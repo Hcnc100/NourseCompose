@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">NourseCompose</string>
+    <!-- title nav bar -->
+    <string name="title_nav_alarm">Alarmas</string>
+    <string name="title_nav_oxygen">Oxígeno</string>
+    <string name="title_nav_temp">Temperatura</string>
+    <string name="description_nav_alarm">Icono para ir la pantalla de alarmas</string>
+    <string name="description_nav_oxygen">Icono para ir la pantalla de las medidas de oxígeno</string>
+    <string name="description_nav_temp">Icono para ir la pantalla de las medidas de temperatura</string>
+    <string name="description_arrow_back">Icono para regresar a la pantalla anterior</string>
+
 </resources>

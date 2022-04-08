@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import com.nullpointer.noursecompose.models.measure.MeasureType
 import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 import com.nullpointer.noursecompose.ui.screen.measure.GraphAndTable
+import com.ramcosta.composedestinations.annotation.Destination
 
+@Destination
 @Composable
 fun TempScreen() {
     val listTemp = SimpleMeasure.createFake(20, MeasureType.TEMPERATURE)
