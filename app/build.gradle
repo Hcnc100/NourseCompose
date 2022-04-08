@@ -63,6 +63,8 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 
+    implementation 'androidx.cardview:cardview:1.0.0'
+
     // * mp graph
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
