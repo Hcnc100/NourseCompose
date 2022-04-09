@@ -28,7 +28,9 @@ import com.nullpointer.noursecompose.ui.share.mpGraph.ToolbarBack
 import com.nullpointer.noursecompose.ui.theme.NourseComposeTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.navigateTo
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

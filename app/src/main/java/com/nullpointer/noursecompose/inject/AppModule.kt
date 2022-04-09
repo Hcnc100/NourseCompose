@@ -6,6 +6,7 @@ import com.nullpointer.noursecompose.data.local.NurseDatabase
 import com.nullpointer.noursecompose.data.local.daos.AlarmDAO
 import com.nullpointer.noursecompose.data.local.daos.MeasureDAO
 import com.nullpointer.noursecompose.data.local.daos.RegistryDAO
+import com.nullpointer.noursecompose.domain.measure.MeasureRepoImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,4 +43,9 @@ object AppModule {
     fun provideMeasureDAO(database: NurseDatabase): MeasureDAO =
         database.getMeasureDAO()
 
+    @Provides
+    @Singleton
+    fun provideMeasureRepository(
+        measureDAO: MeasureDAO
+    ):MeasureRepoImpl = MeasureRepoImpl(measureDAO)
 }
