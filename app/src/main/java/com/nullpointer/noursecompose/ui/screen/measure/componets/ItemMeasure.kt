@@ -12,17 +12,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 
 @Composable
 fun ItemMeasure(
     nameMeasure:String,
-    contentMeasure:String
+    suffixMeasure:String,
+    measure:SimpleMeasure,
 ) {
     Card(modifier = Modifier.padding(4.dp), shape = RoundedCornerShape(10.dp)) {
         Column (modifier = Modifier.padding(10.dp)){
             Text(nameMeasure, style = MaterialTheme.typography.caption)
             Spacer(modifier = Modifier.height(20.dp))
-            Text(contentMeasure, style = MaterialTheme.typography.body1, fontWeight = FontWeight.W600)
+            Text("${measure.value} ${suffixMeasure[0]}", style = MaterialTheme.typography.body1, fontWeight = FontWeight.W600)
         }
     }
 }

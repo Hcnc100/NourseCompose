@@ -20,20 +20,8 @@ data class SimpleMeasure(
         this.isSelect = !this.isSelect
     }
 
-    override fun toString(): String {
-        val suffix=when(typeMeasure){
-            OXYGEN -> suffixOxygen
-            TEMPERATURE -> suffixTemp
-        }
-        return "$value $suffix"
-    }
-
 
     companion object {
-
-        const val suffixOxygen="%"
-        const val suffixTemp="°"
-
         const val minValueTemp = 36
         const val maxValueTemp = 39
 

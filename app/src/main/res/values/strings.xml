@@ -9,4 +9,17 @@
     <string name="description_nav_temp">Icono para ir la pantalla de las medidas de temperatura</string>
     <string name="description_arrow_back">Icono para regresar a la pantalla anterior</string>
 
+
+    <!-- dialog add measure -->
+    <string name="suffix_oxygen">%SPo2</string>
+    <string name="suffix_temp">°C</string>
+    <string name="name_oxygen">Oxígeno</string>
+    <string name="name_temp">Temperatura</string>
+    <string name="text_accept">Aceptar</string>
+    <string name="text_cancel">Cancelar</string>
+    <string name="title_new_measure">Agrega una nueva medida</string>
+    <string name="message_error_measure">Verifique la medida</string>
+    <string name="description_add_oxygen">Agrega una nueva medida de oxígeno</string>
+    <string name="description_add_temp">Agrega una nueva medida de temperatura</string>
+
 </resources>

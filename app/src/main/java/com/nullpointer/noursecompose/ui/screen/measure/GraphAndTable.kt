@@ -4,17 +4,17 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
-import com.nullpointer.noursecompose.models.measure.MeasureType
 import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 import com.nullpointer.noursecompose.ui.screen.measure.componets.ItemMeasure
 import com.nullpointer.noursecompose.ui.share.mpGraph.MpGraphAndroid
@@ -23,10 +23,12 @@ import com.nullpointer.noursecompose.ui.share.mpGraph.MpGraphAndroid
 @Composable
 fun GraphAndTable(
     listMeasure: List<SimpleMeasure>,
-    suffixMeasure:String,
-    nameMeasure:String,
-    minValue:Float,
-    maxValues: Float
+    suffixMeasure: String,
+    nameMeasure: String,
+    descriptionAddNewMeasure:String,
+    minValue: Float,
+    maxValues: Float,
+    actionAdd: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -35,8 +37,16 @@ fun GraphAndTable(
                 minValue = minValue,
                 maxValue = maxValues,
                 suffixMeasure = suffixMeasure,
-                modifier = Modifier.fillMaxWidth().height(250.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = actionAdd) {
+                Icon(painterResource(id = R.drawable.ic_add),
+                    contentDescription = descriptionAddNewMeasure)
+            }
         }
     ) {
         LazyVerticalGrid(
@@ -44,10 +54,10 @@ fun GraphAndTable(
             contentPadding = PaddingValues(4.dp),
         ) {
             items(count = listMeasure.size) { index ->
-                val measure=listMeasure[index]
                 ItemMeasure(
                     nameMeasure,
-                    measure.toString()
+                    suffixMeasure,
+                    listMeasure[index]
                 )
             }
         }
