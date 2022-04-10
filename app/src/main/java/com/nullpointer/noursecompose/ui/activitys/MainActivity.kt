@@ -3,6 +3,7 @@ package com.nullpointer.noursecompose.ui.activitys
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -20,6 +21,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.navigation.HomeDestinations
 import com.nullpointer.noursecompose.ui.screen.home.NavGraphs
 import com.nullpointer.noursecompose.ui.screen.home.navDestination
@@ -27,11 +29,14 @@ import com.nullpointer.noursecompose.ui.share.mpGraph.SimpleToolbar
 import com.nullpointer.noursecompose.ui.share.mpGraph.ToolbarBack
 import com.nullpointer.noursecompose.ui.theme.NourseComposeTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.navigation.navigateTo
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val selectionViewModel: SelectionViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -43,20 +48,22 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     var isHomeRoute by remember { mutableStateOf(false) }
 
-                    navController.addOnDestinationChangedListener { _, navDestination: NavDestination, _ ->
+                    navController.addOnDestinationChangedListener { controller, navDestination: NavDestination, _ ->
                         isHomeRoute = HomeDestinations.isHomeRoute(navDestination.route)
                     }
 
                     Scaffold(
-                        bottomBar = {  AnimatedVisibility(
-                            visible = isHomeRoute,
-                            enter = slideInVertically(initialOffsetY = { it }),
-                            exit = slideOutVertically(targetOffsetY = { it }),
-                        ) {
-                            ButtonNavigation(
-                                navController = navController
-                            )
-                        } }, topBar = {
+                        bottomBar = {
+                            AnimatedVisibility(
+                                visible = isHomeRoute,
+                                enter = slideInVertically(initialOffsetY = { it }),
+                                exit = slideOutVertically(targetOffsetY = { it }),
+                            ) {
+                                ButtonNavigation(
+                                    navController = navController
+                                )
+                            }
+                        }, topBar = {
                             AnimatedVisibility(
                                 visible = isHomeRoute,
                                 enter = slideInVertically(initialOffsetY = { it }),
@@ -65,14 +72,14 @@ class MainActivity : ComponentActivity() {
                                 SimpleToolbar(title = stringResource(id = R.string.app_name))
                             }
                         }
-                    ){ innerPadding ->
+                    ) { innerPadding ->
                         Box(modifier = Modifier.padding(innerPadding)) {
                             DestinationsNavHost(
                                 navController = navController,
                                 navGraph = NavGraphs.root,
-//                                dependenciesContainerBuilder = {
-//                                    dependency(authViewModel)
-//                                }
+                                dependenciesContainerBuilder = {
+                                    dependency(selectionViewModel)
+                                }
                             )
                         }
                     }
@@ -93,6 +100,10 @@ class MainActivity : ComponentActivity() {
                 BottomNavigationItem(
                     selected = currentDestination == destination.direction,
                     onClick = {
+                        // * clear selection if destination change
+                        if (currentDestination != destination.direction)
+                            selectionViewModel.clearSelection()
+                        // * navigate to destiny
                         navController.navigateTo(destination.direction) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
@@ -101,7 +112,10 @@ class MainActivity : ComponentActivity() {
                             restoreState = true
                         }
                     },
-                    icon = { Icon(painterResource(id = destination.icon), stringResource(id = destination.description)) },
+                    icon = {
+                        Icon(painterResource(id = destination.icon),
+                            stringResource(id = destination.description))
+                    },
                     label = { Text(stringResource(id = destination.title)) },
                 )
             }

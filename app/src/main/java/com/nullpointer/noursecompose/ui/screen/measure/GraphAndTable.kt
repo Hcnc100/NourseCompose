@@ -15,6 +15,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.models.ItemSelected
 import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 import com.nullpointer.noursecompose.ui.screen.measure.componets.ItemMeasure
 import com.nullpointer.noursecompose.ui.share.mpGraph.MpGraphAndroid
@@ -29,6 +30,8 @@ fun GraphAndTable(
     minValue: Float,
     maxValues: Float,
     actionAdd: () -> Unit,
+    isSelectedEnable: Boolean,
+    changeSelectState: (ItemSelected) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -57,7 +60,9 @@ fun GraphAndTable(
                 ItemMeasure(
                     nameMeasure,
                     suffixMeasure,
-                    listMeasure[index]
+                    listMeasure[index],
+                    isSelectedEnable,
+                    changeSelectState
                 )
             }
         }
