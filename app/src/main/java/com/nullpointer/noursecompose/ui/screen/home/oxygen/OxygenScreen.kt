@@ -24,17 +24,13 @@ fun OxygenScreen(
 ) {
     val listOxygenState = measureViewModel.listOxygen.collectAsState()
     val (isShowDialog, changeVisibleDialog) = rememberSaveable { mutableStateOf(false) }
-    GraphAndTable(listMeasure = listOxygenState.value,
+    GraphAndTable(listMeasure = listOxygenState.value.reversed(),
         descriptionAddNewMeasure = stringResource(id = R.string.description_add_oxygen),
         suffixMeasure = stringResource(id = R.string.suffix_oxygen),
         nameMeasure = stringResource(id = R.string.name_oxygen),
         minValue = SimpleMeasure.minValueOxygen.toFloat(),
         maxValues = SimpleMeasure.maxValueOxygen.toFloat(),
-        actionAdd = {
-            measureViewModel.addNewMeasure(SimpleMeasure.createFake(1, MeasureType.OXYGEN)
-                .first())
-//            changeVisibleDialog(true)
-        },
+        actionAdd = { changeVisibleDialog(true) },
         isSelectedEnable = selectionViewModel.isSelectedEnable,
         changeSelectState = selectionViewModel::changeItemSelected
     )
@@ -48,6 +44,6 @@ fun OxygenScreen(
             nameMeasure = stringResource(id = R.string.name_oxygen),
             measureFullSuffix = stringResource(id = R.string.suffix_oxygen),
             actionHiddenDialog = { changeVisibleDialog(false) },
-            actionAdd = {})
+            actionAdd = { measureViewModel.addNewMeasure(SimpleMeasure(it, MeasureType.OXYGEN)) })
     }
 }

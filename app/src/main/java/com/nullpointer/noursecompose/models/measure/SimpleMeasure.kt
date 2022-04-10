@@ -13,7 +13,7 @@ data class SimpleMeasure(
     val timestamp: Long = System.currentTimeMillis(),
 ):ItemSelected {
     @PrimaryKey(autoGenerate = true)
-    override var id: Long = -1
+    override var id: Long = 0
 
     @Ignore
     override var isSelected: Boolean = false

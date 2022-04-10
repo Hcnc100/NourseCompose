@@ -1,4 +1,14 @@
 <resources>
+    <plurals name="selected_items">
+        <item quantity="one">Un elemento seleccionado</item>
+        <item quantity="other">%d elementos seleccionados</item>
+    </plurals>
+    <plurals name="deleted_items">
+        <item quantity="one">Un elemento eliminado</item>
+        <item quantity="other">%d elementos eliminados</item>
+    </plurals>
+
+
     <string name="app_name">NourseCompose</string>
     <!-- title nav bar -->
     <string name="title_nav_alarm">Alarmas</string>
@@ -21,5 +31,6 @@
     <string name="message_error_measure">Verifique la medida</string>
     <string name="description_add_oxygen">Agrega una nueva medida de oxígeno</string>
     <string name="description_add_temp">Agrega una nueva medida de temperatura</string>
+    <string name="description_clear_selection">Icono para limpiar la selección</string>
 
 </resources>

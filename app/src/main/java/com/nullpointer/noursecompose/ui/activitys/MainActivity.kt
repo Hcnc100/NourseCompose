@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
@@ -25,6 +26,7 @@ import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.navigation.HomeDestinations
 import com.nullpointer.noursecompose.ui.screen.home.NavGraphs
 import com.nullpointer.noursecompose.ui.screen.home.navDestination
+import com.nullpointer.noursecompose.ui.share.mpGraph.SelectionToolbar
 import com.nullpointer.noursecompose.ui.share.mpGraph.SimpleToolbar
 import com.nullpointer.noursecompose.ui.share.mpGraph.ToolbarBack
 import com.nullpointer.noursecompose.ui.theme.NourseComposeTheme
@@ -45,10 +47,11 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background) {
 
+                    val context = LocalContext.current
                     val navController = rememberNavController()
                     var isHomeRoute by remember { mutableStateOf(false) }
 
-                    navController.addOnDestinationChangedListener { controller, navDestination: NavDestination, _ ->
+                    navController.addOnDestinationChangedListener { _, navDestination: NavDestination, _ ->
                         isHomeRoute = HomeDestinations.isHomeRoute(navDestination.route)
                     }
 
@@ -69,7 +72,15 @@ class MainActivity : ComponentActivity() {
                                 enter = slideInVertically(initialOffsetY = { it }),
                                 exit = slideOutVertically(targetOffsetY = { it }),
                             ) {
-                                SimpleToolbar(title = stringResource(id = R.string.app_name))
+                                SelectionToolbar(
+                                    titleDefault = stringResource(id = R.string.app_name),
+                                    titleSelection = context.resources.getQuantityString(
+                                        R.plurals.selected_items,
+                                        selectionViewModel.numberSelection,
+                                        selectionViewModel.numberSelection),
+                                    numberSelection = selectionViewModel.numberSelection,
+                                    actionClear = selectionViewModel::clearSelection
+                                )
                             }
                         }
                     ) { innerPadding ->

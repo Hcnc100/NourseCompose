@@ -22,6 +22,7 @@ class SelectionViewModel @Inject constructor(
         emptyList())
 
     val isSelectedEnable get() = listMeasureSelected.isNotEmpty()
+    val numberSelection get() = listMeasureSelected.size
 
     fun changeItemSelected(item: ItemSelected) {
         listMeasureSelected = if (listMeasureSelected.contains(item)) {
