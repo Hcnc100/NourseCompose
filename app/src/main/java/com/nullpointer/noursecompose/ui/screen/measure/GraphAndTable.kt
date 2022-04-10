@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyGridState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -32,11 +34,12 @@ fun GraphAndTable(
     actionAdd: () -> Unit,
     isSelectedEnable: Boolean,
     changeSelectState: (ItemSelected) -> Unit,
+    listState: LazyGridState
 ) {
     Scaffold(
         topBar = {
             MpGraphAndroid(
-                list = listMeasure,
+                list = listMeasure.reversed(),
                 minValue = minValue,
                 maxValue = maxValues,
                 suffixMeasure = suffixMeasure,
@@ -53,6 +56,7 @@ fun GraphAndTable(
         }
     ) {
         LazyVerticalGrid(
+            state = listState,
             cells = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure)),
             contentPadding = PaddingValues(4.dp),
         ) {

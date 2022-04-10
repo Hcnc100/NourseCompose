@@ -1,8 +1,12 @@
 package com.nullpointer.noursecompose.ui.screen.home.oxygen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.lazy.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -15,16 +19,21 @@ import com.nullpointer.noursecompose.ui.dialogs.DialogAddMeasure
 import com.nullpointer.noursecompose.ui.screen.measure.GraphAndTable
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
 import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Destination
 @Composable
 fun OxygenScreen(
     measureViewModel: MeasureViewModel = hiltViewModel(),
     selectionViewModel: SelectionViewModel,
 ) {
+    val listState = rememberLazyGridState()
+    val scope = rememberCoroutineScope()
     val listOxygenState = measureViewModel.listOxygen.collectAsState()
     val (isShowDialog, changeVisibleDialog) = rememberSaveable { mutableStateOf(false) }
-    GraphAndTable(listMeasure = listOxygenState.value.reversed(),
+
+    GraphAndTable(listMeasure = listOxygenState.value,
         descriptionAddNewMeasure = stringResource(id = R.string.description_add_oxygen),
         suffixMeasure = stringResource(id = R.string.suffix_oxygen),
         nameMeasure = stringResource(id = R.string.name_oxygen),
@@ -32,7 +41,8 @@ fun OxygenScreen(
         maxValues = SimpleMeasure.maxValueOxygen.toFloat(),
         actionAdd = { changeVisibleDialog(true) },
         isSelectedEnable = selectionViewModel.isSelectedEnable,
-        changeSelectState = selectionViewModel::changeItemSelected
+        changeSelectState = selectionViewModel::changeItemSelected,
+        listState = listState
     )
 
     BackHandler(selectionViewModel.isSelectedEnable) {
@@ -44,6 +54,9 @@ fun OxygenScreen(
             nameMeasure = stringResource(id = R.string.name_oxygen),
             measureFullSuffix = stringResource(id = R.string.suffix_oxygen),
             actionHiddenDialog = { changeVisibleDialog(false) },
-            actionAdd = { measureViewModel.addNewMeasure(SimpleMeasure(it, MeasureType.OXYGEN)) })
+            actionAdd = {
+                measureViewModel.addNewMeasure(SimpleMeasure(it, MeasureType.OXYGEN))
+                scope.launch { listState.animateScrollToItem(0) }
+            })
     }
 }

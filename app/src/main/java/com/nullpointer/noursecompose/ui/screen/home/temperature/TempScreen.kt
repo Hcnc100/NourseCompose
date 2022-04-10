@@ -1,8 +1,12 @@
 package com.nullpointer.noursecompose.ui.screen.home.temperature
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.lazy.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -15,17 +19,21 @@ import com.nullpointer.noursecompose.ui.dialogs.DialogAddMeasure
 import com.nullpointer.noursecompose.ui.screen.measure.GraphAndTable
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
 import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Destination
 @Composable
 fun TempScreen(
     measureViewModel: MeasureViewModel = hiltViewModel(),
     selectionViewModel: SelectionViewModel,
 ) {
+    val scope = rememberCoroutineScope()
+    val listState = rememberLazyGridState()
     val listTempState = measureViewModel.listTemp.collectAsState()
-
     val (isShowDialog, changeVisibleDialog) = rememberSaveable { mutableStateOf(false) }
-    GraphAndTable(listMeasure = listTempState.value.reversed(),
+
+    GraphAndTable(listMeasure = listTempState.value,
         descriptionAddNewMeasure = stringResource(id = R.string.description_add_temp),
         suffixMeasure = stringResource(id = R.string.suffix_temp),
         nameMeasure = stringResource(id = R.string.name_temp),
@@ -33,7 +41,8 @@ fun TempScreen(
         maxValues = SimpleMeasure.maxValueTemp.toFloat(),
         actionAdd = { changeVisibleDialog(true) },
         isSelectedEnable = selectionViewModel.isSelectedEnable,
-        changeSelectState = selectionViewModel::changeItemSelected
+        changeSelectState = selectionViewModel::changeItemSelected,
+        listState = listState
     )
 
     BackHandler(selectionViewModel.isSelectedEnable) {
@@ -45,6 +54,9 @@ fun TempScreen(
             nameMeasure = stringResource(id = R.string.name_temp),
             measureFullSuffix = stringResource(id = R.string.suffix_temp),
             actionHiddenDialog = { changeVisibleDialog(false) },
-            actionAdd = {measureViewModel.addNewMeasure(SimpleMeasure(it, MeasureType.TEMPERATURE)) })
+            actionAdd = {
+                measureViewModel.addNewMeasure(SimpleMeasure(it, MeasureType.TEMPERATURE))
+                scope.launch { listState.animateScrollToItem(0) }
+            })
     }
 }

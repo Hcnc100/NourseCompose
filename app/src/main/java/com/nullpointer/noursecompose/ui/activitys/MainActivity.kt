@@ -74,12 +74,12 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 SelectionToolbar(
                                     titleDefault = stringResource(id = R.string.app_name),
+                                    numberSelection = selectionViewModel.numberSelection,
+                                    actionClear = selectionViewModel::clearSelection,
                                     titleSelection = context.resources.getQuantityString(
                                         R.plurals.selected_items,
                                         selectionViewModel.numberSelection,
                                         selectionViewModel.numberSelection),
-                                    numberSelection = selectionViewModel.numberSelection,
-                                    actionClear = selectionViewModel::clearSelection
                                 )
                             }
                         }
