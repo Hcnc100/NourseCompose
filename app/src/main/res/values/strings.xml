@@ -31,6 +31,8 @@
     <string name="message_error_measure">Verifique la medida</string>
     <string name="description_add_oxygen">Agrega una nueva medida de oxígeno</string>
     <string name="description_add_temp">Agrega una nueva medida de temperatura</string>
+    <string name="description_remove_oxygen">Elimina las medidas de oxígeno seleccionadas</string>
+    <string name="description_remove_temp">Elimina las medidas de temperatura seleccionadas</string>
     <string name="description_clear_selection">Icono para limpiar la selección</string>
 
 </resources>

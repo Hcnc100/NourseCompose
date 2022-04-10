@@ -24,7 +24,7 @@ class MeasureViewModel @Inject constructor(
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5_000),
-        emptyList()
+        null
     )
 
     val listTemp = measureRepo.getListTemp().catch {
@@ -32,7 +32,7 @@ class MeasureViewModel @Inject constructor(
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5_000),
-        emptyList()
+        null
     )
 
     fun addNewMeasure(simpleMeasure: SimpleMeasure) = viewModelScope.launch(Dispatchers.IO){

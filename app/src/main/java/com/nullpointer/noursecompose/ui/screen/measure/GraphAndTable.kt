@@ -1,40 +1,40 @@
 package com.nullpointer.noursecompose.ui.screen.measure
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyGridState
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.models.ItemSelected
 import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 import com.nullpointer.noursecompose.ui.screen.measure.componets.ItemMeasure
+import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
 import com.nullpointer.noursecompose.ui.share.mpGraph.MpGraphAndroid
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun GraphAndTable(
     listMeasure: List<SimpleMeasure>,
     suffixMeasure: String,
     nameMeasure: String,
-    descriptionAddNewMeasure:String,
     minValue: Float,
     maxValues: Float,
     actionAdd: () -> Unit,
+    actionDeleter: () -> Unit,
+    descriptionAddNewMeasure: String,
+    descriptionDeleterMeasure: String,
     isSelectedEnable: Boolean,
     changeSelectState: (ItemSelected) -> Unit,
-    listState: LazyGridState
+    listState: LazyGridState,
 ) {
     Scaffold(
         topBar = {
@@ -49,10 +49,17 @@ fun GraphAndTable(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = actionAdd) {
-                Icon(painterResource(id = R.drawable.ic_add),
-                    contentDescription = descriptionAddNewMeasure)
-            }
+
+                ButtonToggleAddRemove(
+                    isVisible = !listState.isScrollInProgress,
+                    isSelectedEnable = isSelectedEnable,
+                    descriptionButtonAdd = descriptionAddNewMeasure,
+                    actionAdd = actionAdd,
+                    descriptionButtonRemove = descriptionDeleterMeasure,
+                    actionRemove = actionDeleter
+                )
+
+
         }
     ) {
         LazyVerticalGrid(
@@ -72,3 +79,4 @@ fun GraphAndTable(
         }
     }
 }
+
