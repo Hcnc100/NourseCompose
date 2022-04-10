@@ -39,11 +39,11 @@ class MeasureViewModel @Inject constructor(
         measureRepo.insertNewMeasure(simpleMeasure)
     }
 
-    fun deleterListMeasure() = viewModelScope.launch(Dispatchers.IO) {
-
+    fun deleterListMeasure(listIdMeasure:List<Long>) = viewModelScope.launch(Dispatchers.IO) {
+        measureRepo.deleterListMeasure(listIdMeasure)
     }
 
-    fun deleterMeasure() = viewModelScope.launch(Dispatchers.IO) {
-
+    fun deleterMeasure(idMeasure:Long) = viewModelScope.launch(Dispatchers.IO) {
+        measureRepo.deleterMeasure(idMeasure)
     }
 }

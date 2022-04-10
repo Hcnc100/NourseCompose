@@ -34,6 +34,12 @@ class SelectionViewModel @Inject constructor(
         }
     }
 
+    fun getListMeasureAndClear():List<Long>{
+        val listIdMeasure=listMeasureSelected.map { it.id }
+        clearSelection()
+        return listIdMeasure
+    }
+
     fun clearSelection() {
         listMeasureSelected.forEach { it.isSelected = false }
         listMeasureSelected = emptyList()

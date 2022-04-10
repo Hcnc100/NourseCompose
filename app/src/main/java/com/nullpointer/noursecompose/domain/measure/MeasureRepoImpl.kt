@@ -18,8 +18,8 @@ class MeasureRepoImpl(
     override suspend fun insertNewMeasure(measure: SimpleMeasure)=
         measureDAO.insert(measure)
 
-    override suspend fun deleterMeasure(measure: SimpleMeasure) =
-        measureDAO.deleterMeasure(measure)
+    override suspend fun deleterMeasure(idMeasure:Long) =
+        measureDAO.deleterMeasure(idMeasure)
 
     override suspend fun deleterListMeasure(listMeasure: List<Long>) =
         measureDAO.deleterListMeasure(listMeasure)

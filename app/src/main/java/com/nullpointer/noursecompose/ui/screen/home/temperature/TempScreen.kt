@@ -54,7 +54,11 @@ fun TempScreen(
             isSelectedEnable = selectionViewModel.isSelectedEnable,
             changeSelectState = selectionViewModel::changeItemSelected,
             listState = listState,
-            actionDeleter = {},
+            actionDeleter = {
+                measureViewModel.deleterListMeasure(
+                    selectionViewModel.getListMeasureAndClear()
+                )
+            },
             descriptionDeleterMeasure =stringResource(id = R.string.description_remove_temp)
         )
     }
