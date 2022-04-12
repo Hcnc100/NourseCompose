@@ -1,4 +1,5 @@
 <resources>
+    <!-- selection resource-->
     <plurals name="selected_items">
         <item quantity="one">Un elemento seleccionado</item>
         <item quantity="other">%d elementos seleccionados</item>
@@ -7,6 +8,30 @@
         <item quantity="one">Un elemento eliminado</item>
         <item quantity="other">%d elementos eliminados</item>
     </plurals>
+
+    <!-- time utils -->
+    <string name="error_value_repeat_invalid">Valor no válido</string>
+    <plurals name="minutes">
+        <item quantity="one">%d minuto</item>
+        <item quantity="other">%d minutos</item>
+    </plurals>
+    <plurals name="seconds">
+        <item quantity="one">%d segundo</item>
+        <item quantity="other">%d segundos</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d hora</item>
+        <item quantity="other">%d horas</item>
+    </plurals>
+    <plurals name="days">
+        <item quantity="one">%d día</item>
+        <item quantity="other">%d días</item>
+    </plurals>
+
+    <string name="text_alarm_tomorrow">Mañana a las %s</string>
+    <string name="text_alarm_today">Hoy a las %s</string>
+    <string name="text_alarm_other">a las %s</string>
+
 
 
     <string name="app_name">NourseCompose</string>
@@ -29,6 +54,8 @@
     <string name="text_cancel">Cancelar</string>
     <string name="title_new_measure">Agrega una nueva medida</string>
     <string name="message_error_measure">Verifique la medida</string>
+
+    <!-- add new measure and selection -->
     <string name="description_add_oxygen">Agrega una nueva medida de oxígeno</string>
     <string name="description_add_temp">Agrega una nueva medida de temperatura</string>
     <string name="description_remove_oxygen">Elimina las medidas de oxígeno seleccionadas</string>

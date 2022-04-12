@@ -1,9 +1,9 @@
 package com.nullpointer.noursecompose.ui.navigation
 
 import com.nullpointer.noursecompose.R
-import com.nullpointer.noursecompose.ui.screen.home.destinations.AlarmScreenDestination
-import com.nullpointer.noursecompose.ui.screen.home.destinations.OxygenScreenDestination
-import com.nullpointer.noursecompose.ui.screen.home.destinations.TempScreenDestination
+import com.nullpointer.noursecompose.ui.screen.destinations.AlarmScreenDestination
+import com.nullpointer.noursecompose.ui.screen.destinations.OxygenScreenDestination
+import com.nullpointer.noursecompose.ui.screen.destinations.TempScreenDestination
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 
 enum class HomeDestinations(

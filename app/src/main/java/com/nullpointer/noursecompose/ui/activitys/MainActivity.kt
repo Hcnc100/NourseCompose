@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -24,20 +25,17 @@ import androidx.navigation.compose.rememberNavController
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.navigation.HomeDestinations
-import com.nullpointer.noursecompose.ui.screen.home.NavGraphs
-import com.nullpointer.noursecompose.ui.screen.home.navDestination
+import com.nullpointer.noursecompose.ui.screen.NavGraphs
+import com.nullpointer.noursecompose.ui.screen.navDestination
 import com.nullpointer.noursecompose.ui.share.mpGraph.SelectionToolbar
-import com.nullpointer.noursecompose.ui.share.mpGraph.SimpleToolbar
-import com.nullpointer.noursecompose.ui.share.mpGraph.ToolbarBack
 import com.nullpointer.noursecompose.ui.theme.NourseComposeTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.navigation.navigateTo
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     private val selectionViewModel: SelectionViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
