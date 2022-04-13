@@ -1,33 +1,34 @@
 package com.nullpointer.noursecompose.ui.screen.addAlarm
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.NameAndImgScreen
+import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.viewModel.NameAndImgViewModel
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
 @Composable
 @Destination
-fun AddAlarmScreen() {
+fun AddAlarmScreen(
+    nameAndImgViewModel: NameAndImgViewModel = hiltViewModel(),
+) {
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
+    val modalState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val changePage: (value: Int) -> Unit = {
         scope.launch {
             pagerState.animateScrollToPage(pagerState.currentPage + it)
@@ -41,18 +42,32 @@ fun AddAlarmScreen() {
     Box {
         HorizontalPager(count = 4, state = pagerState) { page ->
             when (page) {
-                0 -> NameAndImgScreen()
+                0 -> NameAndImgScreen(nameAndImgViewModel, modalState)
                 1 -> InstruccionScreen()
                 2 -> RepeatAlarmScreen()
                 3 -> TimeScreen()
             }
         }
-        Button(onClick = { changePage(+1) }, modifier = Modifier
-            .align(Alignment.BottomEnd)
-            .padding(10.dp)) {
-            Text("Siguiente")
-        }
+        AnimatedVisibility(visible = !modalState.isVisible,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(10.dp),
+            enter = slideInHorizontally { it } + fadeIn(),
+            exit = shrinkHorizontally { it } + fadeOut()) {
+            Button(onClick = {
+                when (pagerState.currentPage) {
+                    0 -> {
+                        nameAndImgViewModel.validateName()
+                        if (nameAndImgViewModel.errorName.isEmpty()) {
+                            changePage(+1)
+                        }
+                    }
 
+                }
+            }) {
+                Text(stringResource(R.string.text_button_next))
+            }
+        }
     }
 
 }

@@ -30,7 +30,8 @@ fun TimeScreen() {
     val context = LocalContext.current
     val rangeAlarm = Pair(0L, 0L)
     ContentPage(title =  "Selecciona la hora de la alarma") {
-        Column(verticalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxSize()) {
+        Column(verticalArrangement = Arrangement.SpaceEvenly
+            , modifier = Modifier.fillMaxSize()) {
             Column {
                 TextMiniTitle(textTitle = "Hora inicial")
                 TextCenterValue("8:00") {}
