@@ -25,6 +25,7 @@ fun DescriptionScreen(
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column {
                 OutlinedTextField(value = descriptionViewModel.description,
+                    isError = descriptionViewModel.hasErrorDescription,
                     onValueChange = descriptionViewModel::changeDescription,
                     label = { Text(text = stringResource(R.string.hint_description_alarm)) },
                     placeholder = { Text(text = stringResource(R.string.label_description_alarm)) },
@@ -34,7 +35,7 @@ fun DescriptionScreen(
                     modifier = Modifier.align(Alignment.End),
                     color = if (descriptionViewModel.hasErrorDescription) MaterialTheme.colors.error else Color.Unspecified,
                     text = if (descriptionViewModel.hasErrorDescription)
-                        descriptionViewModel.counterDescription else stringResource(id = descriptionViewModel.errorDescription))
+                        stringResource(id = descriptionViewModel.errorDescription) else descriptionViewModel.counterDescription )
             }
         }
     }

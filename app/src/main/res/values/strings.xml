@@ -83,4 +83,14 @@
     <string name="title_description_alarm">Puedes agregar instrucciones si así lo deseas</string>
     <string name="hint_description_alarm">Descripción</string>
     <string name="label_description_alarm">Describe el recordatorio</string>
+
+    <!-- repeat alarm screen -->
+    <string name="title_type_alarm">Como quieres que la alarma se repita</string>
+
+
+    <!-- time alarm screen -->
+    <string name="title_init_time">Hora inicial</string>
+    <string name="title_select_init_alarm">Selecciona la hora de la alarma</string>
+    <string name="title_range_days">Rango de días</string>
+    <string name="error_time_min_range">Debe seleccionar mínimo el rango de un día</string>
 </resources>

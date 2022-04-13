@@ -72,6 +72,7 @@ fun NameAndImgScreen(
                     OutlinedTextField(
                         value = nameAndImgViewModel.nameAlarm,
                         onValueChange = nameAndImgViewModel::changeName,
+                        isError = nameAndImgViewModel.hasErrorName,
                         label = { Text(text = stringResource(R.string.hint_name_alarm)) },
                     )
                     Text(style = MaterialTheme.typography.caption,

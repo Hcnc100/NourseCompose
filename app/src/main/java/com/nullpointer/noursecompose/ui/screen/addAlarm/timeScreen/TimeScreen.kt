@@ -1,64 +1,65 @@
-package com.nullpointer.noursecompose.ui.screen.addAlarm
+package com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen
 
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.TimeUtils.calculateRangeInDays
+import com.nullpointer.noursecompose.core.utils.toFormatOnlyTime
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import com.nullpointer.noursecompose.ui.screen.DialogDate
+import com.nullpointer.noursecompose.ui.screen.addAlarm.ContentPage
+import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.viewModel.TimeViewModel
 
 @Composable
-fun TimeScreen() {
+fun TimeScreen(
+    timeViewModel: TimeViewModel,
+) {
     val context = LocalContext.current
-    val rangeAlarm = Pair(0L, 0L)
-    ContentPage(title =  "Selecciona la hora de la alarma") {
-        Column(verticalArrangement = Arrangement.SpaceEvenly
-            , modifier = Modifier.fillMaxSize()) {
+    ContentPage(title = stringResource(R.string.title_select_init_alarm)) {
+        Column(
+            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 15.dp)) {
             Column {
-                TextMiniTitle(textTitle = "Hora inicial")
-                TextCenterValue("8:00") {}
+                TextMiniTitle(textTitle = stringResource(R.string.title_init_time))
+                TextCenterValue(
+                    textValue = timeViewModel.timeInitAlarm.toFormatOnlyTime(context),
+                    actionClick = {
+                        DialogDate.showTimePicker(
+                            context as AppCompatActivity,
+                            timeViewModel::changeTimeInitAlarm)
+                    })
             }
 
-            AnimatedVisibility(
-                visible = true,
-                enter = expandVertically(),
-                exit = shrinkVertically()
-            ) {
+            if (timeViewModel.typeAlarm == AlarmTypes.RANGE)
                 Column {
-                    TextMiniTitle(textTitle = "Rango de dias")
+                    TextMiniTitle(textTitle = stringResource(R.string.title_range_days))
                     FieldRangeAlarm(
+                        hasError = timeViewModel.hasErrorDescription,
+                        currentSelect = timeViewModel.rangeAlarm,
+                        errorString = timeViewModel.errorRange,
+                        titleSelect = stringResource(R.string.title_range_days),
+                        changeTextRange = timeViewModel::changeRangeAlarm,
                         textRange = calculateRangeInDays(
                             context = context,
-                            time = rangeAlarm
-                        ),
-                        hasError = false,
-                        currentSelect = Pair(0, 0),
-                        titleSelect = "Rango de dias",
-                        {}
+                            time = timeViewModel.rangeAlarm)
+
                     )
                 }
-
-            }
         }
-
     }
 
 }
@@ -94,6 +95,7 @@ fun FieldRangeAlarm(
     hasError: Boolean,
     currentSelect: Pair<Long, Long>,
     titleSelect: String,
+    errorString: Int,
     changeTextRange: (rangeAlarm: Pair<Long, Long>) -> Unit,
 ) {
     val activity = LocalContext.current as AppCompatActivity
@@ -116,10 +118,11 @@ fun FieldRangeAlarm(
                 label = { Text(titleSelect) },
                 value = textRange,
                 onValueChange = {},
+                isError = hasError,
                 enabled = false,
             )
             if (hasError)
-                Text(text = "Debe seleccionar minimo el rango de 1 dia",
+                Text(text = stringResource(id = errorString),
                     style = MaterialTheme.typography.caption,
                     textAlign = TextAlign.End,
                     color = MaterialTheme.colors.error

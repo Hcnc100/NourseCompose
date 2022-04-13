@@ -18,6 +18,9 @@ import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.Descri
 import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.viewModel.DescriptionViewModel
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.NameAndImgScreen
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.viewModel.NameAndImgViewModel
+import com.nullpointer.noursecompose.ui.screen.addAlarm.repeatScreen.RepeatAlarmScreen
+import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.TimeScreen
+import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.viewModel.TimeViewModel
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
@@ -28,6 +31,7 @@ import kotlinx.coroutines.launch
 fun AddAlarmScreen(
     nameAndImgViewModel: NameAndImgViewModel = hiltViewModel(),
     descriptionViewModel: DescriptionViewModel = hiltViewModel(),
+    timeViewModel: TimeViewModel = hiltViewModel(),
 ) {
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
@@ -47,8 +51,8 @@ fun AddAlarmScreen(
             when (page) {
                 0 -> NameAndImgScreen(nameAndImgViewModel, modalState)
                 1 -> DescriptionScreen(descriptionViewModel)
-                2 -> RepeatAlarmScreen()
-                3 -> TimeScreen()
+                2 -> RepeatAlarmScreen(timeViewModel)
+                3 -> TimeScreen(timeViewModel)
             }
         }
         AnimatedVisibility(visible = !modalState.isVisible,
@@ -65,12 +69,13 @@ fun AddAlarmScreen(
                             changePage(+1)
                         }
                     }
-                    1->{
+                    1 -> {
                         descriptionViewModel.validateDescription()
-                        if(!descriptionViewModel.hasErrorDescription){
+                        if (!descriptionViewModel.hasErrorDescription) {
                             changePage(+1)
                         }
                     }
+                    2 -> changePage(+1)
 
                 }
             }) {
