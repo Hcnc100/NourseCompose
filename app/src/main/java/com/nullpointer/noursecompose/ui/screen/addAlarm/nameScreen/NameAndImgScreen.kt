@@ -76,10 +76,9 @@ fun NameAndImgScreen(
                     )
                     Text(style = MaterialTheme.typography.caption,
                         modifier = Modifier.align(Alignment.End),
-                        color = if (nameAndImgViewModel.errorName.isEmpty()) Color.Unspecified else MaterialTheme.colors.error,
-                        text = if (nameAndImgViewModel.errorName.isEmpty())
-                            "${nameAndImgViewModel.nameAlarm.length} / ${NameAndImgViewModel.MAX_LENGTH_NAME}"
-                        else nameAndImgViewModel.errorName)
+                        color = if (nameAndImgViewModel.hasErrorName) MaterialTheme.colors.error else Color.Unspecified,
+                        text = if (nameAndImgViewModel.hasErrorName)
+                            stringResource(id = nameAndImgViewModel.errorName) else nameAndImgViewModel.counterName)
                 }
 
             }
@@ -111,7 +110,8 @@ fun ImageAlarmEdit(
                 .size(40.dp)
                 .align(Alignment.BottomEnd)
         ) {
-            Icon(painterResource(id = R.drawable.ic_edit), stringResource(R.string.description_change_img_alarm))
+            Icon(painterResource(id = R.drawable.ic_edit),
+                stringResource(R.string.description_change_img_alarm))
         }
     }
 

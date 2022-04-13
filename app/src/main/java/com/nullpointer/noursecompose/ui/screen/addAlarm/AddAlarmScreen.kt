@@ -14,6 +14,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.DescriptionScreen
+import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.viewModel.DescriptionViewModel
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.NameAndImgScreen
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.viewModel.NameAndImgViewModel
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
@@ -25,6 +27,7 @@ import kotlinx.coroutines.launch
 @Destination
 fun AddAlarmScreen(
     nameAndImgViewModel: NameAndImgViewModel = hiltViewModel(),
+    descriptionViewModel: DescriptionViewModel = hiltViewModel(),
 ) {
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
@@ -43,7 +46,7 @@ fun AddAlarmScreen(
         HorizontalPager(count = 4, state = pagerState) { page ->
             when (page) {
                 0 -> NameAndImgScreen(nameAndImgViewModel, modalState)
-                1 -> InstruccionScreen()
+                1 -> DescriptionScreen(descriptionViewModel)
                 2 -> RepeatAlarmScreen()
                 3 -> TimeScreen()
             }
@@ -58,7 +61,13 @@ fun AddAlarmScreen(
                 when (pagerState.currentPage) {
                     0 -> {
                         nameAndImgViewModel.validateName()
-                        if (nameAndImgViewModel.errorName.isEmpty()) {
+                        if (!nameAndImgViewModel.hasErrorName) {
+                            changePage(+1)
+                        }
+                    }
+                    1->{
+                        descriptionViewModel.validateDescription()
+                        if(!descriptionViewModel.hasErrorDescription){
                             changePage(+1)
                         }
                     }

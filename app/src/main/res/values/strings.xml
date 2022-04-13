@@ -75,5 +75,12 @@
     <string name="description_img_alarm">Imagen del recordatorio</string>
     <string name="description_change_img_alarm">Edita la imagen de la alarma actual</string>
     <string name="text_button_next">Siguiente</string>
+    <string name="error_empty_name">Se necesita un nombre para tu alarma</string>
+    <string name="error_name_long">El nombre no puede ser tan largo</string>
 
+    <!-- description alarm screen -->
+    <string name="error_description_long">La descripción no puede ser tan larga</string>
+    <string name="title_description_alarm">Puedes agregar instrucciones si así lo deseas</string>
+    <string name="hint_description_alarm">Descripción</string>
+    <string name="label_description_alarm">Describe el recordatorio</string>
 </resources>

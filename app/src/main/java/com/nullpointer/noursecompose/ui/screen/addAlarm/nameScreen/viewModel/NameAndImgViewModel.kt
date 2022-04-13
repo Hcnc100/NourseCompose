@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.Insert
+import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.delegates.SavableComposeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,39 +22,42 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NameAndImgViewModel @Inject constructor(
-     state: SavedStateHandle,
+    state: SavedStateHandle,
 ) : ViewModel() {
     companion object {
         private const val KEY_NAME = "KEY_NAME"
         private const val KEY_FILE = "KEY_FILE"
         private const val KEY_ERROR_NAME = "KEY_ERROR_NAME"
-         const val MAX_LENGTH_NAME=50
+        const val MAX_LENGTH_NAME = 50
     }
 
     var nameAlarm: String by SavableComposeState(state, KEY_NAME, "")
-    private set
+        private set
 
-    var fileImg: File? by SavableComposeState(state, KEY_FILE,null)
-    private set
+    var fileImg: File? by SavableComposeState(state, KEY_FILE, null)
+        private set
 
-    var errorName:String by SavableComposeState(state, KEY_ERROR_NAME,"")
-    private set
+    var errorName: Int by SavableComposeState(state, KEY_ERROR_NAME, -1)
+        private set
+
+    val hasErrorName get() = errorName != -1
+    val counterName get() =  "${nameAlarm.length} / $MAX_LENGTH_NAME"
 
     private var jobCompress: Job? = null
     var isCompress = mutableStateOf(false)
         private set
 
 
-    fun changeName(newName:String){
-        nameAlarm=newName
+    fun changeName(newName: String) {
+        nameAlarm = newName
         validateName()
     }
 
     fun validateName() {
-        errorName=when{
-            nameAlarm.isEmpty() -> "Se necesita un nombre para tu alarma"
-            nameAlarm.length > MAX_LENGTH_NAME -> "El nombre no ppuyede ser tan largo"
-            else ->""
+        errorName = when {
+            nameAlarm.isEmpty() -> R.string.error_empty_name
+            nameAlarm.length > MAX_LENGTH_NAME -> R.string.error_name_long
+            else -> -1
         }
     }
 
