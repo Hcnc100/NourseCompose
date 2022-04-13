@@ -16,23 +16,10 @@ import coil.compose.rememberImagePainter
 import com.nullpointer.noursecompose.R
 
 @Composable
-fun InstruccionScreen(
-    actionNext: () -> Unit,
-) {
-    Column(modifier = Modifier
-        .fillMaxSize()) {
-
-        Text(text = "Puedes agregar instrucciones is asi lo deseas",
-            style = MaterialTheme.typography.h5, modifier = Modifier
-                .padding(30.dp)
-                .weight(1f))
-
-
-
-        Box(Modifier
-            .weight(2f)
-            .fillMaxWidth(), contentAlignment = Alignment.Center) {
-            val (textSaved, changeText) = rememberSaveable { mutableStateOf("") }
+fun InstruccionScreen() {
+    ContentPage(title = "Puedes agregar instrucciones is asi lo deseas") {
+        val (textSaved, changeText) = rememberSaveable { mutableStateOf("") }
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             OutlinedTextField(value = textSaved,
                 onValueChange = changeText,
                 label = { Text(text = "Descripcion") },
@@ -40,17 +27,6 @@ fun InstruccionScreen(
                 modifier = Modifier
                     .height(150.dp))
         }
-
-
-
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)) {
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.align(Alignment.BottomEnd)) {
-                Text("Siguiente")
-            }
-        }
-
 
     }
 }

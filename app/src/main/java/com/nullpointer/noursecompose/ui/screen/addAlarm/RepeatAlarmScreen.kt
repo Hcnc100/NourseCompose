@@ -1,46 +1,22 @@
 package com.nullpointer.noursecompose.ui.screen.addAlarm
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.RadioButton
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 
 @Composable
-fun RepeatAlarmScreen(
-    actionNext: () -> Unit,
-) {
+fun RepeatAlarmScreen() {
     val (typeAlarm, changeTypeAlarm) = rememberSaveable { mutableStateOf(AlarmTypes.ONE_SHOT) }
-    Column(modifier = Modifier
-        .fillMaxSize()) {
-
-        Text(text = "Como quieres que la alarma se repita",
-            style = MaterialTheme.typography.h5, modifier = Modifier
-                .padding(30.dp)
-                .weight(1f))
-
-
-        OptionsRepeater(typeAlarm, changeTypeAlarm, Modifier
-            .weight(2f))
-
-
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)) {
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.align(Alignment.BottomEnd)) {
-                Text("Siguiente")
-            }
-        }
+    ContentPage(title = "Como quieres que la alarma se repita") {
+        OptionsRepeater(typeAlarm, changeTypeAlarm)
     }
 
 }

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -14,6 +15,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,18 +29,12 @@ import com.nullpointer.noursecompose.ui.screen.DialogDate
 fun TimeScreen() {
     val context = LocalContext.current
     val rangeAlarm = Pair(0L, 0L)
-    Column(modifier = Modifier
-        .fillMaxSize()) {
-
-        Text(text = "Selecciona la hora de la alarma",
-            style = MaterialTheme.typography.h5, modifier = Modifier
-                .padding(30.dp)
-                .weight(1f))
-
-
-        Column {
-            TextMiniTitle(textTitle = "Hora inicial")
-            TextCenterValue("8:00") {}
+    ContentPage(title =  "Selecciona la hora de la alarma") {
+        Column(verticalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxSize()) {
+            Column {
+                TextMiniTitle(textTitle = "Hora inicial")
+                TextCenterValue("8:00") {}
+            }
 
             AnimatedVisibility(
                 visible = true,
@@ -62,13 +58,6 @@ fun TimeScreen() {
             }
         }
 
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)) {
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.align(Alignment.BottomEnd)) {
-                Text("Siguiente")
-            }
-        }
     }
 
 }
@@ -79,9 +68,7 @@ fun TextCenterValue(textValue: String, actionClick: () -> Unit) {
         textValue,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                actionClick()
-            },
+            .clickable { actionClick() },
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.h5
     )

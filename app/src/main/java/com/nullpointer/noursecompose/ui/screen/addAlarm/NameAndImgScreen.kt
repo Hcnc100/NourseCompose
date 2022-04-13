@@ -17,33 +17,16 @@ import com.airbnb.lottie.model.content.CircleShape
 import com.nullpointer.noursecompose.R
 
 @Composable
-fun NameAndImgScreen(
-    actionNext: () -> Unit,
-) {
-    Column(modifier = Modifier
-        .fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
-
-        Text(text = "Agrega una nombre a la alarma y una imagen, para recordarlo mas faicl",
-            style = MaterialTheme.typography.h5, modifier = Modifier
-                .padding(30.dp)
-                .weight(1f))
-
-
-
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .weight(2f),
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            Card(backgroundColor = Color.LightGray, shape = RoundedCornerShape(10.dp)) {
+fun NameAndImgScreen() {
+    ContentPage(title = "Agrega una nombre a la alarma y una imagen, para recordarlo mas faicl") {
+        Column(modifier = Modifier.fillMaxSize().background(Color.Gray)) {
+            Card(backgroundColor = Color.LightGray, shape = RoundedCornerShape(10.dp), modifier = Modifier
+                .size(150.dp)
+                .align(Alignment.CenterHorizontally)) {
                 Image(painter = rememberImagePainter(R.drawable.ic_image),
                     contentDescription = "",
-                    modifier = Modifier
-                        .size(150.dp)
-                        .align(Alignment.CenterHorizontally)
                 )
             }
-
-
             Spacer(modifier = Modifier.height(50.dp))
             val (textSaved, changeText) = rememberSaveable { mutableStateOf("") }
             OutlinedTextField(value = textSaved,
@@ -51,16 +34,7 @@ fun NameAndImgScreen(
                 label = { Text(text = "Nombre del recordatorio") },
                 modifier = Modifier.align(Alignment.CenterHorizontally))
         }
-
-
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)) {
-            Button(onClick = actionNext, modifier = Modifier.align(Alignment.BottomEnd)) {
-                Text("Siguiente")
-            }
-        }
-
-
     }
+
+
 }
