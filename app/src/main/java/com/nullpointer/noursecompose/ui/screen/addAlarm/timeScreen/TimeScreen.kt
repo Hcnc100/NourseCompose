@@ -7,6 +7,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -15,9 +17,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.core.utils.TimeUtils
 import com.nullpointer.noursecompose.core.utils.TimeUtils.calculateRangeInDays
 import com.nullpointer.noursecompose.core.utils.toFormatOnlyTime
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
+import com.nullpointer.noursecompose.ui.dialogs.DialogSelectHour
 import com.nullpointer.noursecompose.ui.screen.DialogDate
 import com.nullpointer.noursecompose.ui.screen.addAlarm.ContentPage
 import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.viewModel.TimeViewModel
@@ -27,6 +31,10 @@ fun TimeScreen(
     timeViewModel: TimeViewModel,
 ) {
     val context = LocalContext.current
+    val (isShowRepeatDialog, changeIsShowRepeatTimeDialog) = rememberSaveable {
+        mutableStateOf(false)
+    }
+
     ContentPage(title = stringResource(R.string.title_select_init_alarm)) {
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
@@ -44,11 +52,24 @@ fun TimeScreen(
                     })
             }
 
+            if (timeViewModel.typeAlarm != AlarmTypes.ONE_SHOT) {
+                Column {
+                    TextMiniTitle(textTitle = stringResource(R.string.title_repeat_every))
+                    TextCenterValue(
+                        textValue = TimeUtils.timeRepeatInMillisToString(
+                            timeViewModel.timeToRepeatAlarm,
+                            context,
+                            false),
+                        actionClick = { changeIsShowRepeatTimeDialog(true) }
+                    )
+                }
+            }
+
             if (timeViewModel.typeAlarm == AlarmTypes.RANGE)
                 Column {
                     TextMiniTitle(textTitle = stringResource(R.string.title_range_days))
                     FieldRangeAlarm(
-                        hasError = timeViewModel.hasErrorDescription,
+                        hasError = timeViewModel.hasErrorRange,
                         currentSelect = timeViewModel.rangeAlarm,
                         errorString = timeViewModel.errorRange,
                         titleSelect = stringResource(R.string.title_range_days),
@@ -59,6 +80,26 @@ fun TimeScreen(
 
                     )
                 }
+
+            if (!timeViewModel.hasErrorRange) {
+                Row(modifier = Modifier.padding(vertical = 10.dp)) {
+                    Text(text = stringResource(R.string.title_next_alarm),
+                        style = MaterialTheme.typography.caption,
+                        fontWeight = FontWeight.W200)
+                    Spacer(modifier = Modifier.width(7.dp))
+                    Text(text = TimeUtils.getStringTimeAboutNow(timeViewModel.timeNextAlarm,
+                        context),
+                        style = MaterialTheme.typography.caption,
+                        fontWeight = FontWeight.W300)
+                }
+            }
+
+            if (isShowRepeatDialog)
+                DialogSelectHour(
+                    valueDefects = timeViewModel.timeToRepeatAlarm,
+                    changeTimeRepeater = timeViewModel::changeTimeToRepeatAlarm,
+                    hideDialog = { changeIsShowRepeatTimeDialog(false) })
+
         }
     }
 

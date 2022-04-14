@@ -20,7 +20,7 @@ class TimeViewModel @Inject constructor(
     companion object {
         private const val KEY_TIME_INIT = "KEY_TIME_INIT"
         private const val KEY_ERROR_RANGE = "KEY_ERROR_RANGE"
-        private const val KEY_TYPE_ALARM="KEY_TYPE_ALARM"
+        private const val KEY_TYPE_ALARM = "KEY_TYPE_ALARM"
         private const val KEY_RANGE = "KEY_RANGE"
         private const val KEY_NEXT_ALARM = "KEY_NEXT_ALARM"
         private const val KEY_TIME_REPEAT = "KEY_TIME_REPEAT"
@@ -30,9 +30,9 @@ class TimeViewModel @Inject constructor(
         private set
 
     var timeInitAlarm: Long by SavableComposeState(state, KEY_TIME_INIT, getTimeNow())
-    private set
+        private set
 
-    var rangeAlarm:Pair<Long,Long> by SavableComposeState(state, KEY_RANGE, Pair(0L, 0L))
+    var rangeAlarm: Pair<Long, Long> by SavableComposeState(state, KEY_RANGE, Pair(0L, 0L))
         private set
 
     var timeNextAlarm by SavableComposeState(state, KEY_NEXT_ALARM, timeInitAlarm)
@@ -42,18 +42,28 @@ class TimeViewModel @Inject constructor(
         KEY_TIME_REPEAT, 8 * DateUtils.HOUR_IN_MILLIS)
         private set
 
-    var errorRange:Int by SavableComposeState(state,KEY_ERROR_RANGE,-1)
-    val hasErrorDescription get() = errorRange!=-1
+    var errorRange: Int by SavableComposeState(state, KEY_ERROR_RANGE, -1)
+    val hasErrorRange get() = errorRange != -1
 
-    fun changeTimeInitAlarm(newTime:Long){
-        timeInitAlarm=newTime
+    init {
         calculateNextAlarm()
     }
 
-    fun changeType(newType: AlarmTypes){
-        typeAlarm=newType
+    fun changeTimeToRepeatAlarm(newHour: Long) {
+        timeToRepeatAlarm = newHour
+        if (newHour > 0)
+            calculateNextAlarm()
+    }
+
+    fun changeTimeInitAlarm(newTime: Long) {
+        timeInitAlarm = newTime
+        calculateNextAlarm()
+    }
+
+    fun changeType(newType: AlarmTypes) {
+        typeAlarm = newType
         if (newType == AlarmTypes.RANGE) {
-            val firstTime= getFirstTimeDay()
+            val firstTime = getFirstTimeDay()
             rangeAlarm = Pair(firstTime, firstTime + DateUtils.WEEK_IN_MILLIS)
         }
         calculateNextAlarm()
@@ -62,7 +72,7 @@ class TimeViewModel @Inject constructor(
     fun changeRangeAlarm(newRange: Pair<Long, Long>) {
         rangeAlarm = newRange
         // ! change text next alarm
-        errorRange = when{
+        errorRange = when {
             newRange.second - newRange.first < DateUtils.DAY_IN_MILLIS -> R.string.error_time_min_range
             else -> -1
         }

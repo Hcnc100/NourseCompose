@@ -93,4 +93,11 @@
     <string name="title_select_init_alarm">Selecciona la hora de la alarma</string>
     <string name="title_range_days">Rango de días</string>
     <string name="error_time_min_range">Debe seleccionar mínimo el rango de un día</string>
+    <string name="title_repeat_every">Repetir Cada</string>
+    <string name="title_next_alarm">Proxima alarma</string>
+
+    <!-- dialog select time repeat -->
+    <string name="text_repeater_every">Repetir cada</string>
+    <string name="text_hours">Horas</string>
+    <string name="text_minutes">Minutos</string>
 </resources>
