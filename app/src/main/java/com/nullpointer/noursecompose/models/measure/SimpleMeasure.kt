@@ -17,9 +17,6 @@ data class SimpleMeasure(
 
     @Ignore
     override var isSelected: Boolean = false
-    fun toggleSelect() {
-        this.isSelected = !this.isSelected
-    }
 
 
     companion object {

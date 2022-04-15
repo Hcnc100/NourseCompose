@@ -1,7 +1,9 @@
 package com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -59,19 +61,31 @@ fun NameAndImgScreen(
         ContentPage(title = stringResource(R.string.title_change_name)) {
             Column(modifier = Modifier
                 .fillMaxSize()) {
-                ImageAlarmEdit(
-                    modifier = Modifier
-                        .size(150.dp)
-                        .align(Alignment.CenterHorizontally),
-                    actionClick = {
-                        focusManager.clearFocus()
-                        scope.launch {
-                            modalState.show()
-                        }
-                    },
-                    contentDescription = stringResource(R.string.description_img_alarm),
-                    fileImg = nameAndImgViewModel.fileImg
-                )
+                Box(modifier = Modifier
+                    .size(150.dp)
+                    .align(Alignment.CenterHorizontally)) {
+                    ImageAlarm(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentDescription = stringResource(R.string.description_img_alarm),
+                        fileImg = nameAndImgViewModel.fileImg
+                    )
+                    FloatingActionButton(
+                        onClick = {
+                            focusManager.clearFocus()
+                            scope.launch {
+                                modalState.show()
+                            }
+                        },
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(40.dp)
+                            .align(Alignment.BottomEnd)
+                    ) {
+                        Icon(painterResource(id = R.drawable.ic_edit),
+                            stringResource(R.string.description_change_img_alarm))
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(50.dp))
                 Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                     OutlinedTextField(
@@ -94,11 +108,10 @@ fun NameAndImgScreen(
 }
 
 @Composable
-fun ImageAlarmEdit(
-    fileImg: File?,
+fun ImageAlarm(
     modifier: Modifier = Modifier,
-    actionClick: () -> Unit,
-    urlImgPost: String? = null,
+    fileImg: File? = null,
+    bitmap: Bitmap? = null,
     showProgress: Boolean = false,
     contentDescription: String,
 ) {
@@ -108,7 +121,7 @@ fun ImageAlarmEdit(
         // * else load default
         data = when {
             fileImg != null -> fileImg
-            !urlImgPost.isNullOrEmpty() -> urlImgPost
+            bitmap != null -> bitmap
             else -> R.drawable.ic_image
         }
     ) {
@@ -119,8 +132,12 @@ fun ImageAlarmEdit(
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Card(
             modifier = Modifier.fillMaxSize(),
-            backgroundColor = Color.LightGray,
             shape = RoundedCornerShape(10.dp),
+            backgroundColor = when {
+                fileImg != null || bitmap != null -> Color.Transparent
+                isSystemInDarkTheme() -> Color.DarkGray
+                else -> Color.LightGray
+            }
         ) {
             Image(
                 painter = when (state) {
@@ -130,17 +147,9 @@ fun ImageAlarmEdit(
                 contentDescription = contentDescription,
             )
         }
-        FloatingActionButton(
-            onClick = actionClick,
-            modifier = Modifier
-                .padding(10.dp)
-                .size(40.dp)
-                .align(Alignment.BottomEnd)
-        ) {
-            Icon(painterResource(id = R.drawable.ic_edit),
-                stringResource(R.string.description_change_img_alarm))
-        }
+
         if (state is ImagePainter.State.Loading && showProgress) CircularProgressIndicator()
     }
 
 }
+

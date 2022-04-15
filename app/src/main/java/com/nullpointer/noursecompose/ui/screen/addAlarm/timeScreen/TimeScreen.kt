@@ -22,7 +22,7 @@ import com.nullpointer.noursecompose.core.utils.TimeUtils.calculateRangeInDays
 import com.nullpointer.noursecompose.core.utils.toFormatOnlyTime
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import com.nullpointer.noursecompose.ui.dialogs.DialogSelectHour
-import com.nullpointer.noursecompose.ui.screen.DialogDate
+import com.nullpointer.noursecompose.ui.dialogs.DialogDate
 import com.nullpointer.noursecompose.ui.screen.addAlarm.ContentPage
 import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.viewModel.TimeViewModel
 

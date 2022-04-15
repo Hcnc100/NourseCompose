@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.ui.screen
+package com.nullpointer.noursecompose.ui.dialogs
 
 import android.text.format.DateFormat
 import androidx.appcompat.app.AppCompatActivity

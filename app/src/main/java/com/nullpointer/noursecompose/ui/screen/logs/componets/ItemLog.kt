@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -20,8 +21,11 @@ fun ItemLog(
     registry: Registry,
 ) {
     val context = LocalContext.current
-    Card(modifier = Modifier.padding(10.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+    Card(shape = RoundedCornerShape(10.dp), modifier = Modifier.padding(4.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)) {
             Text(text = registry.type.name,
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.error, modifier = Modifier.weight(1f))
