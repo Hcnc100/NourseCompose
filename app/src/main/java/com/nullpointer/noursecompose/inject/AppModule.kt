@@ -8,6 +8,7 @@ import com.nullpointer.noursecompose.data.local.daos.MeasureDAO
 import com.nullpointer.noursecompose.data.local.daos.RegistryDAO
 import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
 import com.nullpointer.noursecompose.domain.measure.MeasureRepoImpl
+import com.nullpointer.noursecompose.domain.registry.RegistryRepoImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,12 +51,19 @@ object AppModule {
         measureDAO: MeasureDAO
     ):MeasureRepoImpl = MeasureRepoImpl(measureDAO)
 
+    @Provides
+    @Singleton
+    fun provideRegistryRepository(
+        registryDAO: RegistryDAO
+    ):RegistryRepoImpl =RegistryRepoImpl(registryDAO)
+
 
     @Provides
     @Singleton
     fun providerAlarmRepository(
         alarmDAO: AlarmDAO,
-    ): AlarmRepoImpl = AlarmRepoImpl(alarmDAO)
+        registryDAO: RegistryDAO
+    ): AlarmRepoImpl = AlarmRepoImpl(alarmDAO, registryDAO)
 
 
 }

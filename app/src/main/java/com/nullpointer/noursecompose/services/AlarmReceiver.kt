@@ -1,17 +1,30 @@
 package com.nullpointer.noursecompose.services
 
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
+import android.graphics.Bitmap
+import android.media.RingtoneManager
+import android.os.Build
 import android.text.format.DateUtils.MINUTE_IN_MILLIS
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.core.utils.getTimeNow
 import com.nullpointer.noursecompose.core.utils.myGoAsync
+import com.nullpointer.noursecompose.core.utils.toFormat
 import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
+import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import com.nullpointer.noursecompose.models.registry.Registry
 import com.nullpointer.noursecompose.models.registry.TypeRegistry
+import com.nullpointer.noursecompose.ui.activitys.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -34,10 +47,11 @@ class AlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var alarmRepository: AlarmRepoImpl
 
-//    @Inject
-//    lateinit var registryRepository: RegistryRepoImpl
+    private lateinit var notificationHelper: NotificationHelper
+
 
     override fun onReceive(context: Context, intent: Intent) {
+        notificationHelper = NotificationHelper(context)
         intent.let {
             when (it.action) {
                 BOOT_COMPLETED, TIME_SET -> restoreAlarms(context)
@@ -55,17 +69,18 @@ class AlarmReceiver : BroadcastReceiver() {
         val currentTime = getTimeNow()
         if (alarm != null) {
             // * launch notification from alarm
-            NotificationManagerHelper(context).showNotificationAlarm(
+            notificationHelper.showNotificationAlarm(
                 alarm.title,
                 alarm.nameFile?.let { ImageUtils.loadImageFromStorage(it, context) },
                 alarm.message
             )
             // * registry launch
-            registryRepository.addNewRegistry(Registry(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
+            alarmRepository.addNewRegistry(Registry(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
             updateAlarm(alarm, currentTime, context)
         } else {
             // * registry error
-            registryRepository.addNewRegistry(Registry(idAlarm = idAlarm, type = ERROR_LAUNCH))
+            alarmRepository.addNewRegistry(Registry(idAlarm = idAlarm,
+                type = TypeRegistry.ERROR_LAUNCH))
             Timber.e("Alarm id non found $idAlarm")
         }
     }
@@ -86,8 +101,8 @@ class AlarmReceiver : BroadcastReceiver() {
             AlarmTypes.RANGE -> {
                 val rangeAlarm = (alarm.rangeInitAlarm!!..alarm.rangeFinishAlarm!!)
                 if (currentTime in rangeAlarm)
-                    alarm.updateTime(currentTime)
-                else alarm.copy(isActive = false, nextAlarm = null)
+                    alarm.updateTime(currentTime) else alarm.copy(isActive = false,
+                    nextAlarm = null)
             }
         }
 
@@ -98,12 +113,12 @@ class AlarmReceiver : BroadcastReceiver() {
         if (alarmUpdate.isActive) {
             MyAlarmManager.setAlarm(context, alarmUpdate) {
                 typeRegistry?.let {
-                    registryRepository.addNewRegistry(Registry(type = it, idAlarm = alarmUpdate.id!!))
+                    alarmRepository.addNewRegistry(Registry(type = it, idAlarm = alarmUpdate.id))
                 }
             }
         } else {
             MyAlarmManager.cancelAlarm(context, alarmUpdate.id!!) {
-                registryRepository.addNewRegistry(Registry(type = UNREGISTRY,
+                alarmRepository.addNewRegistry(Registry(type = TypeRegistry.UNREGISTER,
                     idAlarm = alarmUpdate.id))
             }
         }
@@ -123,7 +138,7 @@ class AlarmReceiver : BroadcastReceiver() {
         alarmsActive.forEach { alarm ->
             if (currentTime > alarm.nextAlarm ?: 0) {
                 // * notify in group that alarm is lost
-                NotificationManagerHelper(context).showNotificationLost(
+                notificationHelper.showNotificationLost(
                     alarm.title,
                     alarm.nameFile?.let { ImageUtils.loadImageFromStorage(it, context) },
                     alarm.message,
@@ -132,8 +147,8 @@ class AlarmReceiver : BroadcastReceiver() {
                 updateAlarm(alarm, currentTime, context, TypeRegistry.RESTORE)
             } else {
                 MyAlarmManager.setAlarm(context, alarm) {
-                    registryRepository.addNewRegistry(Registry(type = TypeRegistry.RESTORE,
-                        idAlarm = alarm.id!!))
+                    alarmRepository.addNewRegistry(Registry(type = TypeRegistry.RESTORE,
+                        idAlarm = alarm.id))
                 }
             }
 

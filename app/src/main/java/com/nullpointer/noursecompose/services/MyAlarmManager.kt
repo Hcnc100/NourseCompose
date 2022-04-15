@@ -1,17 +1,9 @@
 package com.nullpointer.noursecompose.services
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.nullpointer.nourseapp2.core.utils.AlarmTypes
-import com.nullpointer.nourseapp2.domain.registry.RegistryRepoImpl
-import com.nullpointer.nourseapp2.models.Alarm
-import com.nullpointer.nourseapp2.models.Registry
-import com.nullpointer.nourseapp2.models.TypeRegistry
-import com.nullpointer.nourseapp2.services.AlarmReceiver.Companion.ID_ALARM
-import com.nullpointer.nourseapp2.services.AlarmReceiver.Companion.WAKE_UP_ALARM
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.services.AlarmReceiver.Companion.ID_ALARM
 import com.nullpointer.noursecompose.services.AlarmReceiver.Companion.WAKE_UP_ALARM
