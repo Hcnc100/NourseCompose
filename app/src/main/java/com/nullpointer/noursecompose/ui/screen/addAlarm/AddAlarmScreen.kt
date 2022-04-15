@@ -14,6 +14,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.DescriptionScreen
 import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.viewModel.DescriptionViewModel
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.NameAndImgScreen
@@ -32,6 +33,7 @@ fun AddAlarmScreen(
     nameAndImgViewModel: NameAndImgViewModel = hiltViewModel(),
     descriptionViewModel: DescriptionViewModel = hiltViewModel(),
     timeViewModel: TimeViewModel = hiltViewModel(),
+
 ) {
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
@@ -76,7 +78,11 @@ fun AddAlarmScreen(
                         }
                     }
                     2 -> changePage(+1)
+                    3->{
+                        if(timeViewModel.typeAlarm!=AlarmTypes.INDEFINITELY || !timeViewModel.hasErrorRange){
 
+                        }
+                    }
                 }
             }) {
                 Text(stringResource(R.string.text_button_next))
