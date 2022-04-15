@@ -7,7 +7,9 @@ import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.core.utils.toBitmap
 import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
 import com.nullpointer.noursecompose.models.alarm.Alarm
+import com.nullpointer.noursecompose.services.MyAlarmManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
@@ -48,16 +50,13 @@ class AlarmViewModel @Inject constructor(
         alarmRepo.insertAlarm(alarmInsert)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun deleterAlarm(alarm: Alarm, context: Context) = viewModelScope.launch(Dispatchers.IO) {
         alarmRepo.deleterAlarm(alarm)
         alarm.nameFile?.let { nameFile ->
             ImageUtils.deleterImgFromStorage(nameFile, context)
         }
-        MyAlarmManager.cancelAlarm(context, alarm.id!!) {
-            registryRepo.addNewRegistry(
-                Registry(type = TypeRegistry.DELETER, idAlarm = alarm.id)
-            )
-        }
+        MyAlarmManager.cancelAlarm(context, alarm.id)
     }
 
 }

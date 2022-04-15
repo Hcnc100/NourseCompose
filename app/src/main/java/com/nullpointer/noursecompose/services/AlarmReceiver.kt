@@ -117,10 +117,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 }
             }
         } else {
-            MyAlarmManager.cancelAlarm(context, alarmUpdate.id!!) {
-                alarmRepository.addNewRegistry(Registry(type = TypeRegistry.UNREGISTER,
-                    idAlarm = alarmUpdate.id))
-            }
+            MyAlarmManager.cancelAlarm(context, alarmUpdate.id)
         }
     }
 

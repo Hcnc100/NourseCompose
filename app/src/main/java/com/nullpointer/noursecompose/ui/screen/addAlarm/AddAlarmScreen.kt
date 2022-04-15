@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -14,7 +15,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
+import com.nullpointer.noursecompose.presentation.AlarmViewModel
 import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.DescriptionScreen
 import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.viewModel.DescriptionViewModel
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.NameAndImgScreen
@@ -24,6 +27,7 @@ import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.TimeScreen
 import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.viewModel.TimeViewModel
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
@@ -33,11 +37,13 @@ fun AddAlarmScreen(
     nameAndImgViewModel: NameAndImgViewModel = hiltViewModel(),
     descriptionViewModel: DescriptionViewModel = hiltViewModel(),
     timeViewModel: TimeViewModel = hiltViewModel(),
-
+    alarmViewModel: AlarmViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
     val modalState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val context=LocalContext.current
     val changePage: (value: Int) -> Unit = {
         scope.launch {
             pagerState.animateScrollToPage(pagerState.currentPage + it)
@@ -78,9 +84,26 @@ fun AddAlarmScreen(
                         }
                     }
                     2 -> changePage(+1)
-                    3->{
-                        if(timeViewModel.typeAlarm!=AlarmTypes.INDEFINITELY || !timeViewModel.hasErrorRange){
-
+                    3 -> {
+                        if (timeViewModel.typeAlarm != AlarmTypes.RANGE || timeViewModel.typeAlarm == AlarmTypes.RANGE && !timeViewModel.hasErrorRange) {
+                            val (timeInit, timeFinish) = if (timeViewModel.typeAlarm == AlarmTypes.RANGE) {
+                                timeViewModel.rangeAlarm
+                            } else {
+                                Pair(null, null)
+                            }
+                            alarmViewModel.addNewAlarm(
+                                file = nameAndImgViewModel.fileImg,
+                                context = context,
+                                alarm = Alarm(
+                                    title = nameAndImgViewModel.nameAlarm,
+                                    message = descriptionViewModel.description,
+                                    typeAlarm = timeViewModel.typeAlarm,
+                                    nextAlarm = timeViewModel.timeNextAlarm,
+                                    rangeInitAlarm = timeInit,
+                                    rangeFinishAlarm = timeFinish
+                                )
+                            )
+                            navigator.popBackStack()
                         }
                     }
                 }

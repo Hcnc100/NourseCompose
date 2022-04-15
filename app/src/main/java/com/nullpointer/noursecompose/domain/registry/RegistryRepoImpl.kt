@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 class RegistryRepoImpl(
     private val registryDAO: RegistryDAO
 ):RegistryRepository {
-    override suspend fun getAllRegistry(): Flow<List<Registry>> =
+    override fun getAllRegistry(): Flow<List<Registry>> =
         registryDAO.getAllRegistry()
 
     override suspend fun removeRegistry(registry: Registry) =

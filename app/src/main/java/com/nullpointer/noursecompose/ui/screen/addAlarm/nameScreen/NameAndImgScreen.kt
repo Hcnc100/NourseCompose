@@ -17,12 +17,14 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.ui.screen.addAlarm.ContentPage
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.viewModel.NameAndImgViewModel
 import com.nullpointer.noursecompose.ui.share.ButtonSheetContent
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -66,7 +68,10 @@ fun NameAndImgScreen(
                         scope.launch {
                             modalState.show()
                         }
-                    })
+                    },
+                    contentDescription = stringResource(R.string.description_img_alarm),
+                    fileImg = nameAndImgViewModel.fileImg
+                )
                 Spacer(modifier = Modifier.height(50.dp))
                 Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                     OutlinedTextField(
@@ -90,18 +95,39 @@ fun NameAndImgScreen(
 
 @Composable
 fun ImageAlarmEdit(
+    fileImg: File?,
     modifier: Modifier = Modifier,
     actionClick: () -> Unit,
+    urlImgPost: String? = null,
+    showProgress: Boolean = false,
+    contentDescription: String,
 ) {
-    Box(modifier = modifier) {
+    val painter = rememberImagePainter(
+        // * if pass file img so ,load first,
+        // * else load urlImg if this is not empty
+        // * else load default
+        data = when {
+            fileImg != null -> fileImg
+            !urlImgPost.isNullOrEmpty() -> urlImgPost
+            else -> R.drawable.ic_image
+        }
+    ) {
+        placeholder(R.drawable.ic_image)
+        crossfade(true)
+    }
+    val state = painter.state
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Card(
             modifier = Modifier.fillMaxSize(),
             backgroundColor = Color.LightGray,
             shape = RoundedCornerShape(10.dp),
         ) {
             Image(
-                painter = rememberImagePainter(R.drawable.ic_image),
-                contentDescription = stringResource(R.string.description_img_alarm),
+                painter = when (state) {
+                    is ImagePainter.State.Error -> painterResource(id = R.drawable.ic_broken_image)
+                    else -> painter
+                },
+                contentDescription = contentDescription,
             )
         }
         FloatingActionButton(
@@ -114,6 +140,7 @@ fun ImageAlarmEdit(
             Icon(painterResource(id = R.drawable.ic_edit),
                 stringResource(R.string.description_change_img_alarm))
         }
+        if (state is ImagePainter.State.Loading && showProgress) CircularProgressIndicator()
     }
 
 }

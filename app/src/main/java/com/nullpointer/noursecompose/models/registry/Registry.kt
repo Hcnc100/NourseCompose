@@ -10,5 +10,5 @@ data class Registry(
     val timestamp: Long = System.currentTimeMillis(),
 ){
     @PrimaryKey(autoGenerate = true)
-    var id: Long = -1
+     var id: Long = 0
 }

@@ -33,10 +33,9 @@ object MyAlarmManager {
         actionBefore()
     }
 
-    suspend fun cancelAlarm(context: Context, idAlarm: Long, actionBefore: suspend () -> Unit) {
+     fun cancelAlarm(context: Context, idAlarm: Long) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.cancel(getPendingAlarm(context, idAlarm))
-        actionBefore()
     }
 
     // ? this method registry alarm that launch exactly in the tome selected

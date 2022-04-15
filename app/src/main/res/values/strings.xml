@@ -100,4 +100,5 @@
     <string name="text_repeater_every">Repetir cada</string>
     <string name="text_hours">Horas</string>
     <string name="text_minutes">Minutos</string>
+    <string name="description_icon_options">Abrir el menú de opciones</string>
 </resources>

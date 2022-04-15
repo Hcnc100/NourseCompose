@@ -15,6 +15,6 @@ interface RegistryDAO {
     @Query("DELETE FROM registry_table")
     suspend fun deleterAllRegistry()
 
-    @Query("SELECT * FROM registry_table ORDER BY timestamp DESC")
+    @Query("SELECT * FROM registry_table ORDER BY timestamp")
     fun getAllRegistry(): Flow<List<Registry>>
 }

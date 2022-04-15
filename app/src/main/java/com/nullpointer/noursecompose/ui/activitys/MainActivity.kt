@@ -1,7 +1,6 @@
 package com.nullpointer.noursecompose.ui.activitys
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -26,8 +25,9 @@ import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.navigation.HomeDestinations
 import com.nullpointer.noursecompose.ui.screen.NavGraphs
+import com.nullpointer.noursecompose.ui.screen.destinations.LogsScreensDestination
 import com.nullpointer.noursecompose.ui.screen.navDestination
-import com.nullpointer.noursecompose.ui.share.mpGraph.SelectionToolbar
+import com.nullpointer.noursecompose.ui.share.mpGraph.SelectionMenuToolbar
 import com.nullpointer.noursecompose.ui.theme.NourseComposeTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                                 enter = slideInVertically(initialOffsetY = { it }),
                                 exit = slideOutVertically(targetOffsetY = { it }),
                             ) {
-                                SelectionToolbar(
+                                SelectionMenuToolbar(
                                     titleDefault = stringResource(id = R.string.app_name),
                                     numberSelection = selectionViewModel.numberSelection,
                                     actionClear = selectionViewModel::clearSelection,
@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                                         R.plurals.selected_items,
                                         selectionViewModel.numberSelection,
                                         selectionViewModel.numberSelection),
+                                    goToRegistry = {navController.navigateTo(LogsScreensDestination)}
                                 )
                             }
                         }
