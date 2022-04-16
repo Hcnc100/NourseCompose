@@ -3,9 +3,11 @@ package com.nullpointer.noursecompose.ui.screen.home.alarms
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.rememberLazyGridState
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.presentation.AlarmViewModel
@@ -25,16 +27,22 @@ fun AlarmScreen(
     navigator: DestinationsNavigator,
 ) {
     val listAlarm = alarmViewModel.listAlarm.collectAsState().value
+    val context = LocalContext.current
+    val listState = rememberLazyGridState()
     Scaffold(
         floatingActionButton = {
-            ButtonToggleAddRemove(isVisible = true,
-                isSelectedEnable = false,
+            ButtonToggleAddRemove(isVisible = !listState.isScrollInProgress,
+                isSelectedEnable = selectionViewModel.isSelectedEnable,
                 descriptionButtonAdd = "",
                 actionAdd = { navigator.navigate(AddAlarmScreenDestination) },
-                descriptionButtonRemove = "", actionRemove = {})
+                descriptionButtonRemove = "", actionRemove = {
+                    alarmViewModel.deleterListAlarm(
+                        selectionViewModel.getListSelectionAndClear(), context
+                    )
+                })
         }
     ) {
-        LazyVerticalGrid(cells = GridCells.Adaptive(150.dp)) {
+        LazyVerticalGrid(cells = GridCells.Adaptive(150.dp), state = listState) {
             items(listAlarm.size) { index ->
                 ItemAlarm(alarm = listAlarm[index],
                     selectionViewModel.isSelectedEnable,

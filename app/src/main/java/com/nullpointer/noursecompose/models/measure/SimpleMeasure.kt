@@ -11,9 +11,9 @@ data class SimpleMeasure(
     val value: Float,
     val typeMeasure: MeasureType,
     val timestamp: Long = System.currentTimeMillis(),
-):ItemSelected {
     @PrimaryKey(autoGenerate = true)
-    override var id: Long = 0
+    override val id: Long?=null
+):ItemSelected {
 
     @Ignore
     override var isSelected: Boolean = false
@@ -36,10 +36,9 @@ data class SimpleMeasure(
             return (0..number).map {
                 SimpleMeasure(
                     value = "${rangeInt.random()}.${rangeFloat.random()}".toFloat(),
-                    typeMeasure
-                ).apply {
+                    typeMeasure = typeMeasure,
                     id = it.toLong()
-                }
+                )
             }
         }
     }

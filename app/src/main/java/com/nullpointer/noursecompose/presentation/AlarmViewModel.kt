@@ -26,7 +26,7 @@ class AlarmViewModel @Inject constructor(
 ) : ViewModel() {
 
     val listAlarm = alarmRepo.getAllAlarms().catch {
-        Timber.e("Error al cargar las alarmas de la base de datos")
+        Timber.e("Error al cargar las alarmas de la base de datos $it")
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5_000),
@@ -47,16 +47,16 @@ class AlarmViewModel @Inject constructor(
         }
         // * if the name is not null update alarm to save
         val alarmInsert = if (nameImgSaved != null) alarm.copy(nameFile = nameImgSaved) else alarm
-        alarmRepo.insertAlarm(alarmInsert)
+        alarmRepo.insertAlarm(alarmInsert,context)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
     fun deleterAlarm(alarm: Alarm, context: Context) = viewModelScope.launch(Dispatchers.IO) {
-        alarmRepo.deleterAlarm(alarm)
-        alarm.nameFile?.let { nameFile ->
-            ImageUtils.deleterImgFromStorage(nameFile, context)
-        }
-        MyAlarmManager.cancelAlarm(context, alarm.id)
+        alarmRepo.deleterAlarm(alarm,context)
+    }
+
+    fun deleterListAlarm(listIds:List<Long>,context: Context) = viewModelScope.launch {
+        alarmRepo.deleterListAlarm(listIds,context)
     }
 
 }

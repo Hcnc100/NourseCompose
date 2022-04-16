@@ -17,10 +17,10 @@ data class Alarm(
     val nameFile: String? = null,
     val repeaterEvery: Long? = null,
     val rangeInitAlarm: Long? = null,
-    val rangeFinishAlarm: Long? = null
-): ItemSelected {
+    val rangeFinishAlarm: Long? = null,
     @PrimaryKey(autoGenerate = true)
-    override var id: Long = 0
+    override val id: Long? = null
+): ItemSelected {
     @Ignore
     override var isSelected: Boolean = false
 

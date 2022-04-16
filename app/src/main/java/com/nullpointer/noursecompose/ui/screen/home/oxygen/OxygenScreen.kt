@@ -4,7 +4,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -12,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
@@ -59,7 +57,7 @@ fun OxygenScreen(
             listState = listState,
             actionDeleter = {
                 measureViewModel.deleterListMeasure(
-                    selectionViewModel.getListMeasureAndClear()
+                    selectionViewModel.getListSelectionAndClear()
                 )
             },
             descriptionDeleterMeasure = stringResource(id = R.string.description_remove_oxygen)

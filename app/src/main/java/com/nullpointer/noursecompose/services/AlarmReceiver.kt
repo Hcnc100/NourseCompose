@@ -89,11 +89,10 @@ class AlarmReceiver : BroadcastReceiver() {
         alarm: Alarm,
         currentTime: Long,
         context: Context,
-        typeRegistry: TypeRegistry? = null,
     ) {
         // ? update alarm
         val alarmUpdate = when (alarm.typeAlarm) {
-            // * if it's one shot only launch once and desactivate
+            // * if it's one shot only launch once and deactivate
             AlarmTypes.ONE_SHOT -> alarm.copy(isActive = false, nextAlarm = null)
             // * if it's indefinite only update new next alarm
             AlarmTypes.INDEFINITELY -> alarm.updateTime(currentTime)
@@ -107,18 +106,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         // * remove alarms it's needing
-        alarmRepository.updateAlarm(alarmUpdate)
-
-        // * if the option is restore, so
-        if (alarmUpdate.isActive) {
-            MyAlarmManager.setAlarm(context, alarmUpdate) {
-                typeRegistry?.let {
-                    alarmRepository.addNewRegistry(Registry(type = it, idAlarm = alarmUpdate.id))
-                }
-            }
-        } else {
-            MyAlarmManager.cancelAlarm(context, alarmUpdate.id)
-        }
+        alarmRepository.updateAlarm(alarmUpdate,context)
     }
 
 
@@ -141,17 +129,11 @@ class AlarmReceiver : BroadcastReceiver() {
                     alarm.message,
                     alarm.nextAlarm ?: currentTime
                 )
-                updateAlarm(alarm, currentTime, context, TypeRegistry.RESTORE)
+                updateAlarm(alarm, currentTime, context)
             } else {
-                MyAlarmManager.setAlarm(context, alarm) {
-                    alarmRepository.addNewRegistry(Registry(type = TypeRegistry.RESTORE,
-                        idAlarm = alarm.id))
-                }
+                alarmRepository.restoreAlarm(alarm, context)
             }
-
         }
         Timber.d("Alarmas restauradas ${alarmsActive.size}")
     }
-
-
 }

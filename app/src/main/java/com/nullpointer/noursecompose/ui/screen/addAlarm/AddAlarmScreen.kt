@@ -99,6 +99,7 @@ fun AddAlarmScreen(
                                     message = descriptionViewModel.description,
                                     typeAlarm = timeViewModel.typeAlarm,
                                     nextAlarm = timeViewModel.timeNextAlarm,
+                                    repeaterEvery = timeViewModel.timeToRepeatAlarm,
                                     rangeInitAlarm = timeInit,
                                     rangeFinishAlarm = timeFinish
                                 )

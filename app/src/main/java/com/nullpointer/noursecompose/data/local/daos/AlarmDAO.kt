@@ -21,12 +21,18 @@ interface AlarmDAO {
     @Query("DELETE FROM alarms_table WHERE id IN (:listIdDeleter)")
     suspend fun deleterListAlarm(listIdDeleter: List<Long>)
 
-    @Query("SELECT * FROM alarms_table ORDER BY createdAt DESC")
+    @Query("SELECT * FROM alarms_table ORDER BY isActive DESC, createdAt desc")
     fun getAllAlarms(): Flow<List<Alarm>>
 
     @Query("SELECT * FROM alarms_table WHERE id=:id")
     suspend fun getAlarmById(id: Long): Alarm?
 
     @Query("SELECT * FROM alarms_table WHERE isActive")
-    suspend fun getAllAlarmActive(): List<Alarm>
+    fun getAllAlarmActive(): List<Alarm>
+
+    @Query("SELECT * FROM alarms_table WHERE isActive")
+    fun getFlowAlarmActive(): Flow<List<Alarm>>
+
+    @Query("SELECT * FROM alarms_table WHERE NOT isActive")
+    fun getFlowAlarmInactive(): Flow<List<Alarm>>
 }

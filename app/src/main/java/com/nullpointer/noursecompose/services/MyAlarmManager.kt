@@ -28,9 +28,8 @@ object MyAlarmManager {
         )
     }
 
-    suspend fun setAlarm(context: Context, alarm: Alarm, actionBefore: suspend () -> Unit) {
-        startAlarmExactly(context, alarm.id, alarm.nextAlarm!!)
-        actionBefore()
+    fun setAlarm(context: Context, idAlarm: Long,nextAlarm:Long) {
+        startAlarmExactly(context,idAlarm,nextAlarm)
     }
 
      fun cancelAlarm(context: Context, idAlarm: Long) {
