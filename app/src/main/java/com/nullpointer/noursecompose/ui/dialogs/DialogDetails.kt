@@ -1,54 +1,34 @@
 package com.nullpointer.noursecompose.ui.dialogs
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.core.utils.toFormat
+import com.nullpointer.noursecompose.models.alarm.Alarm
+import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 
 @Composable
 fun DialogDetails(
-    nameMeasure: String,
-    measureFullSuffix: String,
     actionHiddenDialog: () -> Unit,
-    actionEdit: (value: Float) -> Unit,
+    alarm: Alarm,
 ) {
-    val (textInputMeasure, changeValueMeasure) = rememberSaveable { mutableStateOf("") }
-    val (hasError, changeHasError) = rememberSaveable { mutableStateOf(false) }
-    val actionAccept = {
-        val valueMeasure = textInputMeasure.toFloatOrNull()
-        if (valueMeasure != null) {
-            actionEdit(valueMeasure)
-            actionHiddenDialog()
-        } else {
-            changeHasError(true)
-        }
-    }
-
     AlertDialog(
         onDismissRequest = actionHiddenDialog,
         modifier = Modifier.fillMaxWidth(.98f),
+        title = { Text("Detalles de la alarma") },
         text = {
-            BodyDialog(
-                measureFullSuffix = measureFullSuffix,
-                textInputMeasure = textInputMeasure,
-                nameMeasure = nameMeasure,
-                hasError = hasError,
-                actionAccept = actionAccept,
-                textMeasureChange = {
-                    changeValueMeasure(it)
-                    changeHasError(false)
-                }
-            )
+            BodyDialogDetails(alarm = alarm)
         },
         confirmButton = {
-            Button(onClick = actionAccept) {
+            Button(onClick = {}) {
                 Text(stringResource(R.string.text_accept))
             }
         },
@@ -59,4 +39,30 @@ fun DialogDetails(
         }
     )
 
+}
+
+@Composable
+fun BodyDialogDetails(alarm: Alarm) {
+    val context = LocalContext.current
+    Column {
+        Text(text = "Estado: ${if (alarm.isActive) "Activo" else "Inactivo"}")
+        Text(text = "Nombre: ${alarm.title}")
+        if(alarm.message.isNotEmpty()){
+            Text(text = "Description: ${alarm.message}")
+        }
+        Text(text = "Tipo: ${alarm.typeAlarm.stringResource}")
+        alarm.nextAlarm?.let {
+            Text(text = "Proxima alarma:")
+            Text(text = alarm.nextAlarm.toFormat(context, true))
+        }
+        if (alarm.typeAlarm == AlarmTypes.RANGE) {
+            val timeInit = alarm.rangeInitAlarm!!.toFormat(context, true)
+            val timeFinish = alarm.rangeFinishAlarm!!.toFormat(context, true)
+            Text(text = "Rango:")
+            Text(text = "Inicio: $timeInit")
+            Text(text = "Fin: $timeFinish")
+        }
+        Text(text = "Fecha de creacion:")
+        Text(text = alarm.createdAt.toFormat(context, true))
+    }
 }

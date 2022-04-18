@@ -50,6 +50,7 @@ class AlarmReceiver : BroadcastReceiver() {
     private lateinit var notificationHelper: NotificationHelper
 
 
+
     override fun onReceive(context: Context, intent: Intent) {
         notificationHelper = NotificationHelper(context)
         intent.let {
@@ -79,8 +80,7 @@ class AlarmReceiver : BroadcastReceiver() {
             updateAlarm(alarm, currentTime, context)
         } else {
             // * registry error
-            alarmRepository.addNewRegistry(Registry(idAlarm = idAlarm,
-                type = TypeRegistry.ERROR_LAUNCH))
+            alarmRepository.addNewRegistry(Registry(idAlarm = idAlarm, type = TypeRegistry.ERROR_LAUNCH))
             Timber.e("Alarm id non found $idAlarm")
         }
     }
@@ -96,7 +96,7 @@ class AlarmReceiver : BroadcastReceiver() {
             AlarmTypes.ONE_SHOT -> alarm.copy(isActive = false, nextAlarm = null)
             // * if it's indefinite only update new next alarm
             AlarmTypes.INDEFINITELY -> alarm.updateTime(currentTime)
-            // ! if the alarm is in range, else desactivate
+            // ! if the alarm is in range, else deactivate
             AlarmTypes.RANGE -> {
                 val rangeAlarm = (alarm.rangeInitAlarm!!..alarm.rangeFinishAlarm!!)
                 if (currentTime in rangeAlarm)
@@ -119,7 +119,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
         Timber.d("Se inicio el proceso de restauracion de las alarmas")
         val alarmsActive = alarmRepository.getAllAlarmActive()
-        val currentTime = getTimeNow() + MINUTE_IN_MILLIS
+        val currentTime = getTimeNow()
         alarmsActive.forEach { alarm ->
             if (currentTime > alarm.nextAlarm ?: 0) {
                 // * notify in group that alarm is lost

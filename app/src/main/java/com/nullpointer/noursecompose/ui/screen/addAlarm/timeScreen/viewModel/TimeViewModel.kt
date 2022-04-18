@@ -5,10 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.delegates.SavableComposeState
-import com.nullpointer.noursecompose.core.utils.getFirstTimeDay
-import com.nullpointer.noursecompose.core.utils.getHourAndMinutesToday
-import com.nullpointer.noursecompose.core.utils.getTimeNow
-import com.nullpointer.noursecompose.core.utils.setHourAndMinutesToday
+import com.nullpointer.noursecompose.core.utils.*
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -29,7 +26,7 @@ class TimeViewModel @Inject constructor(
     var typeAlarm: AlarmTypes by SavableComposeState(state, KEY_TYPE_ALARM, AlarmTypes.INDEFINITELY)
         private set
 
-    var timeInitAlarm: Long by SavableComposeState(state, KEY_TIME_INIT, getTimeNow())
+    var timeInitAlarm: Long by SavableComposeState(state, KEY_TIME_INIT, getTimeNowToClock())
         private set
 
     var rangeAlarm: Pair<Long, Long> by SavableComposeState(state, KEY_RANGE, Pair(0L, 0L))

@@ -65,18 +65,22 @@ fun Long.toFormatOnlyTime(context: Context): String {
     return sdf.format(this)
 }
 
-fun Long.toFormat(context: Context): String {
-    val newPattern = if (DateFormat.is24HourFormat(context)) {
-        "EEEE dd/MM/yyyy hh:mm"
-    } else {
-        "EEEE dd/MM/yyyy hh:mm a"
-    }
+fun Long.toFormat(context: Context,includeSeconds:Boolean=false): String {
+    val base=if(includeSeconds)  "EEEE dd/MM/yyyy hh:mm:ss" else  "EEEE dd/MM/yyyy hh:mm"
+    val newPattern = if (DateFormat.is24HourFormat(context)) base else "$base a"
     val sdf = SimpleDateFormat(newPattern, Locale.getDefault())
     return sdf.format(this)
 }
 
 fun getTimeNow(): Long {
     return Calendar.getInstance().timeInMillis
+}
+
+fun getTimeNowToClock(): Long {
+    return Calendar.getInstance().apply {
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.timeInMillis
 }
 
 fun setHourAndMinutesToday(hour: Int, minute: Int, timeInMillis: Long? = null): Long {
@@ -123,30 +127,6 @@ fun getFirstTimeDay(timeDayInMillis: Long? = null): Long {
     }.timeInMillis
 }
 
-class SaveableComposeState<T>(
-    private val savedStateHandle: SavedStateHandle,
-    private val key: String,
-    defaultValue: T,
-) {
-    private var _state by mutableStateOf(
-        savedStateHandle.get<T>(key) ?: defaultValue)
-
-    operator fun getValue(
-        thisRef: Any?,
-        property: KProperty<*>,
-    ): T {
-        return _state
-    }
-
-    operator fun setValue(
-        thisRef: Any?,
-        property: KProperty<*>,
-        value: T,
-    ) {
-        _state = value
-        savedStateHandle[key] = value
-    }
-}
 
 fun File.toBitmap(): Bitmap {
     val filePath: String = this.path

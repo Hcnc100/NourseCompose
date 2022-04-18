@@ -28,12 +28,13 @@ fun ItemAlarm(
     alarm: Alarm,
     isSelectedEnable: Boolean,
     changeSelectState: (ItemSelected) -> Unit,
+    actionClickSimple:(alarm:Alarm)->Unit
 ) {
     val context = LocalContext.current
     Card(modifier = Modifier
         .padding(2.dp)
         .combinedClickable(
-            onClick = { if (isSelectedEnable) changeSelectState(alarm) },
+            onClick = { if (isSelectedEnable) changeSelectState(alarm) else actionClickSimple(alarm) },
             onLongClick = { if (!isSelectedEnable) changeSelectState(alarm) },
         ), shape = RoundedCornerShape(10.dp),
         backgroundColor = if (alarm.isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.surface) {
