@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyGridState
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,6 +23,7 @@ import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.dialogs.DialogAddMeasure
 import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.screen.measure.GraphAndTable
+import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
@@ -37,32 +40,42 @@ fun OxygenScreen(
     val listOxygenState = measureViewModel.listOxygen.collectAsState().value
     val (isShowDialog, changeVisibleDialog) = rememberSaveable { mutableStateOf(false) }
 
-
-    when {
-        listOxygenState == null -> Box(modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator()
+    Scaffold(
+        floatingActionButton ={
+            ButtonToggleAddRemove(
+                isVisible = !listState.isScrollInProgress,
+                isSelectedEnable = selectionViewModel.isSelectedEnable,
+                descriptionButtonAdd =  stringResource(id = R.string.description_add_oxygen),
+                actionAdd = { changeVisibleDialog(true) },
+                descriptionButtonRemove = stringResource(id = R.string.description_remove_oxygen),
+                actionRemove = {
+                    measureViewModel.deleterListMeasure(
+                        selectionViewModel.getListSelectionAndClear()
+                    )
+                }
+            )
         }
-        listOxygenState.isEmpty() -> EmptyScreen(animation = R.raw.empty1,
-            textEmpty = "No hay medidas de oxigeno")
+    ) {
+        when {
+            listOxygenState == null -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            listOxygenState.isEmpty() -> EmptyScreen(animation = R.raw.empty2,
+                textEmpty = "No hay medidas de oxigeno")
 
-        listOxygenState.isNotEmpty() -> GraphAndTable(listMeasure = listOxygenState,
-            descriptionAddNewMeasure = stringResource(id = R.string.description_add_oxygen),
-            suffixMeasure = stringResource(id = R.string.suffix_oxygen),
-            nameMeasure = stringResource(id = R.string.name_oxygen),
-            minValue = SimpleMeasure.minValueOxygen.toFloat(),
-            maxValues = SimpleMeasure.maxValueOxygen.toFloat(),
-            actionAdd = { changeVisibleDialog(true) },
-            isSelectedEnable = selectionViewModel.isSelectedEnable,
-            changeSelectState = selectionViewModel::changeItemSelected,
-            listState = listState,
-            actionDeleter = {
-                measureViewModel.deleterListMeasure(
-                    selectionViewModel.getListSelectionAndClear()
-                )
-            },
-            descriptionDeleterMeasure = stringResource(id = R.string.description_remove_oxygen)
-        )
+            listOxygenState.isNotEmpty() -> GraphAndTable(listMeasure = listOxygenState,
+                suffixMeasure = stringResource(id = R.string.suffix_oxygen),
+                nameMeasure = stringResource(id = R.string.name_oxygen),
+                minValue = SimpleMeasure.minValueOxygen.toFloat(),
+                maxValues = SimpleMeasure.maxValueOxygen.toFloat(),
+                isSelectedEnable = selectionViewModel.isSelectedEnable,
+                changeSelectState = selectionViewModel::changeItemSelected,
+                listState = listState,
+            )
+        }
+
     }
+
 
 
 

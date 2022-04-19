@@ -30,7 +30,8 @@ class AlarmViewModel @Inject constructor(
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5_000),
-        emptyList())
+        null
+    )
 
     fun addNewAlarm(
         alarm: Alarm,
@@ -47,16 +48,16 @@ class AlarmViewModel @Inject constructor(
         }
         // * if the name is not null update alarm to save
         val alarmInsert = if (nameImgSaved != null) alarm.copy(nameFile = nameImgSaved) else alarm
-        alarmRepo.insertAlarm(alarmInsert,context)
+        alarmRepo.insertAlarm(alarmInsert, context)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
     fun deleterAlarm(alarm: Alarm, context: Context) = viewModelScope.launch(Dispatchers.IO) {
-        alarmRepo.deleterAlarm(alarm,context)
+        alarmRepo.deleterAlarm(alarm, context)
     }
 
-    fun deleterListAlarm(listIds:List<Long>,context: Context) = viewModelScope.launch {
-        alarmRepo.deleterListAlarm(listIds,context)
+    fun deleterListAlarm(listIds: List<Long>, context: Context) = viewModelScope.launch {
+        alarmRepo.deleterListAlarm(listIds, context)
     }
 
 }

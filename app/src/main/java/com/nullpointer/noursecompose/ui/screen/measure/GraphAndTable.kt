@@ -28,10 +28,6 @@ fun GraphAndTable(
     nameMeasure: String,
     minValue: Float,
     maxValues: Float,
-    actionAdd: () -> Unit,
-    actionDeleter: () -> Unit,
-    descriptionAddNewMeasure: String,
-    descriptionDeleterMeasure: String,
     isSelectedEnable: Boolean,
     changeSelectState: (ItemSelected) -> Unit,
     listState: LazyGridState,
@@ -48,19 +44,6 @@ fun GraphAndTable(
                     .height(250.dp)
             )
         },
-        floatingActionButton = {
-
-                ButtonToggleAddRemove(
-                    isVisible = !listState.isScrollInProgress,
-                    isSelectedEnable = isSelectedEnable,
-                    descriptionButtonAdd = descriptionAddNewMeasure,
-                    actionAdd = actionAdd,
-                    descriptionButtonRemove = descriptionDeleterMeasure,
-                    actionRemove = actionDeleter
-                )
-
-
-        }
     ) {
         LazyVerticalGrid(
             state = listState,

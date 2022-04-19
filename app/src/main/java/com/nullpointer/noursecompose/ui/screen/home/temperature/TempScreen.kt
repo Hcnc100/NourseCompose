@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyGridState
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,6 +23,7 @@ import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.dialogs.DialogAddMeasure
 import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.screen.measure.GraphAndTable
+import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
@@ -37,30 +40,41 @@ fun TempScreen(
     val listTempState = measureViewModel.listTemp.collectAsState().value
     val (isShowDialog, changeVisibleDialog) = rememberSaveable { mutableStateOf(false) }
 
-    when {
-        listTempState == null -> Box(modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator()
+    Scaffold(
+        floatingActionButton = {
+            ButtonToggleAddRemove(
+                isVisible = !listState.isScrollInProgress,
+                isSelectedEnable = selectionViewModel.isSelectedEnable,
+                descriptionButtonAdd = stringResource(id = R.string.description_add_temp),
+                actionAdd = { changeVisibleDialog(true) },
+                descriptionButtonRemove = stringResource(id = R.string.description_remove_temp),
+                actionRemove = {
+                    measureViewModel.deleterListMeasure(
+                        selectionViewModel.getListSelectionAndClear()
+                    )
+                }
+            )
         }
-        listTempState.isEmpty() -> EmptyScreen(animation = R.raw.empty1,
-            textEmpty = "No hay medidas de temperatura")
-        listTempState.isNotEmpty() -> GraphAndTable(listMeasure = listTempState,
-            descriptionAddNewMeasure = stringResource(id = R.string.description_add_temp),
-            suffixMeasure = stringResource(id = R.string.suffix_temp),
-            nameMeasure = stringResource(id = R.string.name_temp),
-            minValue = SimpleMeasure.minValueTemp.toFloat(),
-            maxValues = SimpleMeasure.maxValueTemp.toFloat(),
-            actionAdd = { changeVisibleDialog(true) },
-            isSelectedEnable = selectionViewModel.isSelectedEnable,
-            changeSelectState = selectionViewModel::changeItemSelected,
-            listState = listState,
-            actionDeleter = {
-                measureViewModel.deleterListMeasure(
-                    selectionViewModel.getListSelectionAndClear()
-                )
-            },
-            descriptionDeleterMeasure =stringResource(id = R.string.description_remove_temp)
-        )
+    ){
+        when {
+            listTempState == null -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            listTempState.isEmpty() -> EmptyScreen(animation = R.raw.empty1,
+                textEmpty = "No hay medidas de temperatura")
+            listTempState.isNotEmpty() -> GraphAndTable(listMeasure = listTempState,
+                suffixMeasure = stringResource(id = R.string.suffix_temp),
+                nameMeasure = stringResource(id = R.string.name_temp),
+                minValue = SimpleMeasure.minValueTemp.toFloat(),
+                maxValues = SimpleMeasure.maxValueTemp.toFloat(),
+                isSelectedEnable = selectionViewModel.isSelectedEnable,
+                changeSelectState = selectionViewModel::changeItemSelected,
+                listState = listState,
+            )
+        }
+
     }
+
 
 
     BackHandler(selectionViewModel.isSelectedEnable) {
