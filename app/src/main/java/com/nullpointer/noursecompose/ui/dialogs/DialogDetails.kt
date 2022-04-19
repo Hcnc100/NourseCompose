@@ -5,10 +5,12 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.toFormat
@@ -23,46 +25,55 @@ fun DialogDetails(
     AlertDialog(
         onDismissRequest = actionHiddenDialog,
         modifier = Modifier.fillMaxWidth(.98f),
-        title = { Text("Detalles de la alarma") },
-        text = {
-            BodyDialogDetails(alarm = alarm)
-        },
+        title = { Text(stringResource(R.string.title_alarm_details)) },
+        text = { BodyDialogDetails(alarm = alarm) },
         confirmButton = {
             Button(onClick = {}) {
-                Text(stringResource(R.string.text_accept))
+                Text(text = stringResource(R.string.text_edit_alarm))
             }
         },
         dismissButton = {
             TextButton(onClick = actionHiddenDialog) {
-                Text(stringResource(R.string.text_cancel))
+                Text(stringResource(R.string.text_accept))
             }
         }
     )
-
 }
 
 @Composable
 fun BodyDialogDetails(alarm: Alarm) {
     val context = LocalContext.current
     Column {
-        Text(text = "Estado: ${if (alarm.isActive) "Activo" else "Inactivo"}")
-        Text(text = "Nombre: ${alarm.title}")
-        if(alarm.message.isNotEmpty()){
-            Text(text = "Description: ${alarm.message}")
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(R.string.sub_title_state_alarm),
+                style = MaterialTheme.typography.caption,
+                fontWeight = FontWeight.W300
+            )
+            Text(
+                if (alarm.isActive) stringResource(R.string.text_state_active) else stringResource(R.string.text_state_inactive),
+                color = if (alarm.isActive) Color.Green else Color.Red,
+                style = MaterialTheme.typography.subtitle2,
+                fontWeight = FontWeight.W500
+            )
         }
-        Text(text = "Tipo: ${alarm.typeAlarm.stringResource}")
+        Text(text = stringResource(R.string.sub_title_name_alarm) + " ${alarm.title}")
+        if (alarm.message.isNotEmpty()) {
+            Text(text = stringResource(R.string.sub_title_description_alarm) + " ${alarm.message}")
+        }
+        Text(text = stringResource(R.string.sub_title_type_alarm) + " ${alarm.typeAlarm.stringResource}")
         alarm.nextAlarm?.let {
-            Text(text = "Proxima alarma:")
+            Text(text = stringResource(id = R.string.sub_title_next_alarm))
             Text(text = alarm.nextAlarm.toFormat(context, true))
         }
         if (alarm.typeAlarm == AlarmTypes.RANGE) {
-            val timeInit = alarm.rangeInitAlarm!!.toFormat(context, true)
-            val timeFinish = alarm.rangeFinishAlarm!!.toFormat(context, true)
-            Text(text = "Rango:")
-            Text(text = "Inicio: $timeInit")
-            Text(text = "Fin: $timeFinish")
+            val timeInit = alarm.rangeInitAlarm?.toFormat(context, true)
+            val timeFinish = alarm.rangeFinishAlarm?.toFormat(context, true)
+            Text(text = stringResource(R.string.sub_title_range_alarm))
+            Text(text = stringResource(R.string.sub_title_init_alarm) + " $timeInit")
+            Text(text = stringResource(R.string.sub_title_finish_alarm) + " $timeFinish")
         }
-        Text(text = "Fecha de creacion:")
+        Text(text = stringResource(R.string.sub_title_date_alarm))
         Text(text = alarm.createdAt.toFormat(context, true))
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.core.utils.TimeUtils.getStringTimeAboutNow
 import com.nullpointer.noursecompose.models.ItemSelected
@@ -28,7 +29,7 @@ fun ItemAlarm(
     alarm: Alarm,
     isSelectedEnable: Boolean,
     changeSelectState: (ItemSelected) -> Unit,
-    actionClickSimple:(alarm:Alarm)->Unit
+    actionClickSimple: (alarm: Alarm) -> Unit,
 ) {
     val context = LocalContext.current
     Card(modifier = Modifier
@@ -52,7 +53,7 @@ fun ItemAlarm(
                         .weight(1f)
                         .fillMaxWidth()
                         .aspectRatio(1f),
-                    contentDescription = "",
+                    contentDescription = stringResource(R.string.description_img_alarm_item),
                     bitmap = ImageUtils.loadImageFromStorage(alarm.nameFile, context))
             }
         }
@@ -73,7 +74,7 @@ fun TextInfoAlarm(
         overflow = TextOverflow.Ellipsis
     )
     if (timeNextAlarm != null) {
-        Text("Proxima alarma:",
+        Text(stringResource(R.string.sub_title_next_alarm),
             fontWeight = FontWeight.W300,
             modifier = Modifier.padding(vertical = 2.dp),
             style = MaterialTheme.typography.caption,
@@ -99,12 +100,12 @@ fun TextStateAlarm(
         modifier = Modifier.padding(vertical = 5.dp)
     ) {
         Text(
-            "Estado:",
+            stringResource(R.string.sub_title_state_alarm),
             style = MaterialTheme.typography.caption,
             fontWeight = FontWeight.W300
         )
         Text(
-            if (alarmIsActivate) "Activo" else "Inactivo",
+            if (alarmIsActivate) stringResource(R.string.text_state_active) else stringResource(R.string.text_state_inactive),
             color = if (alarmIsActivate) Color.Green else Color.Red,
             style = MaterialTheme.typography.subtitle2,
             fontWeight = FontWeight.W500

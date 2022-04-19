@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
@@ -46,9 +47,10 @@ fun AlarmScreen(
         floatingActionButton = {
             ButtonToggleAddRemove(isVisible = !listState.isScrollInProgress,
                 isSelectedEnable = selectionViewModel.isSelectedEnable,
-                descriptionButtonAdd = "",
+                descriptionButtonAdd = stringResource(R.string.description_add_alarm),
                 actionAdd = { navigator.navigate(AddAlarmScreenDestination) },
-                descriptionButtonRemove = "", actionRemove = {
+                descriptionButtonRemove = stringResource(R.string.description_remove_alarms),
+                actionRemove = {
                     alarmViewModel.deleterListAlarm(
                         selectionViewModel.getListSelectionAndClear(), context
                     )
@@ -62,7 +64,7 @@ fun AlarmScreen(
                 }
 
             listAlarm.isEmpty() ->
-                EmptyScreen(animation = R.raw.empty3, textEmpty = "No hay alarmas guardadas")
+                EmptyScreen(animation = R.raw.empty3, textEmpty = stringResource(R.string.message_empty_alarm_screen))
 
             listAlarm.isNotEmpty() ->
                 LazyVerticalGrid(cells = GridCells.Adaptive(150.dp), state = listState) {

@@ -43,6 +43,7 @@
     <string name="description_nav_oxygen">Icono para ir la pantalla de las medidas de oxígeno</string>
     <string name="description_nav_temp">Icono para ir la pantalla de las medidas de temperatura</string>
     <string name="description_arrow_back">Icono para regresar a la pantalla anterior</string>
+    <string name="description_icon_options">Abrir el menú de opciones</string>
 
 
     <!-- dialog add measure -->
@@ -100,5 +101,25 @@
     <string name="text_repeater_every">Repetir cada</string>
     <string name="text_hours">Horas</string>
     <string name="text_minutes">Minutos</string>
-    <string name="description_icon_options">Abrir el menú de opciones</string>
+
+    <!-- alarm screen -->
+    <string name="description_add_alarm">Empieza el proceso de agregar una nueva alarma o recordatorio</string>
+    <string name="description_remove_alarms">Elimina las alarmas seleccionadas</string>
+    <string name="message_empty_alarm_screen">No hay alarmas guardadas</string>
+    <string name="description_img_alarm_item">Imagen de la alarma actual</string>
+
+    <!-- dialog details alarm -->
+    <string name="sub_title_next_alarm">Próxima alarma:</string>
+    <string name="sub_title_state_alarm">Estado:</string>
+    <string name="text_state_active">Activo</string>
+    <string name="text_state_inactive">Inactivo</string>
+    <string name="title_alarm_details">Detalles de la alarma</string>
+    <string name="text_edit_alarm">Editar</string>
+    <string name="sub_title_name_alarm">Nombre:</string>
+    <string name="sub_title_description_alarm">Descripción:</string>
+    <string name="sub_title_type_alarm">Tipo:</string>
+    <string name="sub_title_range_alarm">Rango:</string>
+    <string name="sub_title_init_alarm">Inicio:</string>
+    <string name="sub_title_finish_alarm">Fin:</string>
+    <string name="sub_title_date_alarm">Fecha de creación:</string>
 </resources>
