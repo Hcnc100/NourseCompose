@@ -3,9 +3,7 @@ package com.nullpointer.noursecompose.ui.screen.home.alarms
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.rememberLazyGridState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -19,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.models.ItemSelected
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.presentation.AlarmViewModel
 import com.nullpointer.noursecompose.presentation.SelectionViewModel
@@ -38,11 +37,12 @@ fun AlarmScreen(
     selectionViewModel: SelectionViewModel,
     navigator: DestinationsNavigator,
 ) {
-    val listAlarm = alarmViewModel.listAlarm.collectAsState().value
+    val listAlarmState = alarmViewModel.listAlarm.collectAsState()
     val context = LocalContext.current
     val listState = rememberLazyGridState()
     val (isShowDialog, changeShowDialog) = rememberSaveable { mutableStateOf(false) }
     val (alarmSelected, changeAlarmSelected) = rememberSaveable { mutableStateOf<Alarm?>(null) }
+
     Scaffold(
         floatingActionButton = {
             ButtonToggleAddRemove(isVisible = !listState.isScrollInProgress,
@@ -57,30 +57,14 @@ fun AlarmScreen(
                 })
         }
     ) {
-        when {
-            listAlarm == null ->
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-
-            listAlarm.isEmpty() ->
-                EmptyScreen(animation = R.raw.empty3, textEmpty = stringResource(R.string.message_empty_alarm_screen))
-
-            listAlarm.isNotEmpty() ->
-                LazyVerticalGrid(cells = GridCells.Adaptive(150.dp), state = listState) {
-                    items(listAlarm.size) { index ->
-                        ItemAlarm(alarm = listAlarm[index],
-                            isSelectedEnable = selectionViewModel.isSelectedEnable,
-                            changeSelectState = selectionViewModel::changeItemSelected,
-                            actionClickSimple = {
-                                changeAlarmSelected(it)
-                                changeShowDialog(true)
-                            }
-                        )
-                    }
-                }
-
-        }
+        ListAlarm(listAlarm = listAlarmState.value,
+            isSelectedEnable = selectionViewModel.isSelectedEnable,
+            listState = listState,
+            changeItemSelect = selectionViewModel::changeItemSelected,
+            simpleClickAlarm = {
+                changeAlarmSelected(it)
+                changeShowDialog(true)
+            })
     }
     if (alarmSelected != null && isShowDialog) {
         DialogDetails(
@@ -94,5 +78,39 @@ fun AlarmScreen(
 
     BackHandler(selectionViewModel.isSelectedEnable) {
         selectionViewModel.clearSelection()
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ListAlarm(
+    listAlarm: List<Alarm>?,
+    isSelectedEnable: Boolean,
+    listState: LazyGridState,
+    changeItemSelect: (ItemSelected) -> Unit,
+    simpleClickAlarm: (Alarm) -> Unit,
+) {
+    when {
+        listAlarm == null ->
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+
+        listAlarm.isEmpty() ->
+            EmptyScreen(animation = R.raw.empty3,
+                textEmpty = stringResource(R.string.message_empty_alarm_screen))
+
+        listAlarm.isNotEmpty() ->
+            LazyVerticalGrid(cells = GridCells.Adaptive(150.dp), state = listState) {
+                itemsIndexed(items = listAlarm, key = { _, item: Alarm -> item.id ?: 0 }
+                ) { _, item: Alarm ->
+                    ItemAlarm(alarm = item,
+                        isSelectedEnable = isSelectedEnable,
+                        changeSelectState = changeItemSelect,
+                        actionClickSimple = simpleClickAlarm
+                    )
+                }
+            }
+
     }
 }

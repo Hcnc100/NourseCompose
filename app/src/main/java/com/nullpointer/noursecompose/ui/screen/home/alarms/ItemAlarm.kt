@@ -8,6 +8,8 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +34,11 @@ fun ItemAlarm(
     actionClickSimple: (alarm: Alarm) -> Unit,
 ) {
     val context = LocalContext.current
+    val bitmap= rememberSaveable {
+        mutableStateOf(
+            if(alarm.nameFile!=null) ImageUtils.loadImageFromStorage(alarm.nameFile, context) else null
+        )
+    }
     Card(modifier = Modifier
         .padding(2.dp)
         .combinedClickable(
@@ -54,7 +61,7 @@ fun ItemAlarm(
                         .fillMaxWidth()
                         .aspectRatio(1f),
                     contentDescription = stringResource(R.string.description_img_alarm_item),
-                    bitmap = ImageUtils.loadImageFromStorage(alarm.nameFile, context))
+                    bitmap = bitmap.value)
             }
         }
     }

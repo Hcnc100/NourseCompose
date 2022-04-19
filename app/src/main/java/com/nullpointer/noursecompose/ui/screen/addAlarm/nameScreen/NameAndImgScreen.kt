@@ -13,7 +13,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -129,27 +131,28 @@ fun ImageAlarm(
         crossfade(true)
     }
     val state = painter.state
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        Card(
-            modifier = Modifier.fillMaxSize(),
-            shape = RoundedCornerShape(10.dp),
-            backgroundColor = when {
+    Box(modifier = modifier
+        .fillMaxSize()
+        .clip(RoundedCornerShape(10.dp))
+        .background(
+            when {
                 fileImg != null || bitmap != null -> Color.Transparent
                 isSystemInDarkTheme() -> Color.DarkGray
                 else -> Color.LightGray
             }
-        ) {
-            Image(
-                painter = when (state) {
-                    is ImagePainter.State.Error -> painterResource(id = R.drawable.ic_broken_image)
-                    else -> painter
-                },
-                contentDescription = contentDescription,
-            )
-        }
+        ), contentAlignment = Alignment.Center) {
 
-        if (state is ImagePainter.State.Loading && showProgress) CircularProgressIndicator()
+        Image(
+            painter = when (state) {
+                is ImagePainter.State.Error -> painterResource(id = R.drawable.ic_broken_image)
+                else -> painter
+            },
+            contentDescription = contentDescription,
+            contentScale = ContentScale.FillBounds)
     }
 
+    if (state is ImagePainter.State.Loading && showProgress) CircularProgressIndicator()
 }
+
+
 
