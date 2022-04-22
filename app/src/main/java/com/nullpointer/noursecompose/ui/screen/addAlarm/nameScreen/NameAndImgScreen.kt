@@ -1,44 +1,61 @@
 package com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen
 
 import android.graphics.Bitmap
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.ui.screen.addAlarm.ContentPage
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.viewModel.NameAndImgViewModel
 import com.nullpointer.noursecompose.ui.share.ButtonSheetContent
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class,
+    ExperimentalComposeUiApi::class)
 @Composable
 fun NameAndImgScreen(
     nameAndImgViewModel: NameAndImgViewModel,
     modalState: ModalBottomSheetState,
+    focusManager: FocusManager
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val focusManager = LocalFocusManager.current
+    val bringName = remember { BringIntoViewRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     ModalBottomSheetLayout(sheetState = modalState,
         sheetContent = {
@@ -88,20 +105,37 @@ fun NameAndImgScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(50.dp))
-                Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                    OutlinedTextField(
-                        value = nameAndImgViewModel.nameAlarm,
-                        onValueChange = nameAndImgViewModel::changeName,
-                        isError = nameAndImgViewModel.hasErrorName,
-                        label = { Text(text = stringResource(R.string.hint_name_alarm)) },
-                    )
-                    Text(style = MaterialTheme.typography.caption,
-                        modifier = Modifier.align(Alignment.End),
-                        color = if (nameAndImgViewModel.hasErrorName) MaterialTheme.colors.error else Color.Unspecified,
-                        text = if (nameAndImgViewModel.hasErrorName)
-                            stringResource(id = nameAndImgViewModel.errorName) else nameAndImgViewModel.counterName)
+
+                Box(modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .bringIntoViewRequester(bringName)
+                    .padding(vertical = 80.dp)){
+                    Column{
+                        OutlinedTextField(
+                            modifier = Modifier.onFocusEvent {
+                                if ( it.isFocused) {
+                                    scope.launch {
+                                        delay(500)
+                                        bringName.bringIntoView()
+                                    }
+                                }
+                            },
+                            value = nameAndImgViewModel.nameAlarm,
+                            onValueChange = nameAndImgViewModel::changeName,
+                            isError = nameAndImgViewModel.hasErrorName,
+                            label = { Text(text = stringResource(R.string.hint_name_alarm)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() })
+                        )
+                        Text(style = MaterialTheme.typography.caption,
+                            modifier = Modifier.align(Alignment.End),
+                            color = if (nameAndImgViewModel.hasErrorName) MaterialTheme.colors.error else Color.Unspecified,
+                            text = if (nameAndImgViewModel.hasErrorName)
+                                stringResource(id = nameAndImgViewModel.errorName) else nameAndImgViewModel.counterName)
+                    }
                 }
+
 
             }
         }

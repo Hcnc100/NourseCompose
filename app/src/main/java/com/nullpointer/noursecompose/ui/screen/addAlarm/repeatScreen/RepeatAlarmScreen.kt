@@ -31,7 +31,7 @@ fun RepeatAlarmScreen(
             options.forEach {
                 Row(modifier = Modifier
                     .clickable { repeatViewModel.changeType(it) }
-                    .padding(vertical = 5.dp)) {
+                    .padding(vertical = 20.dp)) {
                     RadioButton(
                         selected = it == repeatViewModel.typeAlarm,
                         onClick = null,

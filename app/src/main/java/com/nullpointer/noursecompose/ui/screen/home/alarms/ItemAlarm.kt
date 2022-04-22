@@ -9,6 +9,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,9 +35,10 @@ fun ItemAlarm(
     actionClickSimple: (alarm: Alarm) -> Unit,
 ) {
     val context = LocalContext.current
-    val bitmap= rememberSaveable {
+    val bitmap = remember {
         mutableStateOf(
-            if(alarm.nameFile!=null) ImageUtils.loadImageFromStorage(alarm.nameFile, context) else null
+            if (alarm.nameFile != null) ImageUtils.loadImageFromStorage(alarm.nameFile,
+                context) else null
         )
     }
     Card(modifier = Modifier

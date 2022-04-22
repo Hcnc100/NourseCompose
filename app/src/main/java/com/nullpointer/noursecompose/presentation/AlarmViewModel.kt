@@ -11,10 +11,7 @@ import com.nullpointer.noursecompose.services.MyAlarmManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
@@ -25,7 +22,14 @@ class AlarmViewModel @Inject constructor(
     private val alarmRepo: AlarmRepoImpl,
 ) : ViewModel() {
 
-    val listAlarm = alarmRepo.getAllAlarms().catch {
+    var isInitAlarms=false
+
+    val listAlarm = flow {
+        alarmRepo.getAllAlarms().collect {
+            emit(it)
+            isInitAlarms=true
+        }
+    }.catch {
         Timber.e("Error al cargar las alarmas de la base de datos $it")
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,

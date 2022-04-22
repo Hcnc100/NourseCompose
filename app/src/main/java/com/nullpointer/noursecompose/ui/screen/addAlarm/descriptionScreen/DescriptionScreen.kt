@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -20,6 +21,7 @@ import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.viewMo
 @Composable
 fun DescriptionScreen(
     descriptionViewModel: DescriptionViewModel,
+    focusManager: FocusManager
 ) {
     ContentPage(title = stringResource(id = R.string.title_description_alarm)) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

@@ -3,7 +3,10 @@ package com.nullpointer.noursecompose.ui.screen.home.alarms
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyGridState
+import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.rememberLazyGridState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -102,9 +105,8 @@ fun ListAlarm(
 
         listAlarm.isNotEmpty() ->
             LazyVerticalGrid(cells = GridCells.Adaptive(150.dp), state = listState) {
-                itemsIndexed(items = listAlarm, key = { _, item: Alarm -> item.id ?: 0 }
-                ) { _, item: Alarm ->
-                    ItemAlarm(alarm = item,
+                items(listAlarm.size, key = { listAlarm[it].id ?: 0 }) { index ->
+                    ItemAlarm(alarm = listAlarm[index],
                         isSelectedEnable = isSelectedEnable,
                         changeSelectState = changeItemSelect,
                         actionClickSimple = simpleClickAlarm

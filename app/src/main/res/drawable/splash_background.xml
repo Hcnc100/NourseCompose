@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:opacity="opaque">
+    <item
+        android:drawable="@drawable/circle_background"
+        android:gravity="center" />
+    <item
+        android:drawable="@drawable/ic_salud"
+        android:gravity="center" />
+</layer-list>
+
+    <!--
+# el logo deberia tener 110 -120 dp
+
+#manifest
+ <application ...
+        android:theme="@style/SplashTheme">
+
+#activity
+override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.TrueTheme)
+        super.onCreate(savedInstanceState)
+
+#background
+
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid
+        android:color="#fff"/>
+    <size
+        android:width="150dp"
+        android:height="150dp"/>
+</shape>
+
+#theme
+
+<style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@color/purple_700</item>
+    </style>
+
+-->

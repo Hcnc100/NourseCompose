@@ -14,12 +14,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NourseCompose">
+        android:theme="@style/Theme.App.Starting">
         <activity
+            android:theme="@style/Theme.App.Starting"
             android:name=".ui.activitys.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.NourseCompose">
+            android:windowSoftInputMode="adjustResize"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

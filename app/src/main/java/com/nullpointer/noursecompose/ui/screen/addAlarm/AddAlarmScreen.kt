@@ -1,16 +1,23 @@
 package com.nullpointer.noursecompose.ui.screen.addAlarm
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.insets.imePadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -30,21 +37,24 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 @Destination
 fun AddAlarmScreen(
     nameAndImgViewModel: NameAndImgViewModel = hiltViewModel(),
     descriptionViewModel: DescriptionViewModel = hiltViewModel(),
     timeViewModel: TimeViewModel = hiltViewModel(),
-    alarmViewModel: AlarmViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator
+    alarmViewModel: AlarmViewModel,
+    navigator: DestinationsNavigator,
 ) {
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
     val modalState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val context=LocalContext.current
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+
     val changePage: (value: Int) -> Unit = {
+        focusManager.clearFocus()
         scope.launch {
             pagerState.animateScrollToPage(pagerState.currentPage + it)
         }
@@ -55,10 +65,11 @@ fun AddAlarmScreen(
     }
 
     Box {
-        HorizontalPager(count = 4, state = pagerState) { page ->
+        HorizontalPager(count = 4, state = pagerState, userScrollEnabled = false) { page ->
             when (page) {
-                0 -> NameAndImgScreen(nameAndImgViewModel, modalState)
-                1 -> DescriptionScreen(descriptionViewModel)
+                0 -> NameAndImgScreen(nameAndImgViewModel,
+                    modalState, focusManager)
+                1 -> DescriptionScreen(descriptionViewModel, focusManager)
                 2 -> RepeatAlarmScreen(timeViewModel)
                 3 -> TimeScreen(timeViewModel)
             }
@@ -122,20 +133,29 @@ fun ContentPage(
     content: @Composable () -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween) {
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+
 
         Text(text = title,
-            style = MaterialTheme.typography.h5, modifier = Modifier
-                .padding(30.dp)
-                .weight(1f))
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier.padding(30.dp))
 
         Box(modifier = Modifier
             .fillMaxSize()
-            .weight(2f)) {
+            .background(Color.Gray),
+            contentAlignment = Alignment.Center
+        ) {
             content()
         }
-        Spacer(modifier = Modifier.weight(1f))
+
+        Box(modifier = Modifier
+            .height(150.dp)
+            .fillMaxWidth())
 
     }
 
