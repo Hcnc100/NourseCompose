@@ -1,22 +1,29 @@
 package com.nullpointer.noursecompose.services
 
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.media.RingtoneManager
 import android.os.Build
+import android.os.Bundle
+import android.view.View
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.core.utils.toFormat
+import com.nullpointer.noursecompose.models.alarm.Alarm
+import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_PASS
+import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_PASS_ACTIVITY
+import com.nullpointer.noursecompose.ui.activitys.AlarmScreen
 import com.nullpointer.noursecompose.ui.activitys.MainActivity
 
-class NotificationHelper(context: Context):ContextWrapper(context){
-    companion object{
+class NotificationHelper(context: Context) : ContextWrapper(context) {
+    companion object {
         const val CHANNEL_ID_ALARM = "Recordatorios"
         const val DESCRIPTION_CHANNEL_ALARM = "Canal donde se muestran los recordatorios"
         const val REQUEST_CODE_NOTIFICATION_ALARM = 1292
@@ -27,30 +34,50 @@ class NotificationHelper(context: Context):ContextWrapper(context){
         const val ID_GROUP_LOST = "ID_GROUP_LOST"
     }
 
+    private val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
 
     @SuppressLint("InlinedApi")
-    fun showNotificationAlarm(
-        message: String,
-        bitmap: Bitmap?,
-        instruction: String,
-    ) {
-        val intent = Intent(this, MainActivity::class.java)
-        val pendingIntent =
-            PendingIntent.getActivity(
-                this,
-                REQUEST_CODE_NOTIFICATION_ALARM,
-                intent,
-                PendingIntent.FLAG_MUTABLE
-            )
-        val notificationBuilder =
-            getNotificationBuilderAlarm(message, pendingIntent, bitmap, instruction)
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        createNotificationChannelAlarm()
-        notificationManager.notify(
+    fun getNotificationAlarm(
+        alarm: Alarm,
+        useFullScreen: Boolean = true,
+    ): Notification {
+        // * create intent and put alarm as argument
+        val intent = Intent(applicationContext, AlarmScreen::class.java).apply {
+            putExtra(KEY_ALARM_PASS_ACTIVITY, alarm)
+        }
+        // * create pending intent
+        val pendingIntent = PendingIntent.getActivity(
+            this,
             REQUEST_CODE_NOTIFICATION_ALARM,
-            notificationBuilder.build()
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
+        // * create notification
+        val notificationBuilder = getNotificationBuilderAlarm(alarm).apply {
+            if (useFullScreen) setFullScreenIntent(pendingIntent, true)
+        }
+        // * create notification channel
+        createNotificationChannelAlarm()
+
+        return notificationBuilder.build()
+
+    }
+
+
+    private fun getPendingIntentCompose(idAlarm: String): PendingIntent {
+        // * create deep link
+        // * this go to post for notification
+        val deepLinkIntent = Intent(Intent.ACTION_VIEW,
+            "https://www.nourse-compose.com/alarm/$idAlarm".toUri(),
+            this,
+            MainActivity::class.java)
+        // * create pending intent compose
+        val deepLinkPendingIntent = TaskStackBuilder.create(this).run {
+            addNextIntentWithParentStack(deepLinkIntent)
+            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+        return deepLinkPendingIntent
     }
 
 
@@ -60,7 +87,7 @@ class NotificationHelper(context: Context):ContextWrapper(context){
         instruction: String,
         timeAlarmLost: Long,
     ) {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, AlarmScreen::class.java)
         val pendingIntent =
             PendingIntent.getActivity(
                 this,
@@ -69,7 +96,7 @@ class NotificationHelper(context: Context):ContextWrapper(context){
                 PendingIntent.FLAG_MUTABLE
             )
         val notificationBuilder =
-            getNotificationBuilderLost(message, pendingIntent, bitmap, instruction,timeAlarmLost)
+            getNotificationBuilderLost(message, pendingIntent, bitmap, instruction, timeAlarmLost)
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         createNotificationChannelLost()
         notificationManager.notify(
@@ -112,35 +139,18 @@ class NotificationHelper(context: Context):ContextWrapper(context){
     }
 
 
+
     private fun getNotificationBuilderAlarm(
-        nameMedicine: String,
-        pendingIntent: PendingIntent,
-        bitmap: Bitmap?,
-        instruction: String,
+        alarm: Alarm,
     ): NotificationCompat.Builder {
         return NotificationCompat.Builder(this, CHANNEL_ID_ALARM)
             .setSmallIcon(R.drawable.ic_salud)
-            .setContentTitle("Es hora de tomar tu medicamento")
-            .setContentText(nameMedicine)
-            .setAutoCancel(true)
+            .setContentTitle(getString(R.string.title_notify_alarm))
+            .setContentText(alarm.title)
+            .setAutoCancel(false)
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .setContentIntent(pendingIntent)
-            .apply {
-                if (bitmap != null) {
-                    setStyle(
-                        NotificationCompat.BigPictureStyle(this)
-                            .bigPicture(bitmap)
-                            .setSummaryText("Recordatorio de medicamento")
-                    )
-                } else if (instruction.isNotEmpty()) {
-                    setStyle(
-                        NotificationCompat.BigTextStyle(this)
-                            .bigText(instruction)
-                            .setBigContentTitle("Es hora de tomar $nameMedicine")
-                            .setSummaryText("Recordatorio de medicamento")
-                    )
-                }
-            }
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
     }
 
     private fun createNotificationChannelLost() {
@@ -154,7 +164,8 @@ class NotificationHelper(context: Context):ContextWrapper(context){
                 description = descriptionText
             }
             // Register the channel with the system
-            val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -170,7 +181,8 @@ class NotificationHelper(context: Context):ContextWrapper(context){
                 description = descriptionText
             }
             // Register the channel with the system
-            val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }

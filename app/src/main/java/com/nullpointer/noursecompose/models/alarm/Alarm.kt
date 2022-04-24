@@ -1,11 +1,14 @@
 package com.nullpointer.noursecompose.models.alarm
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.nullpointer.noursecompose.models.ItemSelected
+import kotlinx.parcelize.Parcelize
 import java.lang.Exception
 
+@Parcelize
 @Entity(tableName = "alarms_table")
 data class Alarm(
     val title: String = "",
@@ -20,7 +23,7 @@ data class Alarm(
     val rangeFinishAlarm: Long? = null,
     @PrimaryKey(autoGenerate = true)
     override val id: Long? = null
-): ItemSelected {
+): ItemSelected, Parcelable {
     @Ignore
     override var isSelected: Boolean = false
 

@@ -147,7 +147,7 @@ fun ContentPage(
 
         Box(modifier = Modifier
             .fillMaxSize()
-            .background(Color.Gray),
+            ,
             contentAlignment = Alignment.Center
         ) {
             content()

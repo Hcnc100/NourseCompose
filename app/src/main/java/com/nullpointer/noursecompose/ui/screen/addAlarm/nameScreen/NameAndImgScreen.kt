@@ -148,8 +148,10 @@ fun ImageAlarm(
     modifier: Modifier = Modifier,
     fileImg: File? = null,
     bitmap: Bitmap? = null,
+    urlImg:String?=null,
     showProgress: Boolean = false,
     contentDescription: String,
+    contentScale:ContentScale = ContentScale.FillBounds
 ) {
     val painter = rememberImagePainter(
         // * if pass file img so ,load first,
@@ -158,6 +160,7 @@ fun ImageAlarm(
         data = when {
             fileImg != null -> fileImg
             bitmap != null -> bitmap
+            urlImg!=null ->urlImg
             else -> R.drawable.ic_image
         }
     ) {
@@ -166,7 +169,6 @@ fun ImageAlarm(
     }
     val state = painter.state
     Box(modifier = modifier
-        .fillMaxSize()
         .clip(RoundedCornerShape(10.dp))
         .background(
             when {
@@ -177,12 +179,13 @@ fun ImageAlarm(
         ), contentAlignment = Alignment.Center) {
 
         Image(
+            modifier = Modifier.fillMaxSize(),
             painter = when (state) {
                 is ImagePainter.State.Error -> painterResource(id = R.drawable.ic_broken_image)
                 else -> painter
             },
             contentDescription = contentDescription,
-            contentScale = ContentScale.FillBounds)
+            contentScale = contentScale)
     }
 
     if (state is ImagePainter.State.Loading && showProgress) CircularProgressIndicator()

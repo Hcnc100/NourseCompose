@@ -37,7 +37,7 @@ fun TimeScreen(
 
     ContentPage(title = stringResource(R.string.title_select_init_alarm)) {
         Column(
-            verticalArrangement = Arrangement.SpaceEvenly,
+            verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 15.dp)) {
@@ -123,7 +123,7 @@ fun TextMiniTitle(
 ) {
     Text(
         textTitle,
-        modifier = Modifier.padding(vertical = 10.dp),
+        modifier = Modifier.padding(10.dp),
         style = MaterialTheme.typography.caption,
         fontWeight = FontWeight.Bold
     )

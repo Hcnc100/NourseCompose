@@ -1,16 +1,16 @@
 package com.nullpointer.noursecompose.ui.screen.measure
 
+import android.content.res.Configuration
 import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyGridState
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
@@ -32,34 +32,71 @@ fun GraphAndTable(
     changeSelectState: (ItemSelected) -> Unit,
     listState: LazyGridState,
 ) {
-    Scaffold(
-        topBar = {
-            MpGraphAndroid(
-                list = listMeasure.reversed(),
-                minValue = minValue,
-                maxValue = maxValues,
-                suffixMeasure = suffixMeasure,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-            )
-        },
-    ) {
-        LazyVerticalGrid(
-            state = listState,
-            cells = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure)),
-            contentPadding = PaddingValues(4.dp),
-        ) {
-            items(count = listMeasure.size) { index ->
-                ItemMeasure(
-                    nameMeasure,
-                    suffixMeasure,
-                    listMeasure[index],
-                    isSelectedEnable,
-                    changeSelectState
-                )
+
+    when (LocalConfiguration.current.orientation) {
+        Configuration.ORIENTATION_PORTRAIT -> {
+            Scaffold(
+                topBar = {
+                    MpGraphAndroid(
+                        list = listMeasure.reversed(),
+                        minValue = minValue,
+                        maxValue = maxValues,
+                        suffixMeasure = suffixMeasure,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                    )
+                },
+            ) {
+                LazyVerticalGrid(
+                    state = listState,
+                    cells = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure)),
+                    contentPadding = PaddingValues(4.dp),
+                ) {
+                    items(count = listMeasure.size) { index ->
+                        ItemMeasure(
+                            nameMeasure,
+                            suffixMeasure,
+                            listMeasure[index],
+                            isSelectedEnable,
+                            changeSelectState
+                        )
+                    }
+                }
             }
+        }
+        // ? Configuration.ORIENTATION_PORTRAIT
+        else -> {
+           Row(modifier = Modifier.fillMaxSize()) {
+               MpGraphAndroid(
+                   list = listMeasure.reversed(),
+                   minValue = minValue,
+                   maxValue = maxValues,
+                   suffixMeasure = suffixMeasure,
+                   modifier = Modifier
+                       .fillMaxWidth()
+                       .height(250.dp).weight(.5f)
+               )
+               LazyVerticalGrid(
+                   state = listState,
+                   cells = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure)),
+                   contentPadding = PaddingValues(4.dp),
+                   modifier = Modifier.weight(.5f)
+               ) {
+                   items(count = listMeasure.size) { index ->
+                       ItemMeasure(
+                           nameMeasure,
+                           suffixMeasure,
+                           listMeasure[index],
+                           isSelectedEnable,
+                           changeSelectState
+                       )
+                   }
+               }
+           }
         }
     }
 }
+
+
 

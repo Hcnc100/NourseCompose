@@ -70,11 +70,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val currentTime = getTimeNow()
         if (alarm != null) {
             // * launch notification from alarm
-            notificationHelper.showNotificationAlarm(
-                alarm.title,
-                alarm.nameFile?.let { ImageUtils.loadImageFromStorage(it, context) },
-                alarm.message
-            )
+                SoundServices.startServices(context,alarm)
             // * registry launch
             alarmRepository.addNewRegistry(Registry(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
             updateAlarm(alarm, currentTime, context)
