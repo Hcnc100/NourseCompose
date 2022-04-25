@@ -1,20 +1,20 @@
 package com.nullpointer.noursecompose.ui.screen.config
 
-import android.widget.Space
-import androidx.compose.foundation.background
+import android.content.Context
+import android.media.AudioManager
+import android.media.MediaPlayer
+import android.media.RingtoneManager
+import android.net.Uri
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +25,10 @@ import com.nullpointer.noursecompose.ui.screen.config.viewModel.ConfigViewModel
 import com.nullpointer.noursecompose.ui.share.mpGraph.ToolbarBack
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+
 
 @Composable
 @Destination
@@ -34,6 +38,26 @@ fun ConfigScreen(
 ) {
     val typeNotify = configViewModel.typeNotify.collectAsState()
     val indexSound = configViewModel.intSound.collectAsState()
+    val context = LocalContext.current
+    val mediaPlayer = remember { MediaPlayer() }
+    val (isPlaying, changeIsPlaying) = remember {
+        mutableStateOf(false)
+    }
+    DisposableEffect(key1 = Unit) {
+        onDispose {
+            mediaPlayer.release()
+        }
+    }
+    LaunchedEffect(key1 = indexSound.value) {
+        val sound = getUriMediaPlayer(indexSound.value, context)
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
+            changeIsPlaying(false)
+        }
+        mediaPlayer.reset()
+        mediaPlayer.setDataSource(context, sound)
+        mediaPlayer.prepare()
+    }
 
     Scaffold(
         topBar = { ToolbarBack(title = "Configuracion", navigator::popBackStack) }
@@ -47,20 +71,47 @@ fun ConfigScreen(
             TextMiniTitle(textTitle = "Sonido de la alarma")
             SelectSoundAlarm(
                 indexSound = indexSound.value,
-                changeIndexSound = configViewModel::changeIntSound)
+                changeIndexSound = {
+                    configViewModel.changeIntSound(it)
+                })
             Spacer(modifier = Modifier.height(5.dp))
             Row {
-               Box(modifier = Modifier.weight(.4f))
+                Box(modifier = Modifier.weight(.4f))
                 TextButton(modifier = Modifier
-                    .weight(.6f),onClick = { }) {
+                    .weight(.6f), onClick = {
+                    if (mediaPlayer.isPlaying) {
+                        changeIsPlaying(false)
+                        mediaPlayer.pause()
+                        mediaPlayer.seekTo(0)
+                    } else {
+                        mediaPlayer.start()
+                        changeIsPlaying(true)
+                    }
+                }) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(painterResource(id = R.drawable.ic_play), contentDescription ="")
+                        Icon(if (isPlaying) painterResource(id = R.drawable.ic_stop) else painterResource(
+                            id = R.drawable.ic_play), contentDescription = "")
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("Preview")
                     }
                 }
             }
         }
+    }
+}
+
+fun getUriMediaPlayer(indexSound: Int, context: Context): Uri {
+    return if (indexSound != -1) {
+        val sound = when (indexSound) {
+            0 -> R.raw.sound1
+            1 -> R.raw.sound2
+            2 -> R.raw.sound3
+            3 -> R.raw.sound4
+            else -> R.raw.sound5
+        }
+        Uri.parse("android.resource://" + context.packageName.toString() + "/" + sound)
+    } else {
+        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
     }
 }
 
