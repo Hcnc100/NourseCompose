@@ -31,6 +31,7 @@ import com.nullpointer.noursecompose.presentation.AlarmViewModel
 import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.navigation.HomeDestinations
 import com.nullpointer.noursecompose.ui.screen.NavGraphs
+import com.nullpointer.noursecompose.ui.screen.destinations.ConfigScreenDestination
 import com.nullpointer.noursecompose.ui.screen.destinations.LogsScreensDestination
 import com.nullpointer.noursecompose.ui.screen.navDestination
 import com.nullpointer.noursecompose.ui.share.mpGraph.SelectionMenuToolbar
@@ -115,6 +116,9 @@ class MainActivity : AppCompatActivity() {
                                             selectionViewModel.numberSelection),
                                         goToRegistry = {
                                             navController.navigateTo(LogsScreensDestination)
+                                        },
+                                        goToConfig = {
+                                            navController.navigateTo(ConfigScreenDestination)
                                         }
                                     )
                                 }

@@ -58,6 +58,7 @@ class AlarmScreen : AppCompatActivity() {
                                 .fillMaxSize()
                                 .verticalScroll(rememberScrollState()),
                                 horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("Recordatorio de medicamento")
                                 Text(alarm.title,
                                     style = MaterialTheme.typography.h5,
                                     modifier = Modifier.padding(vertical = 10.dp))
@@ -87,6 +88,7 @@ class AlarmScreen : AppCompatActivity() {
                                 .fillMaxSize()
                                 .verticalScroll(rememberScrollState()),
                                 horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("Recordatorio de medicamento")
                                 Text(alarm.title,
                                     style = MaterialTheme.typography.h5,
                                     modifier = Modifier.padding(vertical = 10.dp))

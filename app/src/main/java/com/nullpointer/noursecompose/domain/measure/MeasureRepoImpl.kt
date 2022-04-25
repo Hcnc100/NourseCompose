@@ -1,6 +1,6 @@
 package com.nullpointer.noursecompose.domain.measure
 
-import com.nullpointer.noursecompose.data.local.daos.MeasureDAO
+import com.nullpointer.noursecompose.data.local.room.daos.MeasureDAO
 import com.nullpointer.noursecompose.models.measure.MeasureType
 import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 import kotlinx.coroutines.flow.Flow

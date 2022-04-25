@@ -1,11 +1,11 @@
-package com.nullpointer.noursecompose.data.local
+package com.nullpointer.noursecompose.data.local.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.nullpointer.noursecompose.data.local.daos.AlarmDAO
-import com.nullpointer.noursecompose.data.local.daos.MeasureDAO
-import com.nullpointer.noursecompose.data.local.daos.RegistryDAO
+import com.nullpointer.noursecompose.data.local.room.daos.AlarmDAO
+import com.nullpointer.noursecompose.data.local.room.daos.MeasureDAO
+import com.nullpointer.noursecompose.data.local.room.daos.RegistryDAO
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 import com.nullpointer.noursecompose.models.registry.Registry
@@ -19,5 +19,5 @@ import com.nullpointer.noursecompose.models.registry.Registry
 abstract class NurseDatabase: RoomDatabase() {
     abstract fun getAlarmDAO(): AlarmDAO
     abstract fun getMeasureDAO(): MeasureDAO
-    abstract fun getRegistryDao():RegistryDAO
+    abstract fun getRegistryDao(): RegistryDAO
 }

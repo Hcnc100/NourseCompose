@@ -1,6 +1,6 @@
 package com.nullpointer.noursecompose.domain.registry
 
-import com.nullpointer.noursecompose.data.local.daos.RegistryDAO
+import com.nullpointer.noursecompose.data.local.room.daos.RegistryDAO
 import com.nullpointer.noursecompose.models.registry.Registry
 import kotlinx.coroutines.flow.Flow
 

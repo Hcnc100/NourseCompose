@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting">
         <activity
-            android:theme="@style/NourseCompose"
+            android:excludeFromRecents="true"
+            android:theme="@style/NourseCompose.FullScreen"
             android:name=".ui.activitys.AlarmScreen"
             android:exported="false"
             android:showOnLockScreen="true"/>

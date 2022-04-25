@@ -19,6 +19,7 @@ import com.nullpointer.noursecompose.core.utils.toFormat
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_PASS
 import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_PASS_ACTIVITY
+import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_STOP_SOUND
 import com.nullpointer.noursecompose.ui.activitys.AlarmScreen
 import com.nullpointer.noursecompose.ui.activitys.MainActivity
 
@@ -41,10 +42,13 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
     fun getNotificationAlarm(
         alarm: Alarm,
         useFullScreen: Boolean = true,
+        addActions: Boolean = true,
     ): Notification {
         // * create intent and put alarm as argument
         val intent = Intent(applicationContext, AlarmScreen::class.java).apply {
             putExtra(KEY_ALARM_PASS_ACTIVITY, alarm)
+            flags = (Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_NO_USER_ACTION)
         }
         // * create pending intent
         val pendingIntent = PendingIntent.getActivity(
@@ -56,12 +60,22 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         // * create notification
         val notificationBuilder = getNotificationBuilderAlarm(alarm).apply {
             if (useFullScreen) setFullScreenIntent(pendingIntent, true)
+            if (addActions) {
+                val stopIntent = Intent(applicationContext, SoundServices::class.java).apply {
+                    action = KEY_STOP_SOUND
+                }
+                val stopPendingIntent = PendingIntent.getService(
+                    this@NotificationHelper,
+                    REQUEST_CODE_NOTIFICATION_ALARM,
+                    stopIntent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                addAction(R.drawable.ic_stop, "Descartar", stopPendingIntent)
+            }
         }
         // * create notification channel
         createNotificationChannelAlarm()
-
         return notificationBuilder.build()
-
     }
 
 
@@ -137,7 +151,6 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
                 }
             }
     }
-
 
 
     private fun getNotificationBuilderAlarm(

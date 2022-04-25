@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.data.local.daos
+package com.nullpointer.noursecompose.data.local.room.daos
 
 import androidx.room.*
 import com.nullpointer.noursecompose.models.registry.Registry

@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.data.local
+package com.nullpointer.noursecompose.data.local.room
 
 import androidx.room.TypeConverter
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes

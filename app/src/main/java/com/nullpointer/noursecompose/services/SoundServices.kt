@@ -54,7 +54,6 @@ class SoundServices : LifecycleService() {
         notificationHelper = NotificationHelper(this)
         intent?.let {
             when (it.action) {
-
                 KEY_START_SOUND -> {
                     it.getParcelableExtra<Alarm>(KEY_ALARM_PASS)?.let { alarm ->
                         startForeground(1,  notificationHelper.getNotificationAlarm(alarm))
@@ -76,8 +75,10 @@ class SoundServices : LifecycleService() {
                 }
                 KEY_STOP_SOUND -> {
                     isSound = false
-                    mediaPlayer.stop()
-                    mediaPlayer.release()
+                    if(mediaPlayer.isPlaying){
+                        mediaPlayer.stop()
+                        mediaPlayer.release()
+                    }
                     stopForeground(true)
                 }
                 else -> Timber.d("action ${it.action}")

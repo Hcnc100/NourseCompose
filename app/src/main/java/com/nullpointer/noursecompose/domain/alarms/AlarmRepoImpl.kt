@@ -2,8 +2,8 @@ package com.nullpointer.noursecompose.domain.alarms
 
 import android.content.Context
 import com.nullpointer.noursecompose.core.utils.ImageUtils
-import com.nullpointer.noursecompose.data.local.daos.AlarmDAO
-import com.nullpointer.noursecompose.data.local.daos.RegistryDAO
+import com.nullpointer.noursecompose.data.local.room.daos.AlarmDAO
+import com.nullpointer.noursecompose.data.local.room.daos.RegistryDAO
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.registry.Registry
 import com.nullpointer.noursecompose.models.registry.TypeRegistry

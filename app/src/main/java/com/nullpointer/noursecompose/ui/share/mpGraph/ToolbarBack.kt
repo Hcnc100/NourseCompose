@@ -39,6 +39,7 @@ fun SelectionMenuToolbar(
     numberSelection: Int,
     actionClear: () -> Unit,
     goToRegistry: () -> Unit,
+    goToConfig:()->Unit
 ) {
     val (showMenu, changeVisibleMenu) = rememberSaveable { mutableStateOf(false) }
     TopAppBar(
@@ -63,6 +64,9 @@ fun SelectionMenuToolbar(
                 ) {
                     DropdownMenuItem(onClick = goToRegistry) {
                         Text(text = "Ver los registros")
+                    }
+                    DropdownMenuItem(onClick = goToConfig) {
+                        Text(text = "Ir a la configuracion")
                     }
                 }
             }
