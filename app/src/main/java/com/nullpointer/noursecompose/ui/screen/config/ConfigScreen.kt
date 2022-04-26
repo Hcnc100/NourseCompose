@@ -45,6 +45,7 @@ fun ConfigScreen(
     }
     DisposableEffect(key1 = Unit) {
         onDispose {
+            if (mediaPlayer.isPlaying) mediaPlayer.stop()
             mediaPlayer.release()
         }
     }

@@ -50,7 +50,6 @@ class AlarmReceiver : BroadcastReceiver() {
     private lateinit var notificationHelper: NotificationHelper
 
 
-
     override fun onReceive(context: Context, intent: Intent) {
         notificationHelper = NotificationHelper(context)
         intent.let {
@@ -70,13 +69,14 @@ class AlarmReceiver : BroadcastReceiver() {
         val currentTime = getTimeNow()
         if (alarm != null) {
             // * launch notification from alarm
-                SoundServices.startServices(context,alarm)
+            SoundServices.startServices(context, alarm)
             // * registry launch
             alarmRepository.addNewRegistry(Registry(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
             updateAlarm(alarm, currentTime, context)
         } else {
             // * registry error
-            alarmRepository.addNewRegistry(Registry(idAlarm = idAlarm, type = TypeRegistry.ERROR_LAUNCH))
+            alarmRepository.addNewRegistry(Registry(idAlarm = idAlarm,
+                type = TypeRegistry.ERROR_LAUNCH))
             Timber.e("Alarm id non found $idAlarm")
         }
     }
@@ -102,7 +102,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         // * remove alarms it's needing
-        alarmRepository.updateAlarm(alarmUpdate,context)
+        alarmRepository.updateAlarm(alarmUpdate, context)
     }
 
 
@@ -119,12 +119,7 @@ class AlarmReceiver : BroadcastReceiver() {
         alarmsActive.forEach { alarm ->
             if (currentTime > alarm.nextAlarm ?: 0) {
                 // * notify in group that alarm is lost
-                notificationHelper.showNotificationLost(
-                    alarm.title,
-                    alarm.nameFile?.let { ImageUtils.loadImageFromStorage(it, context) },
-                    alarm.message,
-                    alarm.nextAlarm ?: currentTime
-                )
+                notificationHelper.showNotificationLost(alarm)
                 updateAlarm(alarm, currentTime, context)
             } else {
                 alarmRepository.restoreAlarm(alarm, context)

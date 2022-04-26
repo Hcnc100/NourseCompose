@@ -1,41 +1,50 @@
 package com.nullpointer.noursecompose.ui.activitys
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
-import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.core.utils.turnScreenOffAndKeyguardOn
 import com.nullpointer.noursecompose.core.utils.turnScreenOnAndKeyguardOff
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.services.AlarmReceiver
 import com.nullpointer.noursecompose.services.SoundServices
-import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_PASS
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.ImageAlarm
 import com.nullpointer.noursecompose.ui.share.lottieFiles.LottieContainer
 import com.nullpointer.noursecompose.ui.theme.NourseComposeTheme
+import timber.log.Timber
+
 
 class AlarmScreen : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val alarm = intent.extras?.getParcelable<Alarm>(SoundServices.KEY_ALARM_PASS_ACTIVITY)!!
         turnScreenOnAndKeyguardOff()
+        val alarm = intent.extras?.getParcelable<Alarm>(SoundServices.KEY_ALARM_PASS_ACTIVITY)!!
         setContent {
             NourseComposeTheme {
-
                 val context = LocalContext.current as AppCompatActivity
+                val alarmIsSound=SoundServices.alarmIsAlive
+
+                LaunchedEffect(key1 = alarmIsSound.value){
+                    if(alarmIsSound.value==false) context.finish()
+                }
+
                 Scaffold(
                     floatingActionButtonPosition = FabPosition.Center,
                     floatingActionButton = {

@@ -29,16 +29,20 @@ import com.nullpointer.noursecompose.ui.screen.destinations.AddAlarmScreenDestin
 import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
+import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import timber.log.Timber
 
 @OptIn(ExperimentalFoundationApi::class)
-@Destination(start = true)
+@Destination(
+    start = true
+)
 @Composable
 fun AlarmScreen(
     alarmViewModel: AlarmViewModel = hiltViewModel(),
     selectionViewModel: SelectionViewModel,
-    navigator: DestinationsNavigator,
+    navigator: DestinationsNavigator
 ) {
     val listAlarmState = alarmViewModel.listAlarm.collectAsState()
     val context = LocalContext.current
@@ -60,7 +64,8 @@ fun AlarmScreen(
                 })
         }
     ) {
-        ListAlarm(listAlarm = listAlarmState.value,
+        ListAlarm(
+            listAlarm = listAlarmState.value,
             isSelectedEnable = selectionViewModel.isSelectedEnable,
             listState = listState,
             changeItemSelect = selectionViewModel::changeItemSelected,
@@ -113,6 +118,7 @@ fun ListAlarm(
                     )
                 }
             }
+        }
 
-    }
+
 }

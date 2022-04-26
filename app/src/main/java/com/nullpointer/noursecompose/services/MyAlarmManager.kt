@@ -4,35 +4,34 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.services.AlarmReceiver.Companion.ID_ALARM
 import com.nullpointer.noursecompose.services.AlarmReceiver.Companion.WAKE_UP_ALARM
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 @DelicateCoroutinesApi
 object MyAlarmManager {
-    private const val REQUEST_CODE_ALARM = 1998
 
     private fun getPendingAlarm(
         context: Context,
         idAlarm: Long,
         myAction: String = WAKE_UP_ALARM,
     ): PendingIntent? {
+        val randomRequestCode = "$idAlarm${(1..999).random()}".toInt()
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             action = myAction
             putExtra(ID_ALARM, idAlarm)
         }
         return PendingIntent.getBroadcast(
             context,
-            REQUEST_CODE_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            randomRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
 
-    fun setAlarm(context: Context, idAlarm: Long,nextAlarm:Long) {
-        startAlarmExactly(context,idAlarm,nextAlarm)
+    fun setAlarm(context: Context, idAlarm: Long, nextAlarm: Long) {
+        startAlarmExactly(context, idAlarm, nextAlarm)
     }
 
-     fun cancelAlarm(context: Context, idAlarm: Long) {
+    fun cancelAlarm(context: Context, idAlarm: Long) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.cancel(getPendingAlarm(context, idAlarm))
     }

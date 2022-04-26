@@ -95,13 +95,9 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
     }
 
 
-    fun showNotificationLost(
-        message: String,
-        bitmap: Bitmap?,
-        instruction: String,
-        timeAlarmLost: Long,
-    ) {
-        val intent = Intent(this, AlarmScreen::class.java)
+    fun showNotificationLost(alarm: Alarm) {
+        val intent = Intent(this, MainActivity::class.java)
+        val randomRequestCode = "${alarm.id}${(1..999).random()}".toInt()
         val pendingIntent =
             PendingIntent.getActivity(
                 this,
@@ -110,11 +106,14 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
                 PendingIntent.FLAG_MUTABLE
             )
         val notificationBuilder =
-            getNotificationBuilderLost(message, pendingIntent, bitmap, instruction, timeAlarmLost)
+            getNotificationBuilderLost(alarm.title,
+                pendingIntent,
+                alarm.nextAlarm ?: System.currentTimeMillis()
+            )
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         createNotificationChannelLost()
         notificationManager.notify(
-            REQUEST_CODE_NOTIFICATION_LOST,
+            randomRequestCode,
             notificationBuilder.build()
         )
     }
@@ -122,8 +121,6 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
     private fun getNotificationBuilderLost(
         nameMedicine: String,
         pendingIntent: PendingIntent,
-        bitmap: Bitmap?,
-        instruction: String,
         timeAlarmLost: Long,
     ): NotificationCompat.Builder {
         return NotificationCompat.Builder(this, CHANNEL_ID_ALARM)
@@ -134,22 +131,6 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setContentIntent(pendingIntent)
             .setGroup(ID_GROUP_LOST)
-            .apply {
-                if (bitmap != null) {
-                    setStyle(
-                        NotificationCompat.BigPictureStyle(this)
-                            .bigPicture(bitmap)
-                            .setSummaryText("Recordatorio de medicamento")
-                    )
-                } else if (instruction.isNotEmpty()) {
-                    setStyle(
-                        NotificationCompat.BigTextStyle(this)
-                            .bigText(instruction)
-                            .setBigContentTitle("Es hora de tomar $nameMedicine")
-                            .setSummaryText("Recordatorio de medicamento")
-                    )
-                }
-            }
     }
 
 
