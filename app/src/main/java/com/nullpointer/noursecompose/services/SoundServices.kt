@@ -21,6 +21,7 @@ import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.ui.activitys.AlarmScreen
 import com.nullpointer.noursecompose.ui.screen.config.getUriMediaPlayer
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -68,6 +69,9 @@ class SoundServices : LifecycleService() {
 
     private var isSound = false
 
+    private val listAlarmLost= mutableListOf<Alarm>()
+    private var jobAwaitAlarm: Job?=null
+
 
     private val timer = object : CountDownTimer(MINUTE_IN_MILLIS, 1000) {
         override fun onTick(millisUntilFinished: Long) = Unit
@@ -85,7 +89,16 @@ class SoundServices : LifecycleService() {
                     it.getParcelableExtra<Alarm>(KEY_ALARM_PASS)?.let { alarm ->
                             synchronized(this){
                                 if(isSound){
-                                    notificationHelper.showNotificationLost(alarm)
+                                    listAlarmLost.add(alarm)
+                                    jobAwaitAlarm?.cancel()
+                                    jobAwaitAlarm=lifecycleScope.launch {
+                                        delay(1000)
+                                        if(listAlarmLost.size==1){
+                                            notificationHelper.showNotificationLost(alarm)
+                                        }else{
+                                            notificationHelper.showNotificationLost(listAlarmLost)
+                                        }
+                                    }
                                     Timber.d("Alarma perdida $alarm")
                                 }else{
                                     isSound=true

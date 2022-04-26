@@ -5,19 +5,13 @@ import android.app.*
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import android.graphics.Bitmap
 import android.media.RingtoneManager
 import android.os.Build
-import android.os.Bundle
-import android.view.View
-import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.nullpointer.noursecompose.R
-import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.core.utils.toFormat
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_PASS
 import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_PASS_ACTIVITY
 import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_STOP_SOUND
 import com.nullpointer.noursecompose.ui.activitys.AlarmScreen
@@ -105,11 +99,12 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
                 intent,
                 PendingIntent.FLAG_MUTABLE
             )
-        val notificationBuilder =
-            getNotificationBuilderLost(alarm.title,
-                pendingIntent,
-                alarm.nextAlarm ?: System.currentTimeMillis()
-            )
+        val notificationBuilder = getNotificationBuilderLost(
+            titleAlarm = "Recordatorio Perdido ${alarm.nextAlarm?.toFormat(this)}",
+            message = alarm.title
+        ).apply {
+            setContentIntent(pendingIntent)
+        }
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         createNotificationChannelLost()
         notificationManager.notify(
@@ -118,19 +113,51 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         )
     }
 
+    fun showNotificationLost(listAlarms: List<Alarm>) {
+        val rangeRandom = (123..9999)
+        val intent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            REQUEST_CODE_NOTIFICATION_LOST,
+            intent,
+            PendingIntent.FLAG_MUTABLE
+        )
+        val fistNotify = getNotificationBuilderLost("Hay alarmas perdidas",
+            titleAlarm = "${listAlarms.size} alarmas perdidas",
+            true)
+        notificationManager.notify(
+            rangeRandom.random(),
+            fistNotify.build()
+        )
+        listAlarms.forEach { alarm ->
+            getNotificationBuilderLost(
+                "Recordatorio Perdido ${alarm.nextAlarm?.toFormat(this)}",
+                alarm.title
+            ).apply {
+                setContentIntent(pendingIntent)
+            }.let { builder ->
+                createNotificationChannelLost()
+                notificationManager.notify(
+                    rangeRandom.random(),
+                    builder.build()
+                )
+            }
+        }
+    }
+
     private fun getNotificationBuilderLost(
-        nameMedicine: String,
-        pendingIntent: PendingIntent,
-        timeAlarmLost: Long,
+        message: String,
+        titleAlarm: String,
+        isFirst: Boolean = false,
     ): NotificationCompat.Builder {
         return NotificationCompat.Builder(this, CHANNEL_ID_ALARM)
             .setSmallIcon(R.drawable.ic_salud)
-            .setContentTitle("Recordatorio Perdido ${timeAlarmLost.toFormat(this)}")
-            .setContentText(nameMedicine)
+            .setContentTitle(titleAlarm)
+            .setContentText(message)
             .setAutoCancel(true)
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .setContentIntent(pendingIntent)
             .setGroup(ID_GROUP_LOST)
+            .setGroupSummary(isFirst)
     }
 
 
