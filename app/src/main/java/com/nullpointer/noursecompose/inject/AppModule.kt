@@ -11,6 +11,7 @@ import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
 import com.nullpointer.noursecompose.domain.measure.MeasureRepoImpl
 import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
 import com.nullpointer.noursecompose.domain.registry.RegistryRepoImpl
+import com.nullpointer.noursecompose.services.NotificationHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -78,4 +79,10 @@ object AppModule {
     fun providePreferenceRepository(
         preferences: Preferences
     ):PrefRepoImpl= PrefRepoImpl(preferences)
+
+    @Provides
+    @Singleton
+    fun provideNotifyHelper(
+        @ApplicationContext context:Context
+    ): NotificationHelper=NotificationHelper(context)
 }

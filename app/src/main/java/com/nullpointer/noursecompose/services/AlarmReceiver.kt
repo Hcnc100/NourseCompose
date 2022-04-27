@@ -20,16 +20,17 @@ import com.nullpointer.noursecompose.core.utils.getTimeNow
 import com.nullpointer.noursecompose.core.utils.myGoAsync
 import com.nullpointer.noursecompose.core.utils.toFormat
 import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
+import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
+import com.nullpointer.noursecompose.models.notify.TypeNotify
+import com.nullpointer.noursecompose.models.notify.TypeNotify.*
 import com.nullpointer.noursecompose.models.registry.Registry
 import com.nullpointer.noursecompose.models.registry.TypeRegistry
 import com.nullpointer.noursecompose.ui.activitys.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -47,11 +48,14 @@ class AlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var alarmRepository: AlarmRepoImpl
 
-    private lateinit var notificationHelper: NotificationHelper
+    @Inject
+    lateinit var notificationHelper: NotificationHelper
+
+    @Inject
+    lateinit var prefRepoImpl: PrefRepoImpl
 
 
     override fun onReceive(context: Context, intent: Intent) {
-        notificationHelper = NotificationHelper(context)
         intent.let {
             when (it.action) {
                 BOOT_COMPLETED, TIME_SET -> restoreAlarms(context)
@@ -68,8 +72,9 @@ class AlarmReceiver : BroadcastReceiver() {
         val alarm = alarmRepository.getAlarmById(idAlarm)
         val currentTime = getTimeNow()
         if (alarm != null) {
-            // * launch notification from alarm
+
             SoundServices.startServices(context, alarm)
+
             // * registry launch
             alarmRepository.addNewRegistry(Registry(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
             updateAlarm(alarm, currentTime, context)
@@ -112,19 +117,26 @@ class AlarmReceiver : BroadcastReceiver() {
             Toast.makeText(context, "Se inicio el proceso de restauracion", Toast.LENGTH_LONG)
                 .show()
         }
-
+        val listAlarmLost = mutableListOf<Alarm>()
         Timber.d("Se inicio el proceso de restauracion de las alarmas")
         val alarmsActive = alarmRepository.getAllAlarmActive()
         val currentTime = getTimeNow()
         alarmsActive.forEach { alarm ->
             if (currentTime > alarm.nextAlarm ?: 0) {
                 // * notify in group that alarm is lost
-                notificationHelper.showNotificationLost(alarm)
+                listAlarmLost.add(alarm)
                 updateAlarm(alarm, currentTime, context)
             } else {
                 alarmRepository.restoreAlarm(alarm, context)
             }
         }
+        if (listAlarmLost.isNotEmpty()) {
+            notificationHelper.showNotificationLost(listAlarmLost)
+            listAlarmLost.clear()
+        }
+
         Timber.d("Alarmas restauradas ${alarmsActive.size}")
     }
+
+
 }

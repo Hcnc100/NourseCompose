@@ -22,6 +22,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         const val CHANNEL_ID_ALARM = "Recordatorios"
         const val DESCRIPTION_CHANNEL_ALARM = "Canal donde se muestran los recordatorios"
         const val REQUEST_CODE_NOTIFICATION_ALARM = 1292
+        const val ID_GROUP_ALARM = "ID_GROUP_ALARM"
 
         const val CHANNEL_ID_LOST = "Recordatorios perdidos"
         const val DESCRIPTION_CHANNEL_LOST = "Canal donde se muestran los recordatorios perdidos"
@@ -30,13 +31,17 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
     }
 
     private val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    private val rangeRandom = (123..9999)
 
+    init {
+        // * create notification channel
+        createNotificationChannelAlarm()
+        createNotificationChannelLost()
+    }
 
     @SuppressLint("InlinedApi")
-    fun getNotificationAlarm(
+    fun getNotifyAlarmFromServices(
         alarm: Alarm,
-        useFullScreen: Boolean = true,
-        addActions: Boolean = true,
     ): Notification {
         // * create intent and put alarm as argument
         val intent = Intent(applicationContext, AlarmScreen::class.java).apply {
@@ -52,24 +57,126 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         // * create notification
-        val notificationBuilder = getNotificationBuilderAlarm(alarm).apply {
-            if (useFullScreen) setFullScreenIntent(pendingIntent, true)
-            if (addActions) {
-                val stopIntent = Intent(applicationContext, SoundServices::class.java).apply {
-                    action = KEY_STOP_SOUND
-                }
-                val stopPendingIntent = PendingIntent.getService(
-                    this@NotificationHelper,
-                    REQUEST_CODE_NOTIFICATION_ALARM,
-                    stopIntent,
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        val notificationBuilder = getBaseNotification(
+            title = getString(R.string.title_notify_alarm),
+            message = alarm.message,
+            autoCancel = false,
+            channelId = CHANNEL_ID_ALARM,
+            priority = NotificationCompat.PRIORITY_MAX
+        ).apply {
+            // * add full screen intent
+            setFullScreenIntent(pendingIntent, true)
+            // * add action stop
+            val stopIntent = Intent(applicationContext, SoundServices::class.java).apply {
+                action = KEY_STOP_SOUND
+            }
+            val stopPendingIntent = PendingIntent.getService(
+                this@NotificationHelper,
+                REQUEST_CODE_NOTIFICATION_ALARM,
+                stopIntent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            addAction(R.drawable.ic_stop, "Descartar", stopPendingIntent)
+        }
+        // ? return notify for use in foreground services
+        return notificationBuilder.build()
+    }
+
+    @SuppressLint("InlinedApi")
+    fun showNotifyAlarm(
+        listAlarms: List<Alarm>,
+    ) {
+        // * create intent and put alarm as argument
+        val intent = Intent(this, MainActivity::class.java)
+        // * create pending intent
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            REQUEST_CODE_NOTIFICATION_ALARM,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        if (listAlarms.size > 1) {
+            getBaseNotification(
+                title = "Tienes recordatorios pendientes",
+                message = "${listAlarms.size} recordatorios",
+                autoCancel = false,
+                channelId = CHANNEL_ID_ALARM,
+                group = ID_GROUP_ALARM,
+                isFirst = true
+            ).apply {
+                setContentIntent(pendingIntent)
+            }.let { notify ->
+                notificationManager.notify(
+                    rangeRandom.random(),
+                    notify.build()
                 )
-                addAction(R.drawable.ic_stop, "Descartar", stopPendingIntent)
+            }
+
+        }
+
+        listAlarms.forEach {
+            // * create notification
+            getBaseNotification(
+                title = getString(R.string.title_notify_alarm),
+                message = it.title,
+                autoCancel = true,
+                channelId = CHANNEL_ID_ALARM,
+                group = ID_GROUP_ALARM
+            ).apply {
+                setContentIntent(pendingIntent)
+            }.let { builder ->
+                notificationManager.notify(
+                    it.id!!.toInt(),
+                    builder.build()
+                )
             }
         }
-        // * create notification channel
-        createNotificationChannelAlarm()
-        return notificationBuilder.build()
+    }
+
+    @SuppressLint("InlinedApi")
+    fun showNotificationLost(listAlarms: List<Alarm>) {
+        val intent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            REQUEST_CODE_NOTIFICATION_LOST,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        if (listAlarms.size > 1) {
+            getBaseNotification(
+                title = "Hay alarmas perdidas",
+                message = "${listAlarms.size} alarmas perdidas",
+                autoCancel = false,
+                channelId = CHANNEL_ID_LOST,
+                group = ID_GROUP_LOST,
+                isFirst = true
+            ).apply {
+                setContentIntent(pendingIntent)
+            }.let {notify->
+                notificationManager.notify(
+                    rangeRandom.random(),
+                    notify.build()
+                )
+            }
+        }
+        listAlarms.forEach { alarm ->
+            getBaseNotification(
+                title = "Recordatorio Perdido ${alarm.nextAlarm?.toFormat(this)}",
+                message = alarm.title,
+                autoCancel = true,
+                channelId = CHANNEL_ID_LOST,
+                group = ID_GROUP_LOST,
+            ).apply {
+                setContentIntent(pendingIntent)
+            }.let { builder ->
+                createNotificationChannelLost()
+                notificationManager.notify(
+                    alarm.id!!.toInt(),
+                    builder.build()
+                )
+            }
+        }
     }
 
 
@@ -88,91 +195,58 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         return deepLinkPendingIntent
     }
 
-
+    @SuppressLint("InlinedApi")
     fun showNotificationLost(alarm: Alarm) {
-        val intent = Intent(this, MainActivity::class.java)
-        val randomRequestCode = "${alarm.id}${(1..999).random()}".toInt()
-        val pendingIntent =
-            PendingIntent.getActivity(
-                this,
-                REQUEST_CODE_NOTIFICATION_LOST,
-                intent,
-                PendingIntent.FLAG_MUTABLE
-            )
-        val notificationBuilder = getNotificationBuilderLost(
-            titleAlarm = "Recordatorio Perdido ${alarm.nextAlarm?.toFormat(this)}",
-            message = alarm.title
-        ).apply {
-            setContentIntent(pendingIntent)
-        }
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        createNotificationChannelLost()
-        notificationManager.notify(
-            randomRequestCode,
-            notificationBuilder.build()
-        )
-    }
-
-    fun showNotificationLost(listAlarms: List<Alarm>) {
-        val rangeRandom = (123..9999)
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this,
             REQUEST_CODE_NOTIFICATION_LOST,
             intent,
-            PendingIntent.FLAG_MUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        val fistNotify = getNotificationBuilderLost("Hay alarmas perdidas",
-            titleAlarm = "${listAlarms.size} alarmas perdidas",
-            true)
-        notificationManager.notify(
-            rangeRandom.random(),
-            fistNotify.build()
-        )
-        listAlarms.forEach { alarm ->
-            getNotificationBuilderLost(
-                "Recordatorio Perdido ${alarm.nextAlarm?.toFormat(this)}",
-                alarm.title
-            ).apply {
-                setContentIntent(pendingIntent)
-            }.let { builder ->
-                createNotificationChannelLost()
-                notificationManager.notify(
-                    rangeRandom.random(),
-                    builder.build()
-                )
-            }
+        getBaseNotification(
+            title = "Recordatorio Perdido ${alarm.nextAlarm?.toFormat(this)}",
+            message = alarm.title,
+            autoCancel = true,
+            channelId = CHANNEL_ID_LOST,
+            group = ID_GROUP_LOST
+        ).apply {
+            setContentIntent(pendingIntent)
+        }.let { notify ->
+            notificationManager.notify(
+                rangeRandom.random(),
+                notify.build()
+            )
         }
     }
 
-    private fun getNotificationBuilderLost(
+
+
+
+    private fun getBaseNotification(
+        title: String,
         message: String,
-        titleAlarm: String,
+        autoCancel: Boolean,
+        channelId: String,
+        group: String?=null,
         isFirst: Boolean = false,
-    ): NotificationCompat.Builder {
-        return NotificationCompat.Builder(this, CHANNEL_ID_ALARM)
-            .setSmallIcon(R.drawable.ic_salud)
-            .setContentTitle(titleAlarm)
-            .setContentText(message)
-            .setAutoCancel(true)
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .setGroup(ID_GROUP_LOST)
-            .setGroupSummary(isFirst)
-    }
+        priority: Int = NotificationCompat.PRIORITY_HIGH,
+    ) = NotificationCompat.Builder(this, channelId)
+        .setSmallIcon(R.drawable.ic_salud)
+        .setContentTitle(title)
+        .setContentText(message)
+        .setAutoCancel(autoCancel)
+        .setPriority(priority)
+        .setCategory(NotificationCompat.CATEGORY_ALARM)
+        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+        .setGroupSummary(isFirst).apply {
+            group?.let {
+                setGroup(group)
+            }
+        }
 
 
-    private fun getNotificationBuilderAlarm(
-        alarm: Alarm,
-    ): NotificationCompat.Builder {
-        return NotificationCompat.Builder(this, CHANNEL_ID_ALARM)
-            .setSmallIcon(R.drawable.ic_salud)
-            .setContentTitle(getString(R.string.title_notify_alarm))
-            .setContentText(alarm.title)
-            .setAutoCancel(false)
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
-    }
+
 
     private fun createNotificationChannelLost() {
         // Create the NotificationChannel, but only on API 26+ because
@@ -184,9 +258,6 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
             val channel = NotificationChannel(CHANNEL_ID_LOST, name, importance).apply {
                 description = descriptionText
             }
-            // Register the channel with the system
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -201,9 +272,6 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
             val channel = NotificationChannel(CHANNEL_ID_ALARM, name, importance).apply {
                 description = descriptionText
             }
-            // Register the channel with the system
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }

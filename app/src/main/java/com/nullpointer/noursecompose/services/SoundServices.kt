@@ -1,30 +1,23 @@
 package com.nullpointer.noursecompose.services
 
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
-import android.media.RingtoneManager
 import android.os.Build
 import android.os.CountDownTimer
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.format.DateUtils.MINUTE_IN_MILLIS
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.nullpointer.noursecompose.core.utils.ImageUtils
-import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
 import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.ui.activitys.AlarmScreen
+import com.nullpointer.noursecompose.models.notify.TypeNotify.*
 import com.nullpointer.noursecompose.ui.screen.config.getUriMediaPlayer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -58,7 +51,8 @@ class SoundServices : LifecycleService() {
         }
     }
 
-    private lateinit var notificationHelper: NotificationHelper
+    @Inject
+    lateinit var notificationHelper: NotificationHelper
 
     @Inject
     lateinit var prefRepoImpl: PrefRepoImpl
@@ -69,8 +63,8 @@ class SoundServices : LifecycleService() {
 
     private var isSound = false
 
-    private val listAlarmLost= mutableListOf<Alarm>()
-    private var jobAwaitAlarm: Job?=null
+    private val listAlarmWait = mutableListOf<Alarm>()
+    private var jobAwaitAlarm: Job? = null
 
 
     private val timer = object : CountDownTimer(MINUTE_IN_MILLIS, 1000) {
@@ -82,32 +76,13 @@ class SoundServices : LifecycleService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        notificationHelper = NotificationHelper(this)
         intent?.let {
             when (it.action) {
                 KEY_START_SOUND -> {
                     it.getParcelableExtra<Alarm>(KEY_ALARM_PASS)?.let { alarm ->
-                            synchronized(this){
-                                if(isSound){
-                                    listAlarmLost.add(alarm)
-                                    jobAwaitAlarm?.cancel()
-                                    jobAwaitAlarm=lifecycleScope.launch {
-                                        delay(1000)
-                                        if(listAlarmLost.size==1){
-                                            notificationHelper.showNotificationLost(alarm)
-                                        }else{
-                                            notificationHelper.showNotificationLost(listAlarmLost)
-                                        }
-                                    }
-                                    Timber.d("Alarma perdida $alarm")
-                                }else{
-                                    isSound=true
-                                    alarmPassed = alarm
-                                    startForeground(1, notificationHelper.getNotificationAlarm(alarm))
-                                    launchAlarm()
-                                    Timber.d("Alarma sonando $alarm")
-                                }
-                            }
+                        lifecycleScope.launch {
+                            launchAlarms(alarm)
+                        }
                     }
                 }
                 KEY_STOP_SOUND -> {
@@ -120,8 +95,39 @@ class SoundServices : LifecycleService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun launchAlarm() {
+    private suspend fun launchAlarms(alarm: Alarm) {
+        val typeAlarm = prefRepoImpl.typeNotify.first()
+        synchronized(this) {
+            when (typeAlarm) {
+                NOTIFY -> {
+                    listAlarmWait.add(alarm)
+                    jobAwaitAlarm?.cancel()
+                    jobAwaitAlarm = lifecycleScope.launch {
+                        delay(1000)
+                        notificationHelper.showNotifyAlarm(listAlarmWait)
+                        listAlarmWait.clear()
+                    }
+                }
+                ALARM -> {
+                    listAlarmWait.add(alarm)
+                    jobAwaitAlarm?.cancel()
+                    jobAwaitAlarm = lifecycleScope.launch {
+                        delay(1000)
+                        val first = listAlarmWait.removeFirst()
+                        if (listAlarmWait.isNotEmpty()) notificationHelper.showNotificationLost(listAlarmWait)
+                        startForeground(1, notificationHelper.getNotifyAlarmFromServices(first))
+                        launchAlarm(first)
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun launchAlarm(alarm: Alarm) {
+        alarmPassed = alarm
         alarmIsAlive.value = true
+        isSound = true
         lifecycleScope.launch {
             val index = prefRepoImpl.intSound.first()
             val sound = getUriMediaPlayer(index, this@SoundServices)
@@ -161,7 +167,7 @@ class SoundServices : LifecycleService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        alarmIsAlive.value=null
+        alarmIsAlive.value = null
     }
 
 }
