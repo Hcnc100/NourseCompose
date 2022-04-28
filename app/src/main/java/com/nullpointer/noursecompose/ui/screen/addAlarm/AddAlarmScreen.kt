@@ -1,7 +1,6 @@
 package com.nullpointer.noursecompose.ui.screen.addAlarm
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -11,7 +10,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -54,9 +52,9 @@ fun AddAlarmScreen(
     val focusManager = LocalFocusManager.current
 
     val changePage: (value: Int) -> Unit = {
-        focusManager.clearFocus()
         scope.launch {
-            pagerState.animateScrollToPage(pagerState.currentPage + it)
+            focusManager.clearFocus(true)
+            pagerState.scrollToPage(pagerState.currentPage + it)
         }
     }
 
@@ -69,7 +67,7 @@ fun AddAlarmScreen(
             when (page) {
                 0 -> NameAndImgScreen(nameAndImgViewModel,
                     modalState, focusManager)
-                1 -> DescriptionScreen(descriptionViewModel, focusManager)
+                1 -> DescriptionScreen(descriptionViewModel)
                 2 -> RepeatAlarmScreen(timeViewModel)
                 3 -> TimeScreen(timeViewModel)
             }

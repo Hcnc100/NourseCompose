@@ -13,29 +13,27 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
-import com.google.accompanist.insets.navigationBarsWithImePadding
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.ui.screen.addAlarm.ContentPage
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.viewModel.NameAndImgViewModel
@@ -45,12 +43,12 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class,
-    ExperimentalComposeUiApi::class)
+    ExperimentalComposeUiApi::class, ExperimentalPagerApi::class)
 @Composable
 fun NameAndImgScreen(
     nameAndImgViewModel: NameAndImgViewModel,
     modalState: ModalBottomSheetState,
-    focusManager: FocusManager
+    focusManager: FocusManager,
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -113,7 +111,7 @@ fun NameAndImgScreen(
                     Column{
                         OutlinedTextField(
                             modifier = Modifier.onFocusEvent {
-                                if ( it.isFocused) {
+                                if (it.isFocused ) {
                                     scope.launch {
                                         delay(500)
                                         bringName.bringIntoView()
@@ -143,6 +141,7 @@ fun NameAndImgScreen(
 
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ImageAlarm(
     modifier: Modifier = Modifier,

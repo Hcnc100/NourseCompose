@@ -14,14 +14,16 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.ui.screen.addAlarm.ContentPage
 import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.viewModel.DescriptionViewModel
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun DescriptionScreen(
     descriptionViewModel: DescriptionViewModel,
-    focusManager: FocusManager
 ) {
     ContentPage(title = stringResource(id = R.string.title_description_alarm)) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

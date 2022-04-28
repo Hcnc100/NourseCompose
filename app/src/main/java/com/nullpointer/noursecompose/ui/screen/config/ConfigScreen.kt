@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.models.notify.TypeNotify
+import com.nullpointer.noursecompose.services.SoundServices
 import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.TextMiniTitle
 import com.nullpointer.noursecompose.ui.screen.config.viewModel.ConfigViewModel
 import com.nullpointer.noursecompose.ui.share.mpGraph.ToolbarBack
@@ -38,11 +39,12 @@ fun ConfigScreen(
 ) {
     val typeNotify = configViewModel.typeNotify.collectAsState()
     val indexSound = configViewModel.intSound.collectAsState()
+    val isSoundServices = SoundServices.alarmIsAlive
     val context = LocalContext.current
     val mediaPlayer = remember { MediaPlayer() }
-    val (isPlaying, changeIsPlaying) = remember {
-        mutableStateOf(false)
-    }
+    var isPlaying by remember { mutableStateOf(false) }
+    var currentSound by remember { mutableStateOf(getUriMediaPlayer(-1, context)) }
+
     DisposableEffect(key1 = Unit) {
         onDispose {
             if (mediaPlayer.isPlaying) mediaPlayer.stop()
@@ -50,14 +52,23 @@ fun ConfigScreen(
         }
     }
     LaunchedEffect(key1 = indexSound.value) {
-        val sound = getUriMediaPlayer(indexSound.value, context)
+        currentSound = getUriMediaPlayer(indexSound.value, context)
         if (mediaPlayer.isPlaying) {
             mediaPlayer.stop()
-            changeIsPlaying(false)
+            isPlaying = false
         }
         mediaPlayer.reset()
-        mediaPlayer.setDataSource(context, sound)
-        mediaPlayer.prepare()
+    }
+
+    // * stop sound if launch services
+    LaunchedEffect(key1 = isSoundServices){
+        if(isSoundServices){
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.stop()
+                isPlaying = false
+            }
+            mediaPlayer.reset()
+        }
     }
 
     Scaffold(
@@ -81,12 +92,14 @@ fun ConfigScreen(
                 TextButton(modifier = Modifier
                     .weight(.6f), onClick = {
                     if (mediaPlayer.isPlaying) {
-                        changeIsPlaying(false)
+                        isPlaying = false
                         mediaPlayer.pause()
                         mediaPlayer.seekTo(0)
                     } else {
+                        mediaPlayer.setDataSource(context, currentSound)
+                        mediaPlayer.prepare()
                         mediaPlayer.start()
-                        changeIsPlaying(true)
+                        isPlaying = true
                     }
                 }) {
                     Row(verticalAlignment = Alignment.CenterVertically) {

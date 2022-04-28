@@ -41,8 +41,8 @@ class AlarmScreen : AppCompatActivity() {
                 val context = LocalContext.current as AppCompatActivity
                 val alarmIsSound=SoundServices.alarmIsAlive
 
-                LaunchedEffect(key1 = alarmIsSound.value){
-                    if(alarmIsSound.value==false) context.finish()
+                LaunchedEffect(key1 = alarmIsSound){
+                    if(!alarmIsSound) context.finish()
                 }
 
                 Scaffold(

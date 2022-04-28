@@ -2,24 +2,28 @@ package com.nullpointer.noursecompose.services
 
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.CountDownTimer
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.format.DateUtils.MINUTE_IN_MILLIS
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.models.notify.TypeNotify.*
+import com.nullpointer.noursecompose.models.notify.TypeNotify
+import com.nullpointer.noursecompose.models.notify.TypeNotify.ALARM
+import com.nullpointer.noursecompose.models.notify.TypeNotify.NOTIFY
 import com.nullpointer.noursecompose.ui.screen.config.getUriMediaPlayer
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,7 +32,7 @@ import javax.inject.Inject
 class SoundServices : LifecycleService() {
     companion object {
 
-        val alarmIsAlive = mutableStateOf<Boolean?>(null)
+        var alarmIsAlive by mutableStateOf(false)
 
         const val KEY_START_SOUND = "KEY_START_SOUND"
         const val KEY_STOP_SOUND = "KEY_STOP_SOUND"
@@ -59,21 +63,31 @@ class SoundServices : LifecycleService() {
 
     lateinit var alarmPassed: Alarm
 
-    private val mediaPlayer = MediaPlayer()
+    private val mediaPlayer = MediaPlayer().apply {
+        // * set alarm attributes
+        setAudioAttributes(AudioAttributes.Builder()
+            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+            .setLegacyStreamType(AudioManager.STREAM_ALARM)
+            .setUsage(AudioAttributes.USAGE_ALARM)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build())
+    }
 
     private var isSound = false
 
     private val listAlarmWait = mutableListOf<Alarm>()
-    private var jobAwaitAlarm: Job? = null
 
+    private var jobAwaitAlarm: Job? = null
 
     private val timer = object : CountDownTimer(MINUTE_IN_MILLIS, 1000) {
         override fun onTick(millisUntilFinished: Long) = Unit
         override fun onFinish() {
+            // * if over time so, show notify lost alarm and cancel services
             notificationHelper.showNotificationLost(alarmPassed)
             cancelAlarm()
         }
     }
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
@@ -81,7 +95,8 @@ class SoundServices : LifecycleService() {
                 KEY_START_SOUND -> {
                     it.getParcelableExtra<Alarm>(KEY_ALARM_PASS)?.let { alarm ->
                         lifecycleScope.launch {
-                            launchAlarms(alarm)
+                            val typeAlarm = prefRepoImpl.typeNotify.first()
+                            launchAlarms(alarm, typeAlarm)
                         }
                     }
                 }
@@ -89,71 +104,87 @@ class SoundServices : LifecycleService() {
                     timer.cancel()
                     cancelAlarm()
                 }
-                else -> Timber.d("action ${it.action}")
+                else -> Timber.e("action no valida ${it.action}")
             }
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private suspend fun launchAlarms(alarm: Alarm) {
-        val typeAlarm = prefRepoImpl.typeNotify.first()
-        synchronized(this) {
+    @Synchronized
+    private fun launchAlarms(alarm: Alarm, typeAlarm: TypeNotify) {
+        listAlarmWait.add(alarm)
+        jobAwaitAlarm?.cancel()
+        jobAwaitAlarm = lifecycleScope.launch {
+            delay(1000)
             when (typeAlarm) {
                 NOTIFY -> {
-                    listAlarmWait.add(alarm)
-                    jobAwaitAlarm?.cancel()
-                    jobAwaitAlarm = lifecycleScope.launch {
-                        delay(1000)
-                        notificationHelper.showNotifyAlarm(listAlarmWait)
-                        listAlarmWait.clear()
-                    }
+                    // * get all alarm and notify
+                    notificationHelper.showNotifyAlarm(listAlarmWait)
+                    listAlarmWait.clear()
                 }
                 ALARM -> {
-                    listAlarmWait.add(alarm)
-                    jobAwaitAlarm?.cancel()
-                    jobAwaitAlarm = lifecycleScope.launch {
-                        delay(1000)
-                        val first = listAlarmWait.removeFirst()
-                        if (listAlarmWait.isNotEmpty()) notificationHelper.showNotificationLost(listAlarmWait)
-                        startForeground(1, notificationHelper.getNotifyAlarmFromServices(first))
-                        launchAlarm(first)
-                    }
+                    // * remove first alarm
+                    val first = listAlarmWait.removeFirst()
+                    // * if the list is not empty so, launch notify lost alarms
+                    // ? this for no is possible sound more one alarm
+                    if (listAlarmWait.isNotEmpty()) notificationHelper.showNotificationLost(
+                        listAlarmWait)
+                    // * init services for sound
+                    startForeground(1, notificationHelper.getNotifyAlarmFromServices(first))
+                    launchAlarm(first)
                 }
             }
         }
-
     }
 
-    private fun launchAlarm(alarm: Alarm) {
+    private suspend fun launchAlarm(alarm: Alarm) {
+        // * saved alarm passed
+        // ? this if no stop alarm , and notify last alarm
         alarmPassed = alarm
-        alarmIsAlive.value = true
+        // * change state services to live
+        // ? this for can stop activity observed this
+        alarmIsAlive = true
+        // * change var to control bucle alive
         isSound = true
-        lifecycleScope.launch {
-            val index = prefRepoImpl.intSound.first()
-            val sound = getUriMediaPlayer(index, this@SoundServices)
+        // * get type sound for alarm
+        val index = prefRepoImpl.intSound.first()
+        val sound = getUriMediaPlayer(index, this@SoundServices)
+        // * prepare media player
+        withContext(Dispatchers.IO) {
             mediaPlayer.setDataSource(this@SoundServices, sound)
             mediaPlayer.prepare()
-            mediaPlayer.start()
-            timer.start()
-            mediaPlayer.setOnCompletionListener {
-                if (isSound) {
-                    mediaPlayer.seekTo(0)
-                    mediaPlayer.start()
-                }
+        }
+        // * start sound and count down
+        // ? if the user no stop alarm in one minute, so  stop the services with help
+        // ? of timer
+        mediaPlayer.start()
+        timer.start()
+        // * loop media player
+        // ? when stop , repeat
+        mediaPlayer.setOnCompletionListener {
+            if (isSound) {
+                mediaPlayer.seekTo(0)
+                mediaPlayer.start()
             }
-            while (isSound) {
-                vibratePhone()
-                delay(1000)
-            }
+        }
+        // * vibrate phone
+        while (isSound) {
+            vibratePhone()
+            delay(1000)
         }
     }
 
     private fun cancelAlarm() {
+        // * break loop
         isSound = false
-        alarmIsAlive.value = false
+        // * notify dead services
+        alarmIsAlive = false
+        // * if media player is song to stop and release
         if (mediaPlayer.isPlaying) mediaPlayer.stop()
         mediaPlayer.release()
+        // * stop services
         stopForeground(true)
+        stopSelf()
     }
 
     private fun vibratePhone() {
@@ -167,7 +198,6 @@ class SoundServices : LifecycleService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        alarmIsAlive.value = null
     }
 
 }
