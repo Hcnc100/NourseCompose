@@ -1,5 +1,6 @@
 package com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -23,6 +24,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -32,6 +34,9 @@ import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.imePadding
+import com.google.accompanist.insets.toPaddingValues
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.nullpointer.noursecompose.R
@@ -55,6 +60,66 @@ fun NameAndImgScreen(
     val bringName = remember { BringIntoViewRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val boxContainer: @Composable () -> Unit = remember {
+        {
+            Box(contentAlignment = Alignment.Center) {
+                ImageAlarm(
+                    modifier = Modifier.size(150.dp),
+                    contentDescription = stringResource(R.string.description_img_alarm),
+                    fileImg = nameAndImgViewModel.fileImg
+                )
+                FloatingActionButton(
+                    onClick = {
+                        focusManager.clearFocus()
+                        scope.launch {
+                            modalState.show()
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .size(40.dp)
+                        .align(Alignment.BottomEnd)
+                ) {
+                    Icon(painterResource(id = R.drawable.ic_edit),
+                        stringResource(R.string.description_change_img_alarm))
+                }
+            }
+        }
+    }
+
+    val textContainer: @Composable (modifier: Modifier) -> Unit = remember {
+        { modifier ->
+            Box(modifier) {
+                Column {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .onFocusEvent {
+                                if (it.isFocused) {
+                                    scope.launch {
+                                        delay(500)
+                                        bringName.bringIntoView()
+                                    }
+                                }
+                            }
+                            .width(250.dp),
+                        value = nameAndImgViewModel.nameAlarm,
+                        onValueChange = nameAndImgViewModel::changeName,
+                        isError = nameAndImgViewModel.hasErrorName,
+                        label = { Text(text = stringResource(R.string.hint_name_alarm)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() })
+                    )
+                    Text(style = MaterialTheme.typography.caption,
+                        modifier = Modifier.align(Alignment.End),
+                        color = if (nameAndImgViewModel.hasErrorName) MaterialTheme.colors.error else Color.Unspecified,
+                        text = if (nameAndImgViewModel.hasErrorName)
+                            stringResource(id = nameAndImgViewModel.errorName) else nameAndImgViewModel.counterName)
+                }
+            }
+        }
+    }
+
     ModalBottomSheetLayout(sheetState = modalState,
         sheetContent = {
             if (modalState.isVisible) {
@@ -76,65 +141,28 @@ fun NameAndImgScreen(
             }
         }) {
         ContentPage(title = stringResource(R.string.title_change_name)) {
-            Column(modifier = Modifier
-                .fillMaxSize()) {
-                Box(modifier = Modifier
-                    .size(150.dp)
-                    .align(Alignment.CenterHorizontally)) {
-                    ImageAlarm(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentDescription = stringResource(R.string.description_img_alarm),
-                        fileImg = nameAndImgViewModel.fileImg
-                    )
-                    FloatingActionButton(
-                        onClick = {
-                            focusManager.clearFocus()
-                            scope.launch {
-                                modalState.show()
-                            }
-                        },
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .size(40.dp)
-                            .align(Alignment.BottomEnd)
-                    ) {
-                        Icon(painterResource(id = R.drawable.ic_edit),
-                            stringResource(R.string.description_change_img_alarm))
+
+            when (LocalConfiguration.current.orientation) {
+                Configuration.ORIENTATION_PORTRAIT -> {
+                    Column(modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceAround) {
+                        boxContainer()
+                        Spacer(modifier = Modifier.height(40.dp))
+                        textContainer(modifier = Modifier
+                            .bringIntoViewRequester(bringName)
+                            .padding(bottom = 80.dp))
                     }
                 }
-
-
-                Box(modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .bringIntoViewRequester(bringName)
-                    .padding(vertical = 80.dp)){
-                    Column{
-                        OutlinedTextField(
-                            modifier = Modifier.onFocusEvent {
-                                if (it.isFocused ) {
-                                    scope.launch {
-                                        delay(500)
-                                        bringName.bringIntoView()
-                                    }
-                                }
-                            },
-                            value = nameAndImgViewModel.nameAlarm,
-                            onValueChange = nameAndImgViewModel::changeName,
-                            isError = nameAndImgViewModel.hasErrorName,
-                            label = { Text(text = stringResource(R.string.hint_name_alarm)) },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                            keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() })
-                        )
-                        Text(style = MaterialTheme.typography.caption,
-                            modifier = Modifier.align(Alignment.End),
-                            color = if (nameAndImgViewModel.hasErrorName) MaterialTheme.colors.error else Color.Unspecified,
-                            text = if (nameAndImgViewModel.hasErrorName)
-                                stringResource(id = nameAndImgViewModel.errorName) else nameAndImgViewModel.counterName)
+                else -> {
+                    Row(modifier = Modifier
+                        .fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly) {
+                        boxContainer()
+                        textContainer(modifier = Modifier.bringIntoViewRequester(bringName))
                     }
                 }
-
-
             }
         }
     }
@@ -147,10 +175,10 @@ fun ImageAlarm(
     modifier: Modifier = Modifier,
     fileImg: File? = null,
     bitmap: Bitmap? = null,
-    urlImg:String?=null,
+    urlImg: String? = null,
     showProgress: Boolean = false,
     contentDescription: String,
-    contentScale:ContentScale = ContentScale.FillBounds
+    contentScale: ContentScale = ContentScale.FillBounds,
 ) {
     val painter = rememberImagePainter(
         // * if pass file img so ,load first,
@@ -159,7 +187,7 @@ fun ImageAlarm(
         data = when {
             fileImg != null -> fileImg
             bitmap != null -> bitmap
-            urlImg!=null ->urlImg
+            urlImg != null -> urlImg
             else -> R.drawable.ic_image
         }
     ) {

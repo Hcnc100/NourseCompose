@@ -52,7 +52,10 @@ fun TimeScreen(
                     })
             }
 
+
+
             if (timeViewModel.typeAlarm != AlarmTypes.ONE_SHOT) {
+                Spacer(modifier = Modifier.height(30.dp))
                 Column {
                     TextMiniTitle(textTitle = stringResource(R.string.title_repeat_every))
                     TextCenterValue(
@@ -65,7 +68,9 @@ fun TimeScreen(
                 }
             }
 
-            if (timeViewModel.typeAlarm == AlarmTypes.RANGE)
+
+            if (timeViewModel.typeAlarm == AlarmTypes.RANGE){
+                Spacer(modifier = Modifier.height(30.dp))
                 Column {
                     TextMiniTitle(textTitle = stringResource(R.string.title_range_days))
                     FieldRangeAlarm(
@@ -80,8 +85,10 @@ fun TimeScreen(
 
                     )
                 }
+            }
 
             if (!timeViewModel.hasErrorRange) {
+                Spacer(modifier = Modifier.height(20.dp))
                 Row(modifier = Modifier.padding(vertical = 10.dp)) {
                     Text(text = stringResource(R.string.title_next_alarm),
                         style = MaterialTheme.typography.caption,

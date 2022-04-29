@@ -1,7 +1,10 @@
 package com.nullpointer.noursecompose.ui.screen.addAlarm
 
+import android.content.res.Configuration
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -10,6 +13,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -130,30 +135,24 @@ fun ContentPage(
     title: String,
     content: @Composable () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .imePadding(),
-        verticalArrangement = Arrangement.SpaceBetween
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
     ) {
 
-
-        Text(text = title,
-            style = MaterialTheme.typography.h5,
-            modifier = Modifier.padding(30.dp))
-
-        Box(modifier = Modifier
-            .fillMaxSize()
-            ,
-            contentAlignment = Alignment.Center
-        ) {
-            content()
+        item {
+            Text(text = title,
+                style = MaterialTheme.typography.h5,
+                modifier = Modifier.padding(30.dp))
         }
-
-        Box(modifier = Modifier
-            .height(150.dp)
-            .fillMaxWidth())
+        item {
+            Box(modifier = Modifier
+                .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                content()
+            }
+        }
 
     }
 
