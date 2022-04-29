@@ -83,7 +83,7 @@ class SoundServices : LifecycleService() {
         override fun onTick(millisUntilFinished: Long) = Unit
         override fun onFinish() {
             // * if over time so, show notify lost alarm and cancel services
-            notificationHelper.showNotificationLost(alarmPassed)
+            notificationHelper.showNotificationLost(listOf(alarmPassed))
             cancelAlarm()
         }
     }
@@ -195,9 +195,4 @@ class SoundServices : LifecycleService() {
             vibrator.vibrate(200)
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
 }

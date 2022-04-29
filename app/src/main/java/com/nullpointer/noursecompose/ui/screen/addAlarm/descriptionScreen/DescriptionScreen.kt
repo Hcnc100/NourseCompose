@@ -30,11 +30,15 @@ import kotlinx.coroutines.launch
 fun DescriptionScreen(
     descriptionViewModel: DescriptionViewModel,
 ) {
-    val scope= rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
     val bringName = remember { BringIntoViewRequester() }
+
     ContentPage(title = stringResource(id = R.string.title_description_alarm)) {
 
-        Box(modifier = Modifier.fillMaxSize().bringIntoViewRequester(bringName).padding(vertical = 50.dp), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .bringIntoViewRequester(bringName)
+            .padding(vertical = 50.dp), contentAlignment = Alignment.Center) {
             Column {
                 OutlinedTextField(value = descriptionViewModel.description,
                     isError = descriptionViewModel.hasErrorDescription,
@@ -43,7 +47,7 @@ fun DescriptionScreen(
                     placeholder = { Text(text = stringResource(R.string.label_description_alarm)) },
                     modifier = Modifier
                         .height(150.dp)
-                        .width(280.dp)
+                        .width(300.dp)
                         .onFocusEvent {
                             if (it.isFocused) {
                                 scope.launch {
@@ -56,7 +60,7 @@ fun DescriptionScreen(
                     modifier = Modifier.align(Alignment.End),
                     color = if (descriptionViewModel.hasErrorDescription) MaterialTheme.colors.error else Color.Unspecified,
                     text = if (descriptionViewModel.hasErrorDescription)
-                        stringResource(id = descriptionViewModel.errorDescription) else descriptionViewModel.counterDescription )
+                        stringResource(id = descriptionViewModel.errorDescription) else descriptionViewModel.counterDescription)
             }
         }
     }

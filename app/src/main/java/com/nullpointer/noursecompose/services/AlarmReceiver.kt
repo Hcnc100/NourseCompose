@@ -112,11 +112,6 @@ class AlarmReceiver : BroadcastReceiver() {
 
 
     private fun restoreAlarms(context: Context) = myGoAsync(GlobalScope, Dispatchers.Default) {
-        // * system to restore alarms active
-        withContext(Dispatchers.Main) {
-            Toast.makeText(context, "Se inicio el proceso de restauracion", Toast.LENGTH_LONG)
-                .show()
-        }
         val listAlarmLost = mutableListOf<Alarm>()
         Timber.d("Se inicio el proceso de restauracion de las alarmas")
         val alarmsActive = alarmRepository.getAllAlarmActive()
@@ -137,6 +132,4 @@ class AlarmReceiver : BroadcastReceiver() {
 
         Timber.d("Alarmas restauradas ${alarmsActive.size}")
     }
-
-
 }

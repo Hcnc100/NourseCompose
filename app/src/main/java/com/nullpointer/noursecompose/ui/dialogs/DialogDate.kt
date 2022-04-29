@@ -10,6 +10,7 @@ import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.getFirstTimeDay
 import com.nullpointer.noursecompose.core.utils.getHourAndMinutesToday
 import com.nullpointer.noursecompose.core.utils.setHourAndMinutesToday
@@ -25,7 +26,7 @@ class DialogDate {
 
             val picker = MaterialDatePicker.Builder
                 .dateRangePicker()
-                .setTitleText("Selecona elm rango").apply {
+                .setTitleText(activity.getString(R.string.title_select_range_alarm)).apply {
                     setCalendarConstraints(
                         CalendarConstraints.Builder()
                             .setValidator(DateValidatorPointForward.now()).build()
@@ -49,7 +50,7 @@ class DialogDate {
 
             val picker = MaterialDatePicker.Builder
                 .datePicker()
-                .setTitleText("Selecciona el dia de la alarma").apply {
+                .setTitleText(activity.getString(R.string.title_select_day_alarm)).apply {
                     setCalendarConstraints(
                         CalendarConstraints.Builder()
                             .setValidator(DateValidatorPointForward.now()).build()
@@ -66,7 +67,7 @@ class DialogDate {
 
         fun showTimePicker(activity: AppCompatActivity, updatedDate: (Long) -> Unit) {
             val picker = MaterialTimePicker.Builder()
-                .setTitleText("Select the start time")
+                .setTitleText(activity.getString(R.string.title_hour_of_alarm))
                 .apply {
                     // * get format system
                     val clockFormat = if (DateFormat.is24HourFormat(activity))

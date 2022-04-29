@@ -121,5 +121,36 @@
     <string name="sub_title_init_alarm">Inicio:</string>
     <string name="sub_title_finish_alarm">Fin:</string>
     <string name="sub_title_date_alarm">Fecha de creación:</string>
+
+    <!-- services -->
+    <string name="name_channel_alarms">Recordatorios</string>
+    <string name="description_channel_alarm">Canal donde se muestran las notificaciones de las alarmas</string>
+    <string name="name_channel_lost_alarm">Recordatorios perdidos</string>
+    <string name="description_channel_lost_alarm">Canal donde se muestran las alarmas perdidas</string>
+    <string name="name_action_stop_alarm">Descartar</string>
+    <string name="title_group_alarm_pending">Tienes recordatorios pendientes</string>
+    <string name="message_group_alarm_pending">%d recordatorios</string>
+    <string name="title_group_lost_alarm">Hay alarmas perdidas</string>
+    <string name="message_group_lost_alarm_pending">%d alarmas perdidas</string>
     <string name="title_notify_alarm">Es hora de tomar tu medicamento</string>
+    <string name="title_notify_lost_alarm">Recordatorio Perdido</string>
+
+    <!-- alarm screen -->
+    <string name="description_img_current_alarm">Imagen de la alarma actual</string>
+
+    <!-- dialogs add alarms -->
+    <string name="title_select_range_alarm">Selecciona el rango de días</string>
+    <string name="title_select_day_alarm">Selecciona el día de la alarma</string>
+    <string name="title_hour_of_alarm">Selecciona la hora de inicio de la alarma</string>
+
+   <!-- config screen -->
+    <string name="title_config_screen">Configuración</string>
+    <string name="mini_title_type_alarm">Tipo de alarma</string>
+    <string name="mini_title_sound_alarm">Sonido de la alarma</string>
+    <string name="title_sound_preview">Preview</string>
+    <string name="description_button_preview">Icono de Play si el audio está detenido o de stop si el audio se está reproduciendo</string>
+    <string name="mini_title_sound">Sonido</string>
+    <string name="text_sound_defect">Default</string>
+    <string name="text_sound_select">Sonido %d</string>
+    <string name="description_drop_icon">Icono del menú desplegable</string>
 </resources>

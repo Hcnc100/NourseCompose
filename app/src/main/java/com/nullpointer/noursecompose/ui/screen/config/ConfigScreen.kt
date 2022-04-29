@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
@@ -61,8 +62,8 @@ fun ConfigScreen(
     }
 
     // * stop sound if launch services
-    LaunchedEffect(key1 = isSoundServices){
-        if(isSoundServices){
+    LaunchedEffect(key1 = isSoundServices) {
+        if (isSoundServices) {
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.stop()
                 isPlaying = false
@@ -72,15 +73,18 @@ fun ConfigScreen(
     }
 
     Scaffold(
-        topBar = { ToolbarBack(title = "Configuracion", navigator::popBackStack) }
+        topBar = {
+            ToolbarBack(title = stringResource(R.string.title_config_screen),
+                navigator::popBackStack)
+        }
     ) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            TextMiniTitle(textTitle = "Tipo de alarma")
+            TextMiniTitle(textTitle = stringResource(R.string.mini_title_type_alarm))
             RadioButtonNotifyType(
                 currentNotify = typeNotify.value,
                 changeNotify = configViewModel::changeTypeNotify)
             Spacer(modifier = Modifier.height(20.dp))
-            TextMiniTitle(textTitle = "Sonido de la alarma")
+            TextMiniTitle(textTitle = stringResource(R.string.mini_title_sound_alarm))
             SelectSoundAlarm(
                 indexSound = indexSound.value,
                 changeIndexSound = {
@@ -104,9 +108,10 @@ fun ConfigScreen(
                 }) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(if (isPlaying) painterResource(id = R.drawable.ic_stop) else painterResource(
-                            id = R.drawable.ic_play), contentDescription = "")
+                            id = R.drawable.ic_play),
+                            contentDescription = stringResource(R.string.description_button_preview))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Preview")
+                        Text(stringResource(R.string.title_sound_preview))
                     }
                 }
             }
@@ -137,11 +142,12 @@ fun SelectSoundAlarm(
     val (expanded, changeExpanded) = rememberSaveable { mutableStateOf(false) }
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(horizontal = 10.dp)) {
-        Text(text = "Sonido", modifier = Modifier.weight(.4f))
+        Text(text = stringResource(R.string.mini_title_sound), modifier = Modifier.weight(.4f))
         Box(modifier = Modifier
             .weight(.6f)) {
             OutlinedTextField(
-                value = if (indexSound == -1) "Default" else "Sonido ${indexSound + 1}",
+                value = if (indexSound == -1) stringResource(R.string.text_sound_defect) else stringResource(
+                    id = R.string.text_sound_select, indexSound + 1),
                 onValueChange = {},
                 enabled = false,
                 modifier = Modifier.clickable {
@@ -149,7 +155,7 @@ fun SelectSoundAlarm(
                 },
                 trailingIcon = {
                     Icon(painter = painterResource(id = R.drawable.ic_arrow_drop),
-                        contentDescription = "")
+                        contentDescription = stringResource(R.string.description_drop_icon))
                 },
             )
 
@@ -163,7 +169,7 @@ fun SelectSoundAlarm(
                         changeIndexSound(-1)
                     }
                 ) {
-                    Text(text = "Default")
+                    Text(text = stringResource(id = R.string.text_sound_defect))
                 }
                 (0..6).forEach {
                     DropdownMenuItem(
@@ -172,7 +178,7 @@ fun SelectSoundAlarm(
                             changeIndexSound(it)
                         }
                     ) {
-                        Text(text = "Sonido ${it + 1}")
+                        Text(text = stringResource(id = R.string.text_sound_select, it + 1))
                     }
                 }
             }

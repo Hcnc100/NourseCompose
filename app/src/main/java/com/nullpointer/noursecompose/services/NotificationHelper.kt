@@ -19,13 +19,13 @@ import com.nullpointer.noursecompose.ui.activitys.MainActivity
 
 class NotificationHelper(context: Context) : ContextWrapper(context) {
     companion object {
-        const val CHANNEL_ID_ALARM = "Recordatorios"
-        const val DESCRIPTION_CHANNEL_ALARM = "Canal donde se muestran los recordatorios"
+        const val CHANNEL_ID_ALARM = R.string.name_channel_alarms
+        const val DESCRIPTION_CHANNEL_ALARM = R.string.description_channel_alarm
         const val REQUEST_CODE_NOTIFICATION_ALARM = 1292
         const val ID_GROUP_ALARM = "ID_GROUP_ALARM"
 
-        const val CHANNEL_ID_LOST = "Recordatorios perdidos"
-        const val DESCRIPTION_CHANNEL_LOST = "Canal donde se muestran los recordatorios perdidos"
+        const val CHANNEL_ID_LOST = R.string.name_channel_lost_alarm
+        const val DESCRIPTION_CHANNEL_LOST = R.string.description_channel_lost_alarm
         const val REQUEST_CODE_NOTIFICATION_LOST = 1293
         const val ID_GROUP_LOST = "ID_GROUP_LOST"
     }
@@ -61,7 +61,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
             title = getString(R.string.title_notify_alarm),
             message = alarm.message,
             autoCancel = false,
-            channelId = CHANNEL_ID_ALARM,
+            channelId = getString(CHANNEL_ID_ALARM),
             priority = NotificationCompat.PRIORITY_MAX
         ).apply {
             // * add full screen intent
@@ -76,7 +76,9 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
                 stopIntent,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
-            addAction(R.drawable.ic_stop, "Descartar", stopPendingIntent)
+            addAction(R.drawable.ic_stop,
+                getString(R.string.name_action_stop_alarm),
+                stopPendingIntent)
         }
         // ? return notify for use in foreground services
         return notificationBuilder.build()
@@ -98,10 +100,10 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
 
         if (listAlarms.size > 1) {
             getBaseNotification(
-                title = "Tienes recordatorios pendientes",
-                message = "${listAlarms.size} recordatorios",
+                title = getString(R.string.title_group_alarm_pending),
+                message = getString(R.string.message_group_alarm_pending, listAlarms.size),
                 autoCancel = false,
-                channelId = CHANNEL_ID_ALARM,
+                channelId = getString(CHANNEL_ID_ALARM),
                 group = ID_GROUP_ALARM,
                 isFirst = true
             ).apply {
@@ -112,7 +114,6 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
                     notify.build()
                 )
             }
-
         }
 
         listAlarms.forEach {
@@ -121,7 +122,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
                 title = getString(R.string.title_notify_alarm),
                 message = it.title,
                 autoCancel = true,
-                channelId = CHANNEL_ID_ALARM,
+                channelId = getString(CHANNEL_ID_ALARM),
                 group = ID_GROUP_ALARM
             ).apply {
                 setContentIntent(pendingIntent)
@@ -145,15 +146,15 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         )
         if (listAlarms.size > 1) {
             getBaseNotification(
-                title = "Hay alarmas perdidas",
-                message = "${listAlarms.size} alarmas perdidas",
+                title = getString(R.string.title_group_lost_alarm),
+                message = getString(R.string.message_group_lost_alarm_pending, listAlarms.size),
                 autoCancel = false,
-                channelId = CHANNEL_ID_LOST,
+                channelId = getString(CHANNEL_ID_LOST),
                 group = ID_GROUP_LOST,
                 isFirst = true
             ).apply {
                 setContentIntent(pendingIntent)
-            }.let {notify->
+            }.let { notify ->
                 notificationManager.notify(
                     rangeRandom.random(),
                     notify.build()
@@ -162,10 +163,10 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         }
         listAlarms.forEach { alarm ->
             getBaseNotification(
-                title = "Recordatorio Perdido ${alarm.nextAlarm?.toFormat(this)}",
-                message = alarm.title,
+                title = getString(R.string.title_notify_lost_alarm),
+                message = alarm.title + "\n${alarm.nextAlarm?.toFormat(this)}",
                 autoCancel = true,
-                channelId = CHANNEL_ID_LOST,
+                channelId = getString(CHANNEL_ID_LOST),
                 group = ID_GROUP_LOST,
             ).apply {
                 setContentIntent(pendingIntent)
@@ -195,32 +196,6 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         return deepLinkPendingIntent
     }
 
-    @SuppressLint("InlinedApi")
-    fun showNotificationLost(alarm: Alarm) {
-        val intent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            REQUEST_CODE_NOTIFICATION_LOST,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        getBaseNotification(
-            title = "Recordatorio Perdido ${alarm.nextAlarm?.toFormat(this)}",
-            message = alarm.title,
-            autoCancel = true,
-            channelId = CHANNEL_ID_LOST,
-            group = ID_GROUP_LOST
-        ).apply {
-            setContentIntent(pendingIntent)
-        }.let { notify ->
-            notificationManager.notify(
-                rangeRandom.random(),
-                notify.build()
-            )
-        }
-    }
-
-
 
 
     private fun getBaseNotification(
@@ -228,7 +203,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         message: String,
         autoCancel: Boolean,
         channelId: String,
-        group: String?=null,
+        group: String? = null,
         isFirst: Boolean = false,
         priority: Int = NotificationCompat.PRIORITY_HIGH,
     ) = NotificationCompat.Builder(this, channelId)
@@ -246,17 +221,16 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         }
 
 
-
-
     private fun createNotificationChannelLost() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = CHANNEL_ID_LOST
-            val descriptionText = DESCRIPTION_CHANNEL_LOST
             val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(CHANNEL_ID_LOST, name, importance).apply {
-                description = descriptionText
+            val channel = NotificationChannel(getString(CHANNEL_ID_LOST),
+                getString(CHANNEL_ID_LOST),
+                importance
+            ).apply {
+                description = getString(DESCRIPTION_CHANNEL_LOST)
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -266,11 +240,13 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = CHANNEL_ID_ALARM
-            val descriptionText = DESCRIPTION_CHANNEL_ALARM
             val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(CHANNEL_ID_ALARM, name, importance).apply {
-                description = descriptionText
+            val channel = NotificationChannel(
+                getString(CHANNEL_ID_ALARM),
+                getString(CHANNEL_ID_ALARM),
+                importance
+            ).apply {
+                description = getString(DESCRIPTION_CHANNEL_ALARM)
             }
             notificationManager.createNotificationChannel(channel)
         }
