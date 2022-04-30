@@ -38,4 +38,10 @@ data class Alarm(
             copy(isActive = false, nextAlarm = null)
         }
     }
+
+    companion object{
+        fun createAlarmRandom(): Alarm {
+         return Alarm(title = "Hola",)
+        }
+    }
 }

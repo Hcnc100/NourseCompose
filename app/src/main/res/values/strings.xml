@@ -153,4 +153,11 @@
     <string name="text_sound_defect">Default</string>
     <string name="text_sound_select">Sonido %d</string>
     <string name="description_drop_icon">Icono del menú desplegable</string>
+
+    <!-- state alarm screen-->
+    <string name="text_finish_alarm">Alarma finalizada</string>
+    <string name="description_drop_up_icon">Icono que representa si se muestran los detalles o no</string>
+    <string name="title_lost_alarm">Lista de alarmas perdidas</string>
+    <string name="title_list_alarm">Lista de alarmas actuales</string>
+    <string name="text_no_take_one_more">No se recomienda tomar medicamentos a la misma hora, a menos que el doctor se lo indique</string>
 </resources>

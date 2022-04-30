@@ -16,6 +16,8 @@ import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_
 import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_STOP_SOUND
 import com.nullpointer.noursecompose.ui.activitys.AlarmScreen
 import com.nullpointer.noursecompose.ui.activitys.MainActivity
+import com.nullpointer.noursecompose.ui.navigation.types.ArgsAlarms
+import com.nullpointer.noursecompose.ui.navigation.types.ArgsAlarmsTypeSerializer
 
 class NotificationHelper(context: Context) : ContextWrapper(context) {
     companion object {
@@ -88,21 +90,12 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
     fun showNotifyAlarm(
         listAlarms: List<Alarm>,
     ) {
-        // * create intent and put alarm as argument
-        val intent = Intent(this, MainActivity::class.java)
-        // * create pending intent
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            REQUEST_CODE_NOTIFICATION_ALARM,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
         if (listAlarms.size > 1) {
+            val pendingIntent = getPendingIntentCompose(listAlarms, false)
             getBaseNotification(
                 title = getString(R.string.title_group_alarm_pending),
                 message = getString(R.string.message_group_alarm_pending, listAlarms.size),
-                autoCancel = false,
+                autoCancel = true,
                 channelId = getString(CHANNEL_ID_ALARM),
                 group = ID_GROUP_ALARM,
                 isFirst = true
@@ -117,6 +110,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         }
 
         listAlarms.forEach {
+            val pendingIntent = getPendingIntentCompose(listOf(it), false)
             // * create notification
             getBaseNotification(
                 title = getString(R.string.title_notify_alarm),
@@ -137,14 +131,8 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
 
     @SuppressLint("InlinedApi")
     fun showNotificationLost(listAlarms: List<Alarm>) {
-        val intent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            REQUEST_CODE_NOTIFICATION_LOST,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
         if (listAlarms.size > 1) {
+            val pendingIntent = getPendingIntentCompose(listAlarms, true)
             getBaseNotification(
                 title = getString(R.string.title_group_lost_alarm),
                 message = getString(R.string.message_group_lost_alarm_pending, listAlarms.size),
@@ -162,6 +150,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
             }
         }
         listAlarms.forEach { alarm ->
+            val pendingIntent = getPendingIntentCompose(listOf(alarm), true)
             getBaseNotification(
                 title = getString(R.string.title_notify_lost_alarm),
                 message = alarm.title + "\n${alarm.nextAlarm?.toFormat(this)}",
@@ -181,11 +170,12 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
     }
 
 
-    private fun getPendingIntentCompose(idAlarm: String): PendingIntent {
+    private fun getPendingIntentCompose(listAlarms: List<Alarm>, isLost: Boolean): PendingIntent {
         // * create deep link
         // * this go to post for notification
+        val routeString = ArgsAlarmsTypeSerializer.generateRoute(isLost, listAlarms)
         val deepLinkIntent = Intent(Intent.ACTION_VIEW,
-            "https://www.nourse-compose.com/alarm/$idAlarm".toUri(),
+            "https://www.nourse-compose.com/alarm/$routeString".toUri(),
             this,
             MainActivity::class.java)
         // * create pending intent compose
@@ -195,7 +185,6 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         }
         return deepLinkPendingIntent
     }
-
 
 
     private fun getBaseNotification(

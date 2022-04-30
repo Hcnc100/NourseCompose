@@ -69,4 +69,7 @@ class AlarmRepoImpl(
 
     override fun getAllAlarms(): Flow<List<Alarm>> =
         alarmDAO.getAllAlarms()
+
+    override suspend fun getAlarmsForIds(listIds: List<Long>): List<Alarm> =
+        alarmDAO.getListAlarmForIds(listIds)
 }

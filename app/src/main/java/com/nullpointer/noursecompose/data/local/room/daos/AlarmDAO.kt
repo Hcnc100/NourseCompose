@@ -35,4 +35,7 @@ interface AlarmDAO {
 
     @Query("SELECT * FROM alarms_table WHERE NOT isActive")
     fun getFlowAlarmInactive(): Flow<List<Alarm>>
+
+    @Query("SELECT * FROM alarms_table WHERE id IN (:listIds)")
+    suspend fun getListAlarmForIds(listIds: List<Long>): List<Alarm>
 }

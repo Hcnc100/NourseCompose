@@ -15,4 +15,5 @@ interface AlarmRepository {
     suspend fun deleterListAlarm(list: List<Long>,context: Context)
     fun getAllAlarmActive():List<Alarm>
     fun getAllAlarms(): Flow<List<Alarm>>
+    suspend fun getAlarmsForIds(listIds:List<Long>):List<Alarm>
 }
