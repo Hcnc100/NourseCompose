@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.room.Insert
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.delegates.SavableComposeState
+import com.nullpointer.noursecompose.models.alarm.Alarm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -28,6 +29,7 @@ class NameAndImgViewModel @Inject constructor(
         private const val KEY_NAME = "KEY_NAME"
         private const val KEY_FILE = "KEY_FILE"
         private const val KEY_ERROR_NAME = "KEY_ERROR_NAME"
+        private const val KEY_VM_NAME_INIT = "KEY_VM_NAME_INIT"
         const val MAX_LENGTH_NAME = 50
     }
 
@@ -40,12 +42,21 @@ class NameAndImgViewModel @Inject constructor(
     var errorName: Int by SavableComposeState(state, KEY_ERROR_NAME, -1)
         private set
 
+    private var isInit: Boolean by SavableComposeState(state, KEY_VM_NAME_INIT, false)
+
     val hasErrorName get() = errorName != -1
-    val counterName get() =  "${nameAlarm.length} / $MAX_LENGTH_NAME"
+    val counterName get() = "${nameAlarm.length} / $MAX_LENGTH_NAME"
 
     private var jobCompress: Job? = null
     var isCompress = mutableStateOf(false)
         private set
+
+    fun changeInit(name:String){
+        if(!isInit){
+            nameAlarm=name
+            isInit=false
+        }
+    }
 
 
     fun changeName(newName: String) {

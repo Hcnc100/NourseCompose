@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -44,6 +45,7 @@ import kotlinx.coroutines.launch
 @Composable
 @Destination
 fun AddAlarmScreen(
+    alarm: Alarm?,
     nameAndImgViewModel: NameAndImgViewModel = hiltViewModel(),
     descriptionViewModel: DescriptionViewModel = hiltViewModel(),
     timeViewModel: TimeViewModel = hiltViewModel(),
@@ -55,6 +57,14 @@ fun AddAlarmScreen(
     val modalState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(key1 = Unit) {
+        alarm?.let {
+            nameAndImgViewModel.changeInit(alarm.title)
+            descriptionViewModel.changeInit(alarm.message)
+            timeViewModel.changeInit(alarm)
+        }
+    }
 
     val changePage: (value: Int) -> Unit = {
         scope.launch {
@@ -70,8 +80,11 @@ fun AddAlarmScreen(
     Box {
         HorizontalPager(count = 4, state = pagerState, userScrollEnabled = false) { page ->
             when (page) {
-                0 -> NameAndImgScreen(nameAndImgViewModel,
-                    modalState, focusManager)
+                0 -> NameAndImgScreen(
+                    nameAndImgViewModel = nameAndImgViewModel,
+                    modalState = modalState,
+                    focusManager = focusManager,
+                    fileName = alarm?.nameFile)
                 1 -> DescriptionScreen(descriptionViewModel)
                 2 -> RepeatAlarmScreen(timeViewModel)
                 3 -> TimeScreen(timeViewModel)
@@ -108,7 +121,9 @@ fun AddAlarmScreen(
                             alarmViewModel.addNewAlarm(
                                 file = nameAndImgViewModel.fileImg,
                                 context = context,
+                                nameFile = alarm?.nameFile,
                                 alarm = Alarm(
+                                    id = alarm?.id,
                                     title = nameAndImgViewModel.nameAlarm,
                                     message = descriptionViewModel.description,
                                     typeAlarm = timeViewModel.typeAlarm,

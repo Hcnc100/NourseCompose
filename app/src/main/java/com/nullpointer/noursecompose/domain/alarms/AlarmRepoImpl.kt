@@ -23,9 +23,11 @@ class AlarmRepoImpl(
         alarmDAO.getAlarmById(id)
 
 
-    override suspend fun insertAlarm(alarm: Alarm, context: Context): Long {
+    override suspend fun insertAlarm(alarm: Alarm, context: Context, isUpdate: Boolean): Long {
         val idAlarm = alarmDAO.insert(alarm)
-        registryDAO.insertRegistry(Registry(TypeRegistry.CREATE, idAlarm))
+        val registry = if (isUpdate) Registry(TypeRegistry.UPDATE, idAlarm)
+        else Registry(TypeRegistry.CREATE, idAlarm)
+        registryDAO.insertRegistry(registry)
         // ! is very important use this idAlarm
         MyAlarmManager.setAlarm(context, idAlarm, alarm.nextAlarm!!)
         return idAlarm

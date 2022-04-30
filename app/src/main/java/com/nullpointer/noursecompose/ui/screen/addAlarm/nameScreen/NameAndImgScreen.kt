@@ -40,6 +40,7 @@ import com.google.accompanist.insets.toPaddingValues
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.ui.screen.addAlarm.ContentPage
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.viewModel.NameAndImgViewModel
 import com.nullpointer.noursecompose.ui.share.ButtonSheetContent
@@ -54,6 +55,7 @@ fun NameAndImgScreen(
     nameAndImgViewModel: NameAndImgViewModel,
     modalState: ModalBottomSheetState,
     focusManager: FocusManager,
+    fileName:String?
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -66,7 +68,8 @@ fun NameAndImgScreen(
                 ImageAlarm(
                     modifier = Modifier.size(150.dp),
                     contentDescription = stringResource(R.string.description_img_alarm),
-                    fileImg = nameAndImgViewModel.fileImg
+                    fileImg = nameAndImgViewModel.fileImg,
+                    bitmap = fileName?.let { ImageUtils.loadImageFromStorage(it, LocalContext.current) }
                 )
                 FloatingActionButton(
                     onClick = {
@@ -185,8 +188,8 @@ fun ImageAlarm(
         // * else load urlImg if this is not empty
         // * else load default
         data = when {
-            fileImg != null -> fileImg
             bitmap != null -> bitmap
+            fileImg != null -> fileImg
             urlImg != null -> urlImg
             else -> R.drawable.ic_image
         }

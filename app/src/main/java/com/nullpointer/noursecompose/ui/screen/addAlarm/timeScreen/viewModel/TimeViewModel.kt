@@ -1,12 +1,15 @@
 package com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.viewModel
 
 import android.text.format.DateUtils
+import android.text.format.DateUtils.MINUTE_IN_MILLIS
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.delegates.SavableComposeState
 import com.nullpointer.noursecompose.core.utils.*
+import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
+import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.viewModel.DescriptionViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -21,6 +24,7 @@ class TimeViewModel @Inject constructor(
         private const val KEY_RANGE = "KEY_RANGE"
         private const val KEY_NEXT_ALARM = "KEY_NEXT_ALARM"
         private const val KEY_TIME_REPEAT = "KEY_TIME_REPEAT"
+        private const val KEY_VM_TIME_INIT = "KEY_VM_TIME_INIT"
     }
 
     var typeAlarm: AlarmTypes by SavableComposeState(state, KEY_TYPE_ALARM, AlarmTypes.INDEFINITELY)
@@ -42,8 +46,29 @@ class TimeViewModel @Inject constructor(
     var errorRange: Int by SavableComposeState(state, KEY_ERROR_RANGE, -1)
     val hasErrorRange get() = errorRange != -1
 
+    private var isInit: Boolean by SavableComposeState(state, KEY_VM_TIME_INIT, false)
+
     init {
         calculateNextAlarm()
+    }
+
+    fun changeInit(alarm: Alarm) {
+        if (!isInit) {
+            changeType(alarm.typeAlarm)
+            alarm.repeaterEvery?.let { timeToRepeatAlarm = it }
+            alarm.rangeInitAlarm?.let { init ->
+                alarm.rangeFinishAlarm?.let { fin ->
+                    if (init <= getFirstTimeDay()) rangeAlarm = Pair(init, fin)
+                }
+            }
+            alarm.nextAlarm?.let {
+                if (it > getTimeNow() + 10 * MINUTE_IN_MILLIS) {
+                    timeNextAlarm = it
+                    timeInitAlarm = it
+                }
+            }
+            isInit = false
+        }
     }
 
     fun changeTimeToRepeatAlarm(newHour: Long) {

@@ -22,12 +22,12 @@ class AlarmViewModel @Inject constructor(
     private val alarmRepo: AlarmRepoImpl,
 ) : ViewModel() {
 
-    var isInitAlarms=false
+    var isInitAlarms = false
 
     val listAlarm = flow {
         alarmRepo.getAllAlarms().collect {
             emit(it)
-            isInitAlarms=true
+            isInitAlarms = true
         }
     }.catch {
         Timber.e("Error al cargar las alarmas de la base de datos $it")
@@ -40,6 +40,7 @@ class AlarmViewModel @Inject constructor(
     fun addNewAlarm(
         alarm: Alarm,
         file: File?,
+        nameFile: String?,
         context: Context,
     ) = viewModelScope.launch(Dispatchers.IO) {
         // * saved img in internal storage
@@ -49,10 +50,16 @@ class AlarmViewModel @Inject constructor(
                 nameFile = "alarm-img-${System.currentTimeMillis()}.png",
                 context = context
             )
+        } ?: nameFile
+
+        // * if update the image so, deleter the last image
+        alarm.nameFile?.let {
+            ImageUtils.deleterImgFromStorage(it, context)
         }
+
         // * if the name is not null update alarm to save
         val alarmInsert = if (nameImgSaved != null) alarm.copy(nameFile = nameImgSaved) else alarm
-        alarmRepo.insertAlarm(alarmInsert, context)
+        alarmRepo.insertAlarm(alarmInsert, context, alarm.id != null)
     }
 
     @OptIn(DelicateCoroutinesApi::class)

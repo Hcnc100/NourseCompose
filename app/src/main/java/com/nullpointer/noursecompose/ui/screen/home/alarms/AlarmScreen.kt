@@ -42,7 +42,7 @@ import timber.log.Timber
 fun AlarmScreen(
     alarmViewModel: AlarmViewModel = hiltViewModel(),
     selectionViewModel: SelectionViewModel,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
 ) {
     val listAlarmState = alarmViewModel.listAlarm.collectAsState()
     val context = LocalContext.current
@@ -55,7 +55,7 @@ fun AlarmScreen(
             ButtonToggleAddRemove(isVisible = !listState.isScrollInProgress,
                 isSelectedEnable = selectionViewModel.isSelectedEnable,
                 descriptionButtonAdd = stringResource(R.string.description_add_alarm),
-                actionAdd = { navigator.navigate(AddAlarmScreenDestination) },
+                actionAdd = { navigator.navigate(AddAlarmScreenDestination.invoke()) },
                 descriptionButtonRemove = stringResource(R.string.description_remove_alarms),
                 actionRemove = {
                     alarmViewModel.deleterListAlarm(
@@ -80,6 +80,12 @@ fun AlarmScreen(
             actionHiddenDialog = {
                 changeShowDialog(false)
                 changeAlarmSelected(null)
+            },
+            actionEditAlarm = { navigator.navigate(AddAlarmScreenDestination.invoke(it)) },
+            deleterAlarm = {
+                alarmViewModel.deleterAlarm(it, context)
+                changeAlarmSelected(null)
+                changeShowDialog(false)
             }
         )
     }
@@ -118,7 +124,7 @@ fun ListAlarm(
                     )
                 }
             }
-        }
+    }
 
 
 }

@@ -2,6 +2,8 @@ package com.nullpointer.noursecompose.ui.dialogs
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -9,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -20,6 +23,8 @@ import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 @Composable
 fun DialogDetails(
     actionHiddenDialog: () -> Unit,
+    actionEditAlarm: (Alarm) -> Unit,
+    deleterAlarm:(Alarm)->Unit,
     alarm: Alarm,
 ) {
     AlertDialog(
@@ -27,16 +32,27 @@ fun DialogDetails(
         modifier = Modifier.fillMaxWidth(.98f),
         title = { Text(stringResource(R.string.title_alarm_details)) },
         text = { BodyDialogDetails(alarm = alarm) },
-        confirmButton = {
-            Button(onClick = {}) {
-                Text(text = stringResource(R.string.text_edit_alarm))
+        buttons = {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 5.dp, horizontal = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                FloatingActionButton(onClick = {deleterAlarm(alarm)},
+                    backgroundColor = MaterialTheme.colors.error,
+                    modifier = Modifier.size(45.dp)) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "")
+                }
+                Row {
+                    Button(onClick = { actionEditAlarm(alarm) }) {
+                        Text(text = stringResource(R.string.text_edit_alarm))
+                    }
+                    Spacer(modifier = Modifier.width(15.dp))
+                    TextButton(onClick = actionHiddenDialog) {
+                        Text(stringResource(R.string.text_accept))
+                    }
+                }
             }
         },
-        dismissButton = {
-            TextButton(onClick = actionHiddenDialog) {
-                Text(stringResource(R.string.text_accept))
-            }
-        }
     )
 }
 
@@ -75,5 +91,6 @@ fun BodyDialogDetails(alarm: Alarm) {
         }
         Text(text = stringResource(R.string.sub_title_date_alarm))
         Text(text = alarm.createdAt.toFormat(context, true))
+        Spacer(modifier = Modifier.height(10.dp))
     }
 }

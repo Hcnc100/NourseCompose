@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface AlarmRepository {
     suspend fun addNewRegistry(newRegistry: Registry)
     suspend fun getAlarmById(id: Long): Alarm?
-    suspend fun insertAlarm(alarm: Alarm,context: Context): Long
+    suspend fun insertAlarm(alarm: Alarm,context: Context,isUpdate:Boolean): Long
     suspend fun updateAlarm(alarm: Alarm,context: Context)
     suspend fun deleterAlarm(alarm: Alarm,context: Context)
     suspend fun restoreAlarm(alarm: Alarm,context: Context)
