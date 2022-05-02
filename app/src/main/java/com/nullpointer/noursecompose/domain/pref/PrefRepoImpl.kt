@@ -9,6 +9,7 @@ class PrefRepoImpl(
 ) : PrefRepository {
     override val typeNotify: Flow<TypeNotify> =
         preferences.typeNotifyFlow
+
     override val intSound: Flow<Int> =
         preferences.intSoundFlow
 

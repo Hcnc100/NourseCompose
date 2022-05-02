@@ -62,6 +62,10 @@
     <string name="description_remove_temp">Elimina las medidas de temperatura seleccionadas</string>
     <string name="description_clear_selection">Icono para limpiar la selección</string>
 
+    <!-- add alarm screen -->
+    <string name="title_new_alarm">Agrega una nueva alarma</string>
+    <string name="title_edit_alarm">Edita la alarma</string>
+
     <!-- select imager picker -->
     <string name="text_select_option">Seleccione una opción</string>
     <string name="option_img_camera">Cámara</string>
@@ -134,6 +138,7 @@
     <string name="message_group_lost_alarm_pending">%d alarmas perdidas</string>
     <string name="title_notify_alarm">Es hora de tomar tu medicamento</string>
     <string name="title_notify_lost_alarm">Recordatorio Perdido</string>
+    <string name="init_process_restart">Se inició el proceso de restauración de las alarmas</string>
 
     <!-- alarm screen -->
     <string name="description_img_current_alarm">Imagen de la alarma actual</string>
@@ -160,4 +165,42 @@
     <string name="title_lost_alarm">Lista de alarmas perdidas</string>
     <string name="title_list_alarm">Lista de alarmas actuales</string>
     <string name="text_no_take_one_more">No se recomienda tomar medicamentos a la misma hora, a menos que el doctor se lo indique</string>
+
+    <!-- AlarmTypes -->
+    <string name="title_one_shot">Solo una vez</string>
+    <string name="description_one_shot">La alarma sonará una vez y será desactivada</string>
+    <string name="title_indef">Indefinidamente</string>
+    <string name="description_indef">La alarma sonará cada cierto tiempo, hasta que se desactive explícitamente</string>
+    <string name="title_range">Selecciona un rango</string>
+    <string name="description_range">La alarma sonara entre los días que se seleccione (en un rango), pasado el tiempo se desactivara</string>
+
+    <!-- TypeNotify -->
+    <string name="title_notify">Notificación</string>
+    <string name="description_notify">Lanza solo una notificación al llegar la alarma</string>
+    <string name="title_alarm">Alarma</string>
+    <string name="description_lauch_alarm">Lanza una alarma de pantalla completa, que vibra y suena</string>
+
+    <!-- TypeRegistry -->
+    <string name="title_create">Creación</string>
+    <string name="description_create">Se creó una nueva alarma con el ID: %d</string>
+    <string name="title_update">Actualización</string>
+    <string name="description_update">Se actualizó la hora de la alarma con el ID: %d</string>
+    <string name="title_deleter">Eliminación</string>
+    <string name="description_deleter">Se eliminó la alarma con el ID: %d</string>
+    <string name="title_registry">Registro de alarma</string>
+    <string name="description_registry">Se registró una alarma con el ID: %d</string>
+    <string name="title_unregistry_alarm">Eliminación de registro de alarma</string>
+    <string name="description_unregistry">Se eliminó la alarma del sistema ID: %d</string>
+    <string name="title_restore">Restauración</string>
+    <string name="description_restore">Se restauró la alarma ID: %d</string>
+    <string name="title_error_lauch">Error al lanzar</string>
+    <string name="description_error_launch">Error al lanzar la alarma ID: %d</string>
+    <string name="title_launch">Lanzar alarma</string>
+    <string name="description_launch">Se lanzó la alarma ID: %d</string>
+    <string name="text_hour_registry">Hora del registro: %s</string>
+    <string name="title_logs_screen">Registros</string>
+    <string name="description_deleter_registry">Elimina el conjunto de registros</string>
+    <string name="text_empty_registry">No hay registros guardados</string>
+    <string name="message_alarm_deleter">La alarma fue eliminada</string>
+
 </resources>

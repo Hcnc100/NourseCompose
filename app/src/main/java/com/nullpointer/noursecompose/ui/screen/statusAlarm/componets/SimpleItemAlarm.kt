@@ -10,13 +10,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.ImageUtils
@@ -66,7 +63,7 @@ fun SimpleItemAlarm(
                                 info = alarm.message)
                         }
                         RowInfo(description = stringResource(id = R.string.mini_title_type_alarm),
-                            info = alarm.typeAlarm.stringResource)
+                            info = stringResource(id = alarm.typeAlarm.title))
                         RowInfo(description = stringResource(id = R.string.sub_title_next_alarm),
                             info = alarm.nextAlarm?.toFormat(context)
                                 ?: stringResource(R.string.text_finish_alarm))

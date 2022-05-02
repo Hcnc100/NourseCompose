@@ -1,11 +1,9 @@
 package com.nullpointer.noursecompose.core.utils
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import timber.log.Timber
-import java.io.*
 
 class ImageUtils {
     companion object {

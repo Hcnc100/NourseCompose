@@ -1,14 +1,15 @@
 package com.nullpointer.noursecompose.models.alarm
 
 import androidx.annotation.StringRes
-import com.nullpointer.noursecompose.ui.screen.destinations.Destination
+import com.nullpointer.noursecompose.R
 
 enum class AlarmTypes(
-    val stringResource: String,
-    val stringDescription: String,
+    @StringRes
+    val title: Int,
+    @StringRes
+    val description: Int,
 ) {
-    ONE_SHOT("Una vez", "La alamra sonara una vez y sera desactivada"),
-    INDEFINITELY("Indefinidamente", "La alarma sonara cada cierto tiempo, hasta que la desactives"),
-    RANGE("Selecciona un rango",
-        "La alarma sonara entre los dias que scojas, pasado el tiempo se desactivara")
+    ONE_SHOT(R.string.title_one_shot, R.string.description_one_shot),
+    INDEFINITELY(R.string.title_indef,R.string.description_indef),
+    RANGE(R.string.title_range, R.string.description_range)
 }

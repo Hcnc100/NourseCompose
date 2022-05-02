@@ -3,13 +3,13 @@ package com.nullpointer.noursecompose.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nullpointer.noursecompose.domain.registry.RegistryRepoImpl
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,6 +23,10 @@ class LogViewModel @Inject constructor(
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5_000),
-        emptyList()
+        null
     )
+
+    fun deleterAllRegistry() = viewModelScope.launch(Dispatchers.IO) {
+        registryRepoImpl.deleterAllAlarm()
+    }
 }

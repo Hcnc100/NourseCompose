@@ -1,14 +1,9 @@
 package com.nullpointer.noursecompose.ui.share.mpGraph
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.nullpointer.noursecompose.R
@@ -27,10 +22,6 @@ fun ToolbarBack(title: String, actionBack: (() -> Unit)? = null) {
         })
 }
 
-@Composable
-fun SimpleToolbar(title: String) {
-    TopAppBar(title = { Text(title) })
-}
 
 @Composable
 fun SelectionMenuToolbar(
@@ -39,7 +30,8 @@ fun SelectionMenuToolbar(
     numberSelection: Int,
     actionClear: () -> Unit,
     goToRegistry: () -> Unit,
-    goToConfig:()->Unit
+    goToConfig: () -> Unit,
+    reInitAlarms: () -> Unit,
 ) {
     val (showMenu, changeVisibleMenu) = rememberSaveable { mutableStateOf(false) }
     TopAppBar(
@@ -67,6 +59,12 @@ fun SelectionMenuToolbar(
                     }
                     DropdownMenuItem(onClick = goToConfig) {
                         Text(text = "Ir a la configuracion")
+                    }
+                    DropdownMenuItem(onClick = {
+                        reInitAlarms()
+                        changeVisibleMenu(false)
+                    }) {
+                        Text(text = "Reinicar alarmas activas")
                     }
                 }
             }

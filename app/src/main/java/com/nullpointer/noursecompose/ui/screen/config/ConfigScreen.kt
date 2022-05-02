@@ -1,7 +1,6 @@
 package com.nullpointer.noursecompose.ui.screen.config
 
 import android.content.Context
-import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
@@ -27,9 +26,6 @@ import com.nullpointer.noursecompose.ui.screen.config.viewModel.ConfigViewModel
 import com.nullpointer.noursecompose.ui.share.mpGraph.ToolbarBack
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 
 @Composable
@@ -207,9 +203,9 @@ fun RadioButtonNotifyType(
             )
             Spacer(modifier = Modifier.width(10.dp))
             Column {
-                Text(it.nameType)
+                Text(stringResource(id = it.title))
                 Spacer(modifier = Modifier.height(5.dp))
-                Text(it.description, style = MaterialTheme.typography.caption)
+                Text(stringResource(id = it.description), style = MaterialTheme.typography.caption)
             }
         }
         Spacer(modifier = Modifier.height(10.dp))

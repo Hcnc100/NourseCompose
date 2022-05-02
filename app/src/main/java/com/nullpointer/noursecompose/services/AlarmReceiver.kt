@@ -3,6 +3,8 @@ package com.nullpointer.noursecompose.services
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
+import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.getTimeNow
 import com.nullpointer.noursecompose.core.utils.myGoAsync
 import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
@@ -15,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -25,6 +28,7 @@ class AlarmReceiver : BroadcastReceiver() {
     companion object {
         const val BOOT_COMPLETED = "android.intent.action.BOOT_COMPLETED"
         const val TIME_SET = "android.intent.action.TIME_SET"
+        const val KEY_RESTORE = "com.nullpointer.noursecompose.android.action.broadcast"
         const val WAKE_UP_ALARM = "WAKE_UP_ALARM"
         const val ID_ALARM = "ID_ALARM"
     }
@@ -42,7 +46,8 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         intent.let {
             when (it.action) {
-                BOOT_COMPLETED, TIME_SET -> restoreAlarms(context)
+                KEY_RESTORE, BOOT_COMPLETED, TIME_SET -> restoreAlarms(context,
+                    it.action == KEY_RESTORE)
                 WAKE_UP_ALARM -> launchAlarm(context, it.getLongExtra(ID_ALARM, -1))
                 else -> Timber.d("action intent $it")
             }
@@ -95,25 +100,31 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
 
-    private fun restoreAlarms(context: Context) = myGoAsync(GlobalScope, Dispatchers.Default) {
-        val listAlarmLost = mutableListOf<Alarm>()
-        Timber.d("Se inicio el proceso de restauracion de las alarmas")
-        val alarmsActive = alarmRepository.getAllAlarmActive()
-        val currentTime = getTimeNow()
-        alarmsActive.forEach { alarm ->
-            if (currentTime > alarm.nextAlarm ?: 0) {
-                // * notify in group that alarm is lost
-                listAlarmLost.add(alarm)
-                updateAlarm(alarm, currentTime, context)
-            } else {
-                alarmRepository.restoreAlarm(alarm, context)
+    private fun restoreAlarms(context: Context, isRestoreUser: Boolean) =
+        myGoAsync(GlobalScope, Dispatchers.IO) {
+            val listAlarmLost = mutableListOf<Alarm>()
+            Timber.d("Se inició el proceso de restauración de las alarmas")
+            withContext(Dispatchers.Main){
+                if (isRestoreUser) Toast.makeText(context,
+                    context.getString(R.string.init_process_restart),
+                    Toast.LENGTH_SHORT).show()
             }
-        }
-        if (listAlarmLost.isNotEmpty()) {
-            notificationHelper.showNotificationLost(listAlarmLost)
-            listAlarmLost.clear()
-        }
+            val alarmsActive = alarmRepository.getAllAlarmActive()
+            val currentTime = getTimeNow()
+            alarmsActive.forEach { alarm ->
+                if (currentTime > alarm.nextAlarm ?: 0) {
+                    // * notify in group that alarm is lost
+                    listAlarmLost.add(alarm)
+                    updateAlarm(alarm, currentTime, context)
+                } else {
+                    alarmRepository.restoreAlarm(alarm, context)
+                }
+            }
+            if (listAlarmLost.isNotEmpty()) {
+                notificationHelper.showNotificationLost(listAlarmLost)
+                listAlarmLost.clear()
+            }
 
-        Timber.d("Alarmas restauradas ${alarmsActive.size}")
-    }
+            Timber.d("Alarmas restauradas ${alarmsActive.size}")
+        }
 }

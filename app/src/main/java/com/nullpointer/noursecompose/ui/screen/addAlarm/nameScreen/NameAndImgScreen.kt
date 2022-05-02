@@ -34,11 +34,7 @@ import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.imePadding
-import com.google.accompanist.insets.toPaddingValues
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.PagerState
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.ui.screen.addAlarm.ContentPage

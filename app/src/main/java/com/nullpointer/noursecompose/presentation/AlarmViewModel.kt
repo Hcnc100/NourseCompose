@@ -7,11 +7,13 @@ import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.core.utils.toBitmap
 import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.services.MyAlarmManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
@@ -22,14 +24,7 @@ class AlarmViewModel @Inject constructor(
     private val alarmRepo: AlarmRepoImpl,
 ) : ViewModel() {
 
-    var isInitAlarms = false
-
-    val listAlarm = flow {
-        alarmRepo.getAllAlarms().collect {
-            emit(it)
-            isInitAlarms = true
-        }
-    }.catch {
+    val listAlarm = alarmRepo.getAllAlarms().catch {
         Timber.e("Error al cargar las alarmas de la base de datos $it")
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
@@ -67,8 +62,13 @@ class AlarmViewModel @Inject constructor(
         alarmRepo.deleterAlarm(alarm, context)
     }
 
-    fun deleterListAlarm(listIds: List<Long>, context: Context) = viewModelScope.launch {
-        alarmRepo.deleterListAlarm(listIds, context)
+    fun deleterListAlarm(listIds: List<Long>, context: Context) =
+        viewModelScope.launch(Dispatchers.IO) {
+            alarmRepo.deleterListAlarm(listIds, context)
+        }
+
+    suspend fun getAlarmById(id: Long): Alarm? {
+        return alarmRepo.getAlarmById(id)
     }
 
 }

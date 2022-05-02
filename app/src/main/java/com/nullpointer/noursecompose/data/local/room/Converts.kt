@@ -8,22 +8,20 @@ import com.nullpointer.noursecompose.models.registry.TypeRegistry
 class Converts {
 
     @TypeConverter
-    fun toAlarmType(type: String): AlarmTypes =
-        AlarmTypes.valueOf(type)
+    fun toAlarmType(type: String): AlarmTypes = AlarmTypes.valueOf(type)
 
     @TypeConverter
     fun fromAlarmType(alarmTypes: AlarmTypes): String = alarmTypes.name
 
     @TypeConverter
-    fun toMeasureType(type: String): MeasureType =
-        MeasureType.valueOf(type)
+    fun toMeasureType(type: String): MeasureType = MeasureType.valueOf(type)
 
     @TypeConverter
     fun fromMeasureType(measureType: MeasureType): String = measureType.name
 
     @TypeConverter
-    fun toRegistryType(type: String): TypeRegistry = TypeRegistry.myValueOf(type)
+    fun toRegistryType(type: String): TypeRegistry = TypeRegistry.valueOf(type)
 
     @TypeConverter
-    fun fromRegistryType(registry: TypeRegistry): String = registry.stringValue
+    fun fromRegistryType(registry: TypeRegistry): String = registry.name
 }

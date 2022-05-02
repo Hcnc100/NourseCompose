@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.nullpointer.noursecompose.core.delegates.SavableComposeState
 import com.nullpointer.noursecompose.models.ItemSelected
-import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -16,7 +15,7 @@ class SelectionViewModel @Inject constructor(
         private const val KEY_LIST_SELECTION = "KEY_LIST_SELECTION"
     }
 
-    var listMeasureSelected: List<ItemSelected> by SavableComposeState(
+    private var listMeasureSelected: List<ItemSelected> by SavableComposeState(
         stateHandle,
         KEY_LIST_SELECTION,
         emptyList())

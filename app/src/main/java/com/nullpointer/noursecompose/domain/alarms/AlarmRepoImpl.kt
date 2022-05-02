@@ -48,13 +48,13 @@ class AlarmRepoImpl(
         alarmDAO.deleterAlarm(alarm)
         alarm.nameFile?.let { ImageUtils.deleterImgFromStorage(it, context) }
         registryDAO.insertRegistry(Registry(TypeRegistry.DELETER, alarm.id!!))
-        if (alarm.isActive) MyAlarmManager.cancelAlarm(context, alarm.id!!)
+        if (alarm.isActive) MyAlarmManager.cancelAlarm(context, alarm.id)
     }
 
 
     override suspend fun restoreAlarm(alarm: Alarm, context: Context) {
         MyAlarmManager.setAlarm(context, alarm.id!!, alarm.nextAlarm!!)
-        registryDAO.insertRegistry(Registry(type = TypeRegistry.RESTORE, idAlarm = alarm.id!!))
+        registryDAO.insertRegistry(Registry(type = TypeRegistry.RESTORE, idAlarm = alarm.id))
     }
 
     override suspend fun deleterListAlarm(list: List<Long>, context: Context) {
@@ -65,6 +65,8 @@ class AlarmRepoImpl(
         }
         alarmDAO.deleterListAlarm(list)
     }
+
+
 
     override fun getAllAlarmActive(): List<Alarm> =
         alarmDAO.getAllAlarmActive()

@@ -1,12 +1,10 @@
 package com.nullpointer.noursecompose.ui.screen.addAlarm
 
-import android.content.res.Configuration
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,14 +12,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.insets.imePadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -37,6 +32,7 @@ import com.nullpointer.noursecompose.ui.screen.addAlarm.repeatScreen.RepeatAlarm
 import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.TimeScreen
 import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.viewModel.TimeViewModel
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
+import com.nullpointer.noursecompose.ui.share.mpGraph.ToolbarBack
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
@@ -76,72 +72,80 @@ fun AddAlarmScreen(
     BackHandler(pagerState.currentPage != 0) {
         changePage(-1)
     }
-
-    Box {
-        HorizontalPager(count = 4, state = pagerState, userScrollEnabled = false) { page ->
-            when (page) {
-                0 -> NameAndImgScreen(
-                    nameAndImgViewModel = nameAndImgViewModel,
-                    modalState = modalState,
-                    focusManager = focusManager,
-                    fileName = alarm?.nameFile)
-                1 -> DescriptionScreen(descriptionViewModel)
-                2 -> RepeatAlarmScreen(timeViewModel)
-                3 -> TimeScreen(timeViewModel)
-            }
+    Scaffold(
+        topBar = {
+            ToolbarBack(title = if (alarm == null) stringResource(R.string.title_new_alarm) else stringResource(
+                R.string.title_edit_alarm),
+                actionBack = navigator::popBackStack)
         }
-        AnimatedVisibility(visible = !modalState.isVisible,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(10.dp),
-            enter = slideInHorizontally { it } + fadeIn(),
-            exit = shrinkHorizontally { it } + fadeOut()) {
-            Button(onClick = {
-                when (pagerState.currentPage) {
-                    0 -> {
-                        nameAndImgViewModel.validateName()
-                        if (!nameAndImgViewModel.hasErrorName) {
-                            changePage(+1)
-                        }
-                    }
-                    1 -> {
-                        descriptionViewModel.validateDescription()
-                        if (!descriptionViewModel.hasErrorDescription) {
-                            changePage(+1)
-                        }
-                    }
-                    2 -> changePage(+1)
-                    3 -> {
-                        if (timeViewModel.typeAlarm != AlarmTypes.RANGE || timeViewModel.typeAlarm == AlarmTypes.RANGE && !timeViewModel.hasErrorRange) {
-                            val (timeInit, timeFinish) = if (timeViewModel.typeAlarm == AlarmTypes.RANGE) {
-                                timeViewModel.rangeAlarm
-                            } else {
-                                Pair(null, null)
-                            }
-                            alarmViewModel.addNewAlarm(
-                                file = nameAndImgViewModel.fileImg,
-                                context = context,
-                                nameFile = alarm?.nameFile,
-                                alarm = Alarm(
-                                    id = alarm?.id,
-                                    title = nameAndImgViewModel.nameAlarm,
-                                    message = descriptionViewModel.description,
-                                    typeAlarm = timeViewModel.typeAlarm,
-                                    nextAlarm = timeViewModel.timeNextAlarm,
-                                    repeaterEvery = timeViewModel.timeToRepeatAlarm,
-                                    rangeInitAlarm = timeInit,
-                                    rangeFinishAlarm = timeFinish
-                                )
-                            )
-                            navigator.popBackStack()
-                        }
-                    }
+    ) {
+        Box {
+            HorizontalPager(count = 4, state = pagerState, userScrollEnabled = false) { page ->
+                when (page) {
+                    0 -> NameAndImgScreen(
+                        nameAndImgViewModel = nameAndImgViewModel,
+                        modalState = modalState,
+                        focusManager = focusManager,
+                        fileName = alarm?.nameFile)
+                    1 -> DescriptionScreen(descriptionViewModel)
+                    2 -> RepeatAlarmScreen(timeViewModel)
+                    3 -> TimeScreen(timeViewModel)
                 }
-            }) {
-                Text(stringResource(R.string.text_button_next))
+            }
+            AnimatedVisibility(visible = !modalState.isVisible,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(10.dp),
+                enter = slideInHorizontally { it } + fadeIn(),
+                exit = shrinkHorizontally { it } + fadeOut()) {
+                Button(onClick = {
+                    when (pagerState.currentPage) {
+                        0 -> {
+                            nameAndImgViewModel.validateName()
+                            if (!nameAndImgViewModel.hasErrorName) {
+                                changePage(+1)
+                            }
+                        }
+                        1 -> {
+                            descriptionViewModel.validateDescription()
+                            if (!descriptionViewModel.hasErrorDescription) {
+                                changePage(+1)
+                            }
+                        }
+                        2 -> changePage(+1)
+                        3 -> {
+                            if (timeViewModel.typeAlarm != AlarmTypes.RANGE || timeViewModel.typeAlarm == AlarmTypes.RANGE && !timeViewModel.hasErrorRange) {
+                                val (timeInit, timeFinish) = if (timeViewModel.typeAlarm == AlarmTypes.RANGE) {
+                                    timeViewModel.rangeAlarm
+                                } else {
+                                    Pair(null, null)
+                                }
+                                alarmViewModel.addNewAlarm(
+                                    file = nameAndImgViewModel.fileImg,
+                                    context = context,
+                                    nameFile = alarm?.nameFile,
+                                    alarm = Alarm(
+                                        id = alarm?.id,
+                                        title = nameAndImgViewModel.nameAlarm,
+                                        message = descriptionViewModel.description,
+                                        typeAlarm = timeViewModel.typeAlarm,
+                                        nextAlarm = timeViewModel.timeNextAlarm,
+                                        repeaterEvery = timeViewModel.timeToRepeatAlarm,
+                                        rangeInitAlarm = timeInit,
+                                        rangeFinishAlarm = timeFinish
+                                    )
+                                )
+                                navigator.popBackStack()
+                            }
+                        }
+                    }
+                }) {
+                    Text(stringResource(R.string.text_button_next))
+                }
             }
         }
     }
+
 
 }
 

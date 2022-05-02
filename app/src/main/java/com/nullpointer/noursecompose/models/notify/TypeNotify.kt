@@ -1,6 +1,13 @@
 package com.nullpointer.noursecompose.models.notify
 
-enum class TypeNotify(val nameType: String,val  description: String) {
-    NOTIFY("Notificacion", "Lanza solo una notificacions"),
-    ALARM("Alarma", "Lanza una alarma de pantalla completa, que vibra y suena");
+import androidx.annotation.StringRes
+import com.nullpointer.noursecompose.R
+
+enum class TypeNotify(
+    @StringRes
+    val title: Int,
+    @StringRes
+    val description: Int) {
+    NOTIFY(R.string.title_notify, R.string.description_notify),
+    ALARM(R.string.title_alarm, R.string.description_lauch_alarm)
 }

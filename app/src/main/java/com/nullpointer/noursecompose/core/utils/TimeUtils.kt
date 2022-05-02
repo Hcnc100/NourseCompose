@@ -1,9 +1,8 @@
 package com.nullpointer.noursecompose.core.utils
 
 import android.content.Context
-import android.text.format.DateUtils.*
+import android.text.format.DateUtils.DAY_IN_MILLIS
 import com.nullpointer.noursecompose.R
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 object TimeUtils {

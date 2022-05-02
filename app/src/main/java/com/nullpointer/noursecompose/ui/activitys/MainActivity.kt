@@ -1,9 +1,9 @@
 package com.nullpointer.noursecompose.ui.activitys
 
+import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputConnection
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -27,11 +28,13 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.insets.cutoutPadding
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.presentation.AlarmViewModel
 import com.nullpointer.noursecompose.presentation.SelectionViewModel
+import com.nullpointer.noursecompose.services.AlarmReceiver
 import com.nullpointer.noursecompose.ui.navigation.HomeDestinations
 import com.nullpointer.noursecompose.ui.screen.NavGraphs
 import com.nullpointer.noursecompose.ui.screen.destinations.ConfigScreenDestination
@@ -46,6 +49,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.takeWhile
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -68,19 +72,19 @@ class MainActivity : AppCompatActivity() {
         setContent {
             NourseComposeTheme {
                 ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
-                    // A surface container using the 'background' color from the theme
-
                     LaunchedEffect(alarmViewModel.listAlarm) {
                         alarmViewModel.listAlarm.takeWhile { loading }.collect {
                             delay(200)
                             loading = it != null
                         }
                     }
-
-                    Surface(modifier = Modifier
-                        .fillMaxSize(),
+                    val configuration = LocalConfiguration.current
+                    var modifier = Modifier.fillMaxSize()
+                    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        modifier = modifier.cutoutPadding()
+                    }
+                    Surface(modifier = modifier,
                         color = MaterialTheme.colors.background) {
-
                         val context = LocalContext.current
                         val navController = rememberNavController()
                         var isHomeRoute by remember { mutableStateOf(false) }
@@ -122,6 +126,14 @@ class MainActivity : AppCompatActivity() {
                                         },
                                         goToConfig = {
                                             navController.navigateTo(ConfigScreenDestination)
+                                        },
+                                        reInitAlarms = {
+                                            val intent =
+                                                Intent(context, AlarmReceiver::class.java).apply {
+                                                    action =
+                                                        "com.nullpointer.noursecompose.android.action.broadcast"
+                                                }
+                                            applicationContext.sendBroadcast(intent)
                                         }
                                     )
                                 }

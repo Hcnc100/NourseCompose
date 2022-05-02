@@ -1,8 +1,5 @@
 package com.nullpointer.noursecompose.ui.activitys
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -12,7 +9,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -28,7 +24,6 @@ import com.nullpointer.noursecompose.services.SoundServices
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.ImageAlarm
 import com.nullpointer.noursecompose.ui.share.lottieFiles.LottieContainer
 import com.nullpointer.noursecompose.ui.theme.NourseComposeTheme
-import timber.log.Timber
 
 
 class AlarmScreen : AppCompatActivity() {

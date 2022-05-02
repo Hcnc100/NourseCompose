@@ -1,17 +1,16 @@
 package com.nullpointer.noursecompose.ui.screen.config.viewModel
 
-import android.media.RingtoneManager
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
 import com.nullpointer.noursecompose.models.notify.TypeNotify
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 

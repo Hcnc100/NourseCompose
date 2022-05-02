@@ -38,9 +38,9 @@ fun RepeatAlarmScreen(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
-                        Text(it.stringResource)
+                        Text(stringResource(id = it.title))
                         Spacer(modifier = Modifier.height(5.dp))
-                        Text(it.stringDescription, style = MaterialTheme.typography.caption)
+                        Text(stringResource(id = it.description), style = MaterialTheme.typography.caption)
                     }
                 }
             }

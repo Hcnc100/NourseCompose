@@ -16,7 +16,6 @@ import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_
 import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_STOP_SOUND
 import com.nullpointer.noursecompose.ui.activitys.AlarmScreen
 import com.nullpointer.noursecompose.ui.activitys.MainActivity
-import com.nullpointer.noursecompose.ui.navigation.types.ArgsAlarms
 import com.nullpointer.noursecompose.ui.navigation.types.ArgsAlarmsTypeSerializer
 
 class NotificationHelper(context: Context) : ContextWrapper(context) {
@@ -28,7 +27,6 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
 
         const val CHANNEL_ID_LOST = R.string.name_channel_lost_alarm
         const val DESCRIPTION_CHANNEL_LOST = R.string.description_channel_lost_alarm
-        const val REQUEST_CODE_NOTIFICATION_LOST = 1293
         const val ID_GROUP_LOST = "ID_GROUP_LOST"
     }
 

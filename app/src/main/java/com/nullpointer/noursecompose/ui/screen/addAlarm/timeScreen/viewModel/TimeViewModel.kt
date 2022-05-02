@@ -9,7 +9,6 @@ import com.nullpointer.noursecompose.core.delegates.SavableComposeState
 import com.nullpointer.noursecompose.core.utils.*
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
-import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.viewModel.DescriptionViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -104,7 +103,7 @@ class TimeViewModel @Inject constructor(
 
     private fun calculateNextAlarm() {
         // * get time now and add one minute of tolerance
-        val currentTime = getTimeNow() + DateUtils.MINUTE_IN_MILLIS
+        val currentTime = getTimeNow() + MINUTE_IN_MILLIS
         // * get time alarm
         val timeAlarmToday = timeInitAlarm
 

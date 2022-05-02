@@ -29,15 +29,11 @@ import com.nullpointer.noursecompose.ui.screen.destinations.AddAlarmScreenDestin
 import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
-import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import timber.log.Timber
 
 @OptIn(ExperimentalFoundationApi::class)
-@Destination(
-    start = true
-)
+@Destination(start = true)
 @Composable
 fun AlarmScreen(
     alarmViewModel: AlarmViewModel = hiltViewModel(),
@@ -47,7 +43,6 @@ fun AlarmScreen(
     val listAlarmState = alarmViewModel.listAlarm.collectAsState()
     val context = LocalContext.current
     val listState = rememberLazyGridState()
-    val (isShowDialog, changeShowDialog) = rememberSaveable { mutableStateOf(false) }
     val (alarmSelected, changeAlarmSelected) = rememberSaveable { mutableStateOf<Alarm?>(null) }
 
     Scaffold(
@@ -71,21 +66,18 @@ fun AlarmScreen(
             changeItemSelect = selectionViewModel::changeItemSelected,
             simpleClickAlarm = {
                 changeAlarmSelected(it)
-                changeShowDialog(true)
             })
     }
-    if (alarmSelected != null && isShowDialog) {
+    if (alarmSelected != null) {
         DialogDetails(
             alarm = alarmSelected,
             actionHiddenDialog = {
-                changeShowDialog(false)
                 changeAlarmSelected(null)
             },
             actionEditAlarm = { navigator.navigate(AddAlarmScreenDestination.invoke(it)) },
             deleterAlarm = {
                 alarmViewModel.deleterAlarm(it, context)
                 changeAlarmSelected(null)
-                changeShowDialog(false)
             }
         )
     }

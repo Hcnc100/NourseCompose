@@ -1,28 +1,21 @@
 package com.nullpointer.noursecompose.models.registry
 
+import androidx.annotation.StringRes
+import com.nullpointer.noursecompose.R
+
 
 enum class TypeRegistry(
-    val stringValue: String,
+    @StringRes
+    val title: Int,
+    @StringRes
+    val description:Int
 ) {
-    CREATE("Create"),
-    UPDATE("Update"),
-    DELETER("Deleter"),
-    REGISTRY("Registry Alarm"),
-    UNREGISTER("Unregister Alarm"),
-    RESTORE("Restore"),
-    ERROR_LAUNCH("Error launch"),
-    LAUNCH("Launch");
-
-    companion object {
-        fun myValueOf(value: String) = when (value) {
-            UPDATE.stringValue -> UPDATE
-            DELETER.stringValue -> DELETER
-            REGISTRY.stringValue -> REGISTRY
-            LAUNCH.stringValue -> LAUNCH
-            ERROR_LAUNCH.stringValue -> ERROR_LAUNCH
-            UNREGISTER.stringValue->UNREGISTER
-            RESTORE.stringValue->RESTORE
-            else -> CREATE
-        }
-    }
+    CREATE(R.string.title_create,R.string.description_create),
+    UPDATE(R.string.title_update,R.string.description_update),
+    DELETER(R.string.title_deleter,R.string.description_deleter),
+    REGISTRY(R.string.title_registry,R.string.description_registry),
+    UNREGISTER(R.string.title_unregistry_alarm,R.string.description_unregistry),
+    RESTORE(R.string.title_restore,R.string.description_restore),
+    ERROR_LAUNCH(R.string.title_error_lauch,R.string.description_error_launch),
+    LAUNCH(R.string.title_launch,R.string.description_launch)
 }

@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.nullpointer.noursecompose.models.ItemSelected
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.lang.Exception
 
@@ -24,6 +25,7 @@ data class Alarm(
     @PrimaryKey(autoGenerate = true)
     override val id: Long? = null
 ): ItemSelected, Parcelable {
+    @IgnoredOnParcel
     @Ignore
     override var isSelected: Boolean = false
 
@@ -41,7 +43,7 @@ data class Alarm(
 
     companion object{
         fun createAlarmRandom(): Alarm {
-         return Alarm(title = "Hola",)
+         return Alarm(title = "Hola")
         }
     }
 }

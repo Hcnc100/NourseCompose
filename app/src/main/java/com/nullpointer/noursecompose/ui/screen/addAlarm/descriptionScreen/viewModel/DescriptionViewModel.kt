@@ -4,8 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.delegates.SavableComposeState
-import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.viewModel.NameAndImgViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
