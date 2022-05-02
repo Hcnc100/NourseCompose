@@ -137,18 +137,6 @@ fun Context.getTimeString(@PluralsRes resource: Int, value: Number): String {
     return this.resources.getQuantityString(resource, value.toInt(), value.toInt())
 }
 
-fun Uri.toBitmap(context: Context): Bitmap? {
-    if (this == Uri.EMPTY) return null
-    return if (Build.VERSION.SDK_INT < 28) {
-        MediaStore.Images.Media.getBitmap(
-            context.contentResolver,
-            this
-        )
-    } else {
-        val source = ImageDecoder.createSource(context.contentResolver, this)
-        ImageDecoder.decodeBitmap(source)
-    }
-}
 
 fun BroadcastReceiver.myGoAsync(
     coroutineScope: CoroutineScope,
