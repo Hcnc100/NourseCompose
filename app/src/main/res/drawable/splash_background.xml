@@ -5,7 +5,7 @@
         android:drawable="@drawable/circle_background"
         android:gravity="center" />
     <item
-        android:drawable="@drawable/ic_salud"
+        android:drawable="@drawable/ic_launcher_foreground"
         android:gravity="center" />
 </layer-list>
 
