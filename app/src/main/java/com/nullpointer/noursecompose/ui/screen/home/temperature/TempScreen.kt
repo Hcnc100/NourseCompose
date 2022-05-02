@@ -55,18 +55,20 @@ fun TempScreen(
                 }
             )
         }
-    ){
+    ) {
         when {
-            listTempState == null -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            listTempState == null -> Box(modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
             listTempState.isEmpty() -> EmptyScreen(animation = R.raw.empty1,
-                textEmpty = "No hay medidas de temperatura")
-            listTempState.isNotEmpty() -> GraphAndTable(listMeasure = listTempState,
+                textEmpty = stringResource(R.string.message_empty_temp))
+            listTempState.isNotEmpty() -> GraphAndTable(
+                listMeasure = listTempState,
                 suffixMeasure = stringResource(id = R.string.suffix_temp),
                 nameMeasure = stringResource(id = R.string.name_temp),
-                minValue = SimpleMeasure.minValueTemp.toFloat(),
-                maxValues = SimpleMeasure.maxValueTemp.toFloat(),
+                minValue = MeasureType.OXYGEN.minValue,
+                maxValues = MeasureType.OXYGEN.maxValue,
                 isSelectedEnable = selectionViewModel.isSelectedEnable,
                 changeSelectState = selectionViewModel::changeItemSelected,
                 listState = listState,

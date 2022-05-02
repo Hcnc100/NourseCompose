@@ -1,4 +1,7 @@
 <resources>
+
+    <string name="app_name" translatable="false">NourseCompose</string>
+
     <!-- selection resource-->
     <plurals name="selected_items">
         <item quantity="one">Un elemento seleccionado</item>
@@ -8,9 +11,8 @@
         <item quantity="one">Un elemento eliminado</item>
         <item quantity="other">%d elementos eliminados</item>
     </plurals>
-
     <!-- time utils -->
-    <string name="error_value_repeat_invalid">Valor no válido</string>
+
     <plurals name="minutes">
         <item quantity="one">%d minuto</item>
         <item quantity="other">%d minutos</item>
@@ -32,8 +34,6 @@
     <string name="text_alarm_today">Hoy a las %s</string>
     <string name="text_alarm_other">a las %s</string>
 
-
-    <string name="app_name">NourseCompose</string>
     <!-- title nav bar -->
     <string name="title_nav_alarm">Alarmas</string>
     <string name="title_nav_oxygen">Oxígeno</string>
@@ -46,8 +46,8 @@
 
 
     <!-- dialog add measure -->
-    <string name="suffix_oxygen">%SPo2</string>
-    <string name="suffix_temp">°C</string>
+    <string name="suffix_oxygen" translatable="false">%SPo2</string>
+    <string name="suffix_temp" translatable="false">°C</string>
     <string name="name_oxygen">Oxígeno</string>
     <string name="name_temp">Temperatura</string>
     <string name="text_accept">Aceptar</string>
@@ -56,6 +56,9 @@
     <string name="message_error_measure">Verifique la medida</string>
 
     <!-- add new measure and selection -->
+    <string name="error_value_repeat_invalid">Valor no válido</string>
+    <string name="message_empty_measure_oxygen">No hay medidas de oxígeno</string>
+    <string name="message_empty_temp">No hay medidas de temperatura</string>
     <string name="description_add_oxygen">Agrega una nueva medida de oxígeno</string>
     <string name="description_add_temp">Agrega una nueva medida de temperatura</string>
     <string name="description_remove_oxygen">Elimina las medidas de oxígeno seleccionadas</string>
@@ -64,7 +67,7 @@
 
     <!-- add alarm screen -->
     <string name="title_new_alarm">Agrega una nueva alarma</string>
-    <string name="title_edit_alarm">Edita la alarma</string>
+    <string name="title_edit_alarm">Editar la alarma</string>
 
     <!-- select imager picker -->
     <string name="text_select_option">Seleccione una opción</string>
@@ -89,7 +92,7 @@
     <string name="label_description_alarm">Describe el recordatorio</string>
 
     <!-- repeat alarm screen -->
-    <string name="title_type_alarm">Como quieres que la alarma se repita</string>
+    <string name="title_type_alarm">¿Como quieres que la alarma se repita?</string>
 
 
     <!-- time alarm screen -->
@@ -97,8 +100,8 @@
     <string name="title_select_init_alarm">Selecciona la hora de la alarma</string>
     <string name="title_range_days">Rango de días</string>
     <string name="error_time_min_range">Debe seleccionar mínimo el rango de un día</string>
-    <string name="title_repeat_every">Repetir Cada</string>
-    <string name="title_next_alarm">Proxima alarma</string>
+    <string name="title_repeat_every">Repetir cada...</string>
+    <string name="title_next_alarm">Próxima alarma</string>
 
     <!-- dialog select time repeat -->
     <string name="text_repeater_every">Repetir cada</string>
@@ -130,12 +133,12 @@
     <string name="name_channel_alarms">Recordatorios</string>
     <string name="description_channel_alarm">Canal donde se muestran las notificaciones de las alarmas</string>
     <string name="name_channel_lost_alarm">Recordatorios perdidos</string>
-    <string name="description_channel_lost_alarm">Canal donde se muestran las alarmas perdidas</string>
+    <string name="description_channel_lost_alarm">Canal donde se muestran las alarmas pérdidas</string>
     <string name="name_action_stop_alarm">Descartar</string>
     <string name="title_group_alarm_pending">Tienes recordatorios pendientes</string>
     <string name="message_group_alarm_pending">%d recordatorios</string>
-    <string name="title_group_lost_alarm">Hay alarmas perdidas</string>
-    <string name="message_group_lost_alarm_pending">%d alarmas perdidas</string>
+    <string name="title_group_lost_alarm">Hay alarmas pérdidas</string>
+    <string name="message_group_lost_alarm_pending">%d alarmas pérdidas</string>
     <string name="title_notify_alarm">Es hora de tomar tu medicamento</string>
     <string name="title_notify_lost_alarm">Recordatorio Perdido</string>
     <string name="init_process_restart">Se inició el proceso de restauración de las alarmas</string>
@@ -152,22 +155,22 @@
     <string name="title_config_screen">Configuración</string>
     <string name="mini_title_type_alarm">Tipo de alarma</string>
     <string name="mini_title_sound_alarm">Sonido de la alarma</string>
-    <string name="title_sound_preview">Preview</string>
+    <string name="title_sound_preview" translatable="false">Preview</string>
     <string name="description_button_preview">Icono de Play si el audio está detenido o de stop si el audio se está reproduciendo</string>
     <string name="mini_title_sound">Sonido</string>
-    <string name="text_sound_defect">Default</string>
+    <string name="text_sound_defect" translatable="false">Default</string>
     <string name="text_sound_select">Sonido %d</string>
     <string name="description_drop_icon">Icono del menú desplegable</string>
 
     <!-- state alarm screen-->
     <string name="text_finish_alarm">Alarma finalizada</string>
     <string name="description_drop_up_icon">Icono que representa si se muestran los detalles o no</string>
-    <string name="title_lost_alarm">Lista de alarmas perdidas</string>
+    <string name="title_lost_alarm">Lista de alarmas pérdidas</string>
     <string name="title_list_alarm">Lista de alarmas actuales</string>
     <string name="text_no_take_one_more">No se recomienda tomar medicamentos a la misma hora, a menos que el doctor se lo indique</string>
 
     <!-- AlarmTypes -->
-    <string name="title_one_shot">Solo una vez</string>
+    <string name="title_one_shot">Sólo una vez</string>
     <string name="description_one_shot">La alarma sonará una vez y será desactivada</string>
     <string name="title_indef">Indefinidamente</string>
     <string name="description_indef">La alarma sonará cada cierto tiempo, hasta que se desactive explícitamente</string>

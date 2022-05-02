@@ -41,11 +41,11 @@ fun OxygenScreen(
     val (isShowDialog, changeVisibleDialog) = rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
-        floatingActionButton ={
+        floatingActionButton = {
             ButtonToggleAddRemove(
                 isVisible = !listState.isScrollInProgress,
                 isSelectedEnable = selectionViewModel.isSelectedEnable,
-                descriptionButtonAdd =  stringResource(id = R.string.description_add_oxygen),
+                descriptionButtonAdd = stringResource(id = R.string.description_add_oxygen),
                 actionAdd = { changeVisibleDialog(true) },
                 descriptionButtonRemove = stringResource(id = R.string.description_remove_oxygen),
                 actionRemove = {
@@ -57,17 +57,19 @@ fun OxygenScreen(
         }
     ) {
         when {
-            listOxygenState == null -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            listOxygenState == null -> Box(modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
             listOxygenState.isEmpty() -> EmptyScreen(animation = R.raw.empty2,
-                textEmpty = "No hay medidas de oxigeno")
+                textEmpty = stringResource(R.string.message_empty_measure_oxygen))
 
-            listOxygenState.isNotEmpty() -> GraphAndTable(listMeasure = listOxygenState,
+            listOxygenState.isNotEmpty() -> GraphAndTable(
+                listMeasure = listOxygenState,
                 suffixMeasure = stringResource(id = R.string.suffix_oxygen),
                 nameMeasure = stringResource(id = R.string.name_oxygen),
-                minValue = SimpleMeasure.minValueOxygen.toFloat(),
-                maxValues = SimpleMeasure.maxValueOxygen.toFloat(),
+                minValue = MeasureType.TEMPERATURE.minValue,
+                maxValues = MeasureType.TEMPERATURE.maxValue,
                 isSelectedEnable = selectionViewModel.isSelectedEnable,
                 changeSelectState = selectionViewModel::changeItemSelected,
                 listState = listState,

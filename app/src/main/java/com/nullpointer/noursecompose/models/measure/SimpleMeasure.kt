@@ -12,30 +12,18 @@ data class SimpleMeasure(
     val typeMeasure: MeasureType,
     val timestamp: Long = System.currentTimeMillis(),
     @PrimaryKey(autoGenerate = true)
-    override val id: Long?=null
-):ItemSelected {
+    override val id: Long? = null,
+) : ItemSelected {
 
     @Ignore
     override var isSelected: Boolean = false
 
 
     companion object {
-        const val minValueTemp = 36
-        const val maxValueTemp = 39
-
-        const val minValueOxygen = 90
-        const val maxValueOxygen = 100
-
         fun createFake(number: Int, typeMeasure: MeasureType): List<SimpleMeasure> {
-            val (minValue, maxValue) = when (typeMeasure) {
-                OXYGEN -> Pair(minValueOxygen, maxValueOxygen)
-                TEMPERATURE -> Pair(minValueTemp, maxValueTemp)
-            }
-            val rangeInt = minValue..maxValue
-            val rangeFloat = 0..100
             return (0..number).map {
                 SimpleMeasure(
-                    value = "${rangeInt.random()}.${rangeFloat.random()}".toFloat(),
+                    value = typeMeasure.getRandomValue(),
                     typeMeasure = typeMeasure,
                     id = it.toLong()
                 )
