@@ -1,14 +1,12 @@
 package com.nullpointer.noursecompose.core.utils
 
 import android.app.Activity
+import android.app.KeyguardManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.net.Uri
 import android.os.Build
-import android.provider.MediaStore
 import android.text.format.DateFormat
 import android.view.WindowManager
 import androidx.annotation.PluralsRes
@@ -19,9 +17,6 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import android.app.KeyguardManager
-import android.app.PendingIntent
-import kotlinx.coroutines.Job
 
 
 // for mutable list

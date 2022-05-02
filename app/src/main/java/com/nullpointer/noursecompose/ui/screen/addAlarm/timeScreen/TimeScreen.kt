@@ -8,6 +8,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import com.nullpointer.noursecompose.core.utils.toFormatOnlyTime
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import com.nullpointer.noursecompose.ui.dialogs.DialogSelectHour
 import com.nullpointer.noursecompose.ui.dialogs.DialogDate
+import com.nullpointer.noursecompose.ui.dialogs.DialogDate.Companion.showTimePicker
 import com.nullpointer.noursecompose.ui.screen.addAlarm.ContentPage
 import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.viewModel.TimeViewModel
 
@@ -33,6 +35,11 @@ fun TimeScreen(
     val context = LocalContext.current
     val (isShowRepeatDialog, changeIsShowRepeatTimeDialog) = rememberSaveable {
         mutableStateOf(false)
+    }
+
+    val timePicker = remember {
+        showTimePicker(activity = context,
+            updatedDate = timeViewModel::changeTimeInitAlarm)
     }
 
     ContentPage(title = stringResource(R.string.title_select_init_alarm)) {
@@ -46,9 +53,12 @@ fun TimeScreen(
                 TextCenterValue(
                     textValue = timeViewModel.timeInitAlarm.toFormatOnlyTime(context),
                     actionClick = {
-                        DialogDate.showTimePicker(
-                            context as AppCompatActivity,
-                            timeViewModel::changeTimeInitAlarm)
+                        if (timePicker.isAdded) {
+                            timePicker.dismiss()
+                        } else {
+                            timePicker.show((context as AppCompatActivity).supportFragmentManager,
+                                timePicker.toString())
+                        }
                     })
             }
 
@@ -69,7 +79,7 @@ fun TimeScreen(
             }
 
 
-            if (timeViewModel.typeAlarm == AlarmTypes.RANGE){
+            if (timeViewModel.typeAlarm == AlarmTypes.RANGE) {
                 Spacer(modifier = Modifier.height(30.dp))
                 Column {
                     TextMiniTitle(textTitle = stringResource(R.string.title_range_days))

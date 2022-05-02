@@ -1,5 +1,6 @@
 package com.nullpointer.noursecompose.ui.dialogs
 
+import android.content.Context
 import android.text.format.DateFormat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.component1
@@ -65,7 +66,10 @@ class DialogDate {
             }
         }
 
-        fun showTimePicker(activity: AppCompatActivity, updatedDate: (Long) -> Unit) {
+        fun showTimePicker(
+            activity: Context,
+            updatedDate: (Long) -> Unit,
+        ): MaterialTimePicker {
             val picker = MaterialTimePicker.Builder()
                 .setTitleText(activity.getString(R.string.title_hour_of_alarm))
                 .apply {
@@ -80,12 +84,13 @@ class DialogDate {
                     setHour(hour)
                     setMinute(minutes)
                 }.build()
-            picker.show(activity.supportFragmentManager, picker.toString())
+
             picker.addOnPositiveButtonClickListener {
                 // * get time change
                 val timeInMillis = setHourAndMinutesToday(picker.hour, picker.minute)
                 updatedDate(timeInMillis)
             }
+            return picker
         }
     }
 
