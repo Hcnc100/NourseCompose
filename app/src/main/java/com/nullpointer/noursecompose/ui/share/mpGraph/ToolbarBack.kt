@@ -55,16 +55,16 @@ fun SelectionMenuToolbar(
                     onDismissRequest = { changeVisibleMenu(false) }
                 ) {
                     DropdownMenuItem(onClick = goToRegistry) {
-                        Text(text = "Ver los registros")
+                        Text(text = stringResource(R.string.option_logs))
                     }
                     DropdownMenuItem(onClick = goToConfig) {
-                        Text(text = "Ir a la configuracion")
+                        Text(text = stringResource(R.string.option_config))
                     }
                     DropdownMenuItem(onClick = {
                         reInitAlarms()
                         changeVisibleMenu(false)
                     }) {
-                        Text(text = "Reinicar alarmas activas")
+                        Text(text = stringResource(R.string.option_re_init_alarm))
                     }
                 }
             }

@@ -30,7 +30,7 @@
     </plurals>
 
     <string name="text_alarm_tomorrow">Tomorrow at %s</string>
-    <string name="text_alarm_today">Today at 8</string>
+    <string name="text_alarm_today">Today at %s</string>
     <string name="text_alarm_other">at %s</string>
     <string name="error_value_repeat_invalid">Invalid value</string>
     <string name="title_nav_alarm">Alarms</string>
@@ -158,4 +158,13 @@
     <string name="description_deleter_registry">Deleter all logs</string>
     <string name="text_empty_registry">There are no logs saved</string>
     <string name="message_alarm_deleter">The alarm was removed</string>
+
+    <!-- options menu -->
+    <string name="option_logs">See the logs</string>
+    <string name="option_config">Go to settings</string>
+    <string name="option_re_init_alarm">Reset active alarms</string>
+
+    <!-- graph measure -->
+    <string name="text_graph_min_value">Recommended minimum value</string>
+    <string name="text_graph_max_value">Recommended maximum value</string>
 </resources>

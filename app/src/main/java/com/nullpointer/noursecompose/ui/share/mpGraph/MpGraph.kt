@@ -46,10 +46,12 @@ fun MpGraphAndroid(
         factory = { context ->
             LineChart(context).apply {
                 setupGraph(this)
-                drawLimits(this,
+                drawLimits(
+                    lineChart = this,
                     minValue = minValue,
                     maxValue = maxValue,
-                    colorText = textColor
+                    colorText = textColor,
+                    context = context
                 )
             }
         },
@@ -57,25 +59,30 @@ fun MpGraphAndroid(
 }
 
 
-fun drawLimits(lineChart: LineChart, minValue: Float, maxValue: Float, colorText: Int) =
-    with(lineChart) {
-        // * draw limit lower
-        LimitLine(minValue, "Valor minimo recomentado").apply {
-            enableDashedLine(10f, 15f, 0f)
-            lineWidth = 2f
-        }.also {
-            axisLeft.addLimitLine(it)
-            it.textColor = colorText
-        }
-        // * draw limit upper
-        LimitLine(maxValue, "Valor maximo recomentado").apply {
-            enableDashedLine(10f, 15f, 0f)
-            lineWidth = 2f
-        }.also {
-            axisLeft.addLimitLine(it)
-            it.textColor = colorText
-        }
+fun drawLimits(
+    context: Context,
+    lineChart: LineChart,
+    minValue: Float,
+    maxValue: Float,
+    colorText: Int,
+) = with(lineChart) {
+    // * draw limit lower
+    LimitLine(minValue, context.getString(R.string.text_graph_min_value)).apply {
+        enableDashedLine(10f, 15f, 0f)
+        lineWidth = 2f
+    }.also {
+        axisLeft.addLimitLine(it)
+        it.textColor = colorText
     }
+    // * draw limit upper
+    LimitLine(maxValue, context.getString(R.string.text_graph_max_value)).apply {
+        enableDashedLine(10f, 15f, 0f)
+        lineWidth = 2f
+    }.also {
+        axisLeft.addLimitLine(it)
+        it.textColor = colorText
+    }
+}
 
 
 fun setupGraph(graph: LineChart) = with(graph) {

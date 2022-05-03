@@ -47,6 +47,8 @@ class TimeViewModel @Inject constructor(
 
     private var isInit: Boolean by SavableComposeState(state, KEY_VM_TIME_INIT, false)
 
+    val timeRepeatIsValid get() = timeToRepeatAlarm!=0L
+
     init {
         calculateNextAlarm()
     }
@@ -83,6 +85,7 @@ class TimeViewModel @Inject constructor(
 
     fun changeType(newType: AlarmTypes) {
         typeAlarm = newType
+        timeToRepeatAlarm = 8 * DateUtils.HOUR_IN_MILLIS
         if (newType == AlarmTypes.RANGE) {
             val firstTime = getFirstTimeDay()
             rangeAlarm = Pair(firstTime, firstTime + DateUtils.WEEK_IN_MILLIS)

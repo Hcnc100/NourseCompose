@@ -114,7 +114,10 @@ fun AddAlarmScreen(
                         }
                         2 -> changePage(+1)
                         3 -> {
-                            if (timeViewModel.typeAlarm != AlarmTypes.RANGE || timeViewModel.typeAlarm == AlarmTypes.RANGE && !timeViewModel.hasErrorRange) {
+                            if (timeViewModel.typeAlarm == AlarmTypes.ONE_SHOT ||
+                                timeViewModel.typeAlarm == AlarmTypes.INDEFINITELY && timeViewModel.timeRepeatIsValid ||
+                                timeViewModel.typeAlarm == AlarmTypes.RANGE && timeViewModel.timeRepeatIsValid && !timeViewModel.hasErrorRange
+                            ) {
                                 val (timeInit, timeFinish) = if (timeViewModel.typeAlarm == AlarmTypes.RANGE) {
                                     timeViewModel.rangeAlarm
                                 } else {
