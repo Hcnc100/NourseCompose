@@ -11,8 +11,6 @@
 
     <style name="NourseCompose" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:statusBarColor">@color/purple_700</item>
-
-
     </style>
 
     <style name="NourseCompose.FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">

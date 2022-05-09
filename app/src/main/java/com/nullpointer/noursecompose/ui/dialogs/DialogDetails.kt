@@ -21,7 +21,7 @@ import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 fun DialogDetails(
     actionHiddenDialog: () -> Unit,
     actionEditAlarm: (Alarm) -> Unit,
-    deleterAlarm:(Alarm)->Unit,
+    deleterAlarm: (Alarm) -> Unit,
     alarm: Alarm,
 ) {
     AlertDialog(
@@ -34,7 +34,7 @@ fun DialogDetails(
                 .fillMaxWidth()
                 .padding(vertical = 5.dp, horizontal = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween) {
-                FloatingActionButton(onClick = {deleterAlarm(alarm)},
+                FloatingActionButton(onClick = { deleterAlarm(alarm) },
                     backgroundColor = MaterialTheme.colors.error,
                     modifier = Modifier.size(45.dp)) {
                     Icon(imageVector = Icons.Default.Delete, contentDescription = "")
@@ -74,7 +74,7 @@ fun BodyDialogDetails(alarm: Alarm) {
         if (alarm.message.isNotEmpty()) {
             Text(text = stringResource(R.string.sub_title_description_alarm) + " ${alarm.message}")
         }
-        Text(text = stringResource(R.string.sub_title_type_alarm) + " ${alarm.typeAlarm.title}")
+        Text(text = stringResource(R.string.sub_title_type_alarm) + " ${context.getString(alarm.typeAlarm.title)}")
         alarm.nextAlarm?.let {
             Text(text = stringResource(id = R.string.sub_title_next_alarm))
             Text(text = alarm.nextAlarm.toFormat(context, true))
