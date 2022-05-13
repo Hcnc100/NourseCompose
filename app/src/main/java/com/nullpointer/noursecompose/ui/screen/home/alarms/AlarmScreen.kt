@@ -44,7 +44,6 @@ fun AlarmScreen(
     val context = LocalContext.current
     val listState = rememberLazyGridState()
     val (alarmSelected, changeAlarmSelected) = rememberSaveable { mutableStateOf<Alarm?>(null) }
-
     Scaffold(
         floatingActionButton = {
             ButtonToggleAddRemove(isVisible = !listState.isScrollInProgress,
