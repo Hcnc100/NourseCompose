@@ -9,11 +9,18 @@ import com.nullpointer.noursecompose.models.notify.TypeNotify
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class Preferences(private val context: Context) {
-    private val Context.dataStore by preferencesDataStore(name = "settings")
+class MyDataStore(
+    private val context: Context,
+) {
+    companion object {
+        private const val NAME_PREFERENCES = "settings"
+        private const val KEY_TYPE_NOTIFY = "KEY_TYPE_NOTIFY"
+        private const val KEY_INT_SOUND = "KEY_INT_SOUND"
+    }
 
-    private val typeNotifyKey = stringPreferencesKey("TYPE_NOTIFY")
-    private val intSoundKey = intPreferencesKey("KEY_SOUND")
+    private val Context.dataStore by preferencesDataStore(name = NAME_PREFERENCES)
+    private val typeNotifyKey = stringPreferencesKey(KEY_TYPE_NOTIFY)
+    private val intSoundKey = intPreferencesKey(KEY_INT_SOUND)
 
     val typeNotifyFlow: Flow<TypeNotify> = context.dataStore.data.map { preferences ->
         val name = preferences[typeNotifyKey]
@@ -21,7 +28,7 @@ class Preferences(private val context: Context) {
     }
 
     val intSoundFlow: Flow<Int> = context.dataStore.data.map { preferences ->
-        preferences[intSoundKey]?:-1
+        preferences[intSoundKey] ?: -1
     }
 
     suspend fun changeTypeNotify(type: TypeNotify) {
@@ -30,7 +37,7 @@ class Preferences(private val context: Context) {
         }
     }
 
-    suspend fun changeSound(intSound:Int) {
+    suspend fun changeSound(intSound: Int) {
         context.dataStore.edit { settings ->
             settings[intSoundKey] = intSound
         }

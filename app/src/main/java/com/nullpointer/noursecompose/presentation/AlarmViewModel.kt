@@ -24,8 +24,10 @@ class AlarmViewModel @Inject constructor(
     private val alarmRepo: AlarmRepoImpl,
 ) : ViewModel() {
 
-    val listAlarm = alarmRepo.getAllAlarms().catch {
+
+    val listAlarm = alarmRepo.listAlarms.catch {
         Timber.e("Error al cargar las alarmas de la base de datos $it")
+        emit(emptyList())
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5_000),

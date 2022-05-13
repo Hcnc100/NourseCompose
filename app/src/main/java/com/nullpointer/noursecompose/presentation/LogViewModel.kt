@@ -18,7 +18,7 @@ class LogViewModel @Inject constructor(
     private val registryRepoImpl: RegistryRepoImpl,
 ) : ViewModel() {
 
-    val listLogs = registryRepoImpl.getAllRegistry().catch {
+    val listLogs = registryRepoImpl.listLogs.catch {
         Timber.e("Error al obtener los logs de la base de datos")
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
@@ -27,6 +27,6 @@ class LogViewModel @Inject constructor(
     )
 
     fun deleterAllRegistry() = viewModelScope.launch(Dispatchers.IO) {
-        registryRepoImpl.deleterAllAlarm()
+        registryRepoImpl.deleterAllLogs()
     }
 }

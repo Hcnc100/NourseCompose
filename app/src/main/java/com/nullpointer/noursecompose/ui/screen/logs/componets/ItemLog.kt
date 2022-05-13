@@ -14,12 +14,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.toFormat
-import com.nullpointer.noursecompose.models.registry.Registry
+import com.nullpointer.noursecompose.models.registry.Log
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ItemLog(
-    registry: Registry,
+    registry: Log,
     actionClick: (Long) -> Unit,
 ) {
     val context = LocalContext.current

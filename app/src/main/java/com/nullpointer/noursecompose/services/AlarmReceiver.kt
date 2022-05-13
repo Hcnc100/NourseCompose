@@ -11,7 +11,7 @@ import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
 import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
-import com.nullpointer.noursecompose.models.registry.Registry
+import com.nullpointer.noursecompose.models.registry.Log
 import com.nullpointer.noursecompose.models.registry.TypeRegistry
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -65,11 +65,11 @@ class AlarmReceiver : BroadcastReceiver() {
             SoundServices.startServices(context, alarm)
 
             // * registry launch
-            alarmRepository.addNewRegistry(Registry(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
+            alarmRepository.addNewLog(Log(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
             updateAlarm(alarm, currentTime, context)
         } else {
             // * registry error
-            alarmRepository.addNewRegistry(Registry(idAlarm = idAlarm,
+            alarmRepository.addNewLog(Log(idAlarm = idAlarm,
                 type = TypeRegistry.ERROR_LAUNCH))
             Timber.e("Alarm id non found $idAlarm")
         }
@@ -112,7 +112,7 @@ class AlarmReceiver : BroadcastReceiver() {
             val alarmsActive = alarmRepository.getAllAlarmActive()
             val currentTime = getTimeNow()
             alarmsActive.forEach { alarm ->
-                if (currentTime > alarm.nextAlarm ?: 0) {
+                if (currentTime > (alarm.nextAlarm ?: 0)) {
                     // * notify in group that alarm is lost
                     listAlarmLost.add(alarm)
                     updateAlarm(alarm, currentTime, context)

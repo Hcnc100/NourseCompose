@@ -5,8 +5,8 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.nullpointer.noursecompose.models.ItemSelected
 
-@Entity(tableName = "registry_table")
-data class Registry(
+@Entity(tableName = "logs_table")
+data class Log(
     val type: TypeRegistry=TypeRegistry.CREATE,
     val idAlarm: Long=0,
     val timestamp: Long = System.currentTimeMillis(),

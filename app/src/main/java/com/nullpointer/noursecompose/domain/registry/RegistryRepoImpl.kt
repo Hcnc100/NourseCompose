@@ -1,18 +1,19 @@
 package com.nullpointer.noursecompose.domain.registry
 
-import com.nullpointer.noursecompose.data.local.room.daos.RegistryDAO
-import com.nullpointer.noursecompose.models.registry.Registry
+import com.nullpointer.noursecompose.data.local.datasource.logs.LogsDataSource
+import com.nullpointer.noursecompose.models.registry.Log
 import kotlinx.coroutines.flow.Flow
 
 class RegistryRepoImpl(
-    private val registryDAO: RegistryDAO,
+    private val logsDataSource: LogsDataSource
 ) : RegistryRepository {
-    override fun getAllRegistry(): Flow<List<Registry>> =
-        registryDAO.getAllRegistry()
+    override val listLogs: Flow<List<Log>> =
+        logsDataSource.listLogs
 
-    override suspend fun removeRegistry(registry: Registry) =
-        registryDAO.deleterRegistry(registry)
+    override suspend fun removeLog(log: Log) =
+        logsDataSource.deleterLog(log)
 
-    override suspend fun deleterAllAlarm() =
-        registryDAO.deleterAllRegistry()
+    override suspend fun deleterAllLogs() =
+        logsDataSource.deleterAllLog()
+
 }

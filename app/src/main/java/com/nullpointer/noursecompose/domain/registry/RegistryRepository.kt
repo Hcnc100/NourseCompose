@@ -1,10 +1,10 @@
 package com.nullpointer.noursecompose.domain.registry
 
-import com.nullpointer.noursecompose.models.registry.Registry
+import com.nullpointer.noursecompose.models.registry.Log
 import kotlinx.coroutines.flow.Flow
 
 interface RegistryRepository {
-     fun getAllRegistry(): Flow<List<Registry>>
-    suspend fun removeRegistry(registry: Registry)
-    suspend fun deleterAllAlarm()
+    val listLogs: Flow<List<Log>>
+    suspend fun removeLog(log: Log)
+    suspend fun deleterAllLogs()
 }

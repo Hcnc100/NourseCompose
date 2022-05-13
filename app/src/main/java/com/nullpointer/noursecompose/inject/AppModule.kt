@@ -2,11 +2,12 @@ package com.nullpointer.noursecompose.inject
 
 import android.content.Context
 import androidx.room.Room
-import com.nullpointer.noursecompose.data.local.pref.Preferences
+import com.nullpointer.noursecompose.data.local.datasource.pref.PrefDataSource
+import com.nullpointer.noursecompose.data.local.pref.MyDataStore
 import com.nullpointer.noursecompose.data.local.room.NurseDatabase
 import com.nullpointer.noursecompose.data.local.room.daos.AlarmDAO
 import com.nullpointer.noursecompose.data.local.room.daos.MeasureDAO
-import com.nullpointer.noursecompose.data.local.room.daos.RegistryDAO
+import com.nullpointer.noursecompose.data.local.room.daos.LogsDAO
 import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
 import com.nullpointer.noursecompose.domain.measure.MeasureRepoImpl
 import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
@@ -35,54 +36,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providerAlarmDAO(database: NurseDatabase): AlarmDAO =
-        database.getAlarmDAO()
-
-    @Provides
-    @Singleton
-    fun provideRegistryDAO(database: NurseDatabase): RegistryDAO =
-        database.getRegistryDao()
-
-    @Provides
-    @Singleton
-    fun provideMeasureDAO(database: NurseDatabase): MeasureDAO =
-        database.getMeasureDAO()
-
-    @Provides
-    @Singleton
-    fun provideMeasureRepository(
-        measureDAO: MeasureDAO
-    ):MeasureRepoImpl = MeasureRepoImpl(measureDAO)
-
-    @Provides
-    @Singleton
-    fun provideRegistryRepository(
-        registryDAO: RegistryDAO
-    ):RegistryRepoImpl =RegistryRepoImpl(registryDAO)
-
-
-    @Provides
-    @Singleton
-    fun providerAlarmRepository(
-        alarmDAO: AlarmDAO,
-        registryDAO: RegistryDAO
-    ): AlarmRepoImpl = AlarmRepoImpl(alarmDAO, registryDAO)
-
-    @Provides
-    @Singleton
-    fun providerPreferences(
-        @ApplicationContext context: Context
-    )=Preferences(context)
-
-    @Provides
-    @Singleton
-    fun providePreferenceRepository(
-        preferences: Preferences
-    ):PrefRepoImpl= PrefRepoImpl(preferences)
-
-    @Provides
-    @Singleton
     fun provideNotifyHelper(
-        @ApplicationContext context:Context
-    ): NotificationHelper=NotificationHelper(context)
+        @ApplicationContext context: Context,
+    ): NotificationHelper = NotificationHelper(context)
+
 }

@@ -19,7 +19,7 @@ class MeasureViewModel @Inject constructor(
     private val measureRepo: MeasureRepoImpl,
 ) : ViewModel() {
 
-    val listOxygen = measureRepo.getListOxygen().catch {
+    val listOxygen = measureRepo.listOxygen.catch {
         Timber.e("Error al obtener la lista de oxigeno $it")
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
@@ -27,7 +27,7 @@ class MeasureViewModel @Inject constructor(
         null
     )
 
-    val listTemp = measureRepo.getListTemp().catch {
+    val listTemp = measureRepo.listTemp.catch {
         Timber.e("Error al obtener la lista de temp $it")
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
