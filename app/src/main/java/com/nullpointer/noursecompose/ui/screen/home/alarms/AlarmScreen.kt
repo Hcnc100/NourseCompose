@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.rememberLazyGridState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,6 +32,7 @@ import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
 import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalFoundationApi::class)
 @Destination(start = true)
@@ -44,6 +46,15 @@ fun AlarmScreen(
     val context = LocalContext.current
     val listState = rememberLazyGridState()
     val (alarmSelected, changeAlarmSelected) = rememberSaveable { mutableStateOf<Alarm?>(null) }
+
+    LaunchedEffect(key1 = Unit) {
+        alarmViewModel.listAlarm.first { it != null }.let { list ->
+            if (!list.isNullOrEmpty()) {
+                selectionViewModel.reselectedItemSelected(list)
+            }
+        }
+    }
+
     Scaffold(
         floatingActionButton = {
             ButtonToggleAddRemove(isVisible = !listState.isScrollInProgress,
@@ -116,6 +127,4 @@ fun ListAlarm(
                 }
             }
     }
-
-
 }

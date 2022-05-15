@@ -15,32 +15,44 @@ class SelectionViewModel @Inject constructor(
         private const val KEY_LIST_SELECTION = "KEY_LIST_SELECTION"
     }
 
-    private var listMeasureSelected: List<ItemSelected> by SavableComposeState(
+    private var listIdsItemsSelected: List<Long> by SavableComposeState(
         stateHandle,
         KEY_LIST_SELECTION,
         emptyList())
 
-    val isSelectedEnable get() = listMeasureSelected.isNotEmpty()
-    val numberSelection get() = listMeasureSelected.size
+    private val listItemSelected = mutableListOf<ItemSelected>()
+
+    val isSelectedEnable get() = listIdsItemsSelected.isNotEmpty()
+    val numberSelection get() = listIdsItemsSelected.size
 
     fun changeItemSelected(item: ItemSelected) {
-        listMeasureSelected = if (listMeasureSelected.contains(item)) {
+        listIdsItemsSelected = if (listIdsItemsSelected.contains(item.id)) {
             item.isSelected = false
-            listMeasureSelected - item
+            listItemSelected.remove(item)
+            listIdsItemsSelected - item.id!!
         } else {
             item.isSelected = true
-            listMeasureSelected + item
+            listItemSelected.add(item)
+            listIdsItemsSelected + item.id!!
         }
     }
 
-    fun getListSelectionAndClear():List<Long>{
-        val listIdMeasure=listMeasureSelected.map { it.id!! }
+    fun reselectedItemSelected(listItems: List<ItemSelected>) {
+        listItems.filter { listIdsItemsSelected.contains(it.id) }
+            .onEach { it.isSelected = true }.let {
+                listItemSelected.addAll(it)
+            }
+    }
+
+    fun getListSelectionAndClear(): List<Long> {
+        val listIdMeasure = listOf(*listIdsItemsSelected.toTypedArray())
         clearSelection()
         return listIdMeasure
     }
 
     fun clearSelection() {
-        listMeasureSelected.forEach { it.isSelected = false }
-        listMeasureSelected = emptyList()
+        listItemSelected.forEach { it.isSelected = false }
+        listItemSelected.clear()
+        listIdsItemsSelected = emptyList()
     }
 }
