@@ -28,6 +28,7 @@ fun GraphAndTable(
     isSelectedEnable: Boolean,
     changeSelectState: (ItemSelected) -> Unit,
     listState: LazyGridState,
+    modifier: Modifier = Modifier
 ) {
 
     when (LocalConfiguration.current.orientation) {

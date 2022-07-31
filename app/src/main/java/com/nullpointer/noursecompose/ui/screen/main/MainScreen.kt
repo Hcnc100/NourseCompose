@@ -8,10 +8,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.HomeDestinations
 import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
@@ -29,11 +31,17 @@ import com.ramcosta.composedestinations.navigation.navigate
 @Composable
 fun MainScreen(
     actionRootDestinations: ActionRootDestinations,
+    selectViewModel: SelectionViewModel = hiltViewModel(),
     mainScreenState: MainScreenState = rememberMainScreenState()
 ) {
     Scaffold(
         topBar = { SimpleToolbar(title = stringResource(id = R.string.app_name)) },
-        bottomBar = { MainButtonNavigation(navController = mainScreenState.navController) }
+        bottomBar = {
+            MainButtonNavigation(
+                navController = mainScreenState.navController,
+                actionClear = selectViewModel::clearSelection
+            )
+        }
     ) { innerPadding ->
         DestinationsNavHost(
             modifier = Modifier.padding(innerPadding),
@@ -41,7 +49,10 @@ fun MainScreen(
             engine = mainScreenState.navHostEngine,
             navGraph = NavGraphs.home,
             startRoute = NavGraphs.home.startRoute,
-            dependenciesContainerBuilder = { dependency(actionRootDestinations) }
+            dependenciesContainerBuilder = {
+                dependency(actionRootDestinations)
+                dependency(selectViewModel)
+            }
         )
     }
 }
@@ -49,6 +60,7 @@ fun MainScreen(
 @Composable
 private fun MainButtonNavigation(
     navController: NavController,
+    actionClear: () -> Unit
 ) {
     val currentDestination = navController.currentBackStackEntryAsState()
         .value?.destination
@@ -57,6 +69,7 @@ private fun MainButtonNavigation(
             BottomNavigationItem(
                 selected = currentDestination?.route == destination.direction.route,
                 onClick = {
+                    if (currentDestination?.route != destination.direction.route) actionClear()
                     navController.navigate(destination.direction) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true

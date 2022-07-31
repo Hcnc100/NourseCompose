@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.nullpointer.noursecompose.models.ItemSelected
-import com.nullpointer.noursecompose.models.measure.MeasureType.*
 
 @Entity(tableName = "measure_table")
 data class SimpleMeasure(
@@ -12,7 +11,7 @@ data class SimpleMeasure(
     val typeMeasure: MeasureType,
     val timestamp: Long = System.currentTimeMillis(),
     @PrimaryKey(autoGenerate = true)
-    override val id: Long? = null,
+    override val id: Long = 0,
 ) : ItemSelected {
 
     @Ignore

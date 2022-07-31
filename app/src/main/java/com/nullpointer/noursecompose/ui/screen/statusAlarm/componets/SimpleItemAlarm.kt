@@ -25,8 +25,8 @@ import com.nullpointer.noursecompose.models.alarm.Alarm
 fun SimpleItemAlarm(
     alarm: Alarm,
 ) {
-    val context = LocalContext.current
-    val image = remember { alarm.nameFile?.let { ImageUtils.loadImageFromStorage(it, context) } }
+//    val context = LocalContext.current
+//    val image = remember { alarm.nameFile?.let { ImageUtils.loadImageFromStorage(it, context) } }
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     Card(onClick = { isExpanded = !isExpanded },
@@ -39,33 +39,33 @@ fun SimpleItemAlarm(
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = alarm.title,
+                    Text(text = alarm.name,
                         Modifier
                             .weight(2f)
                             .padding(horizontal = 20.dp),
                         style = MaterialTheme.typography.body1,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 2)
-                    if (alarm.nameFile != null) {
+//                    if (alarm.nameFile != null) {
 //                        ImageAlarm(contentDescription = stringResource(id = R.string.description_img_alarm),
 //                            modifier = Modifier
 //                                .weight(1f)
 //                                .height(100.dp), bitmap = image)
-                    }
+//                    }
                 }
                 if (isExpanded) {
                     Column(modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp)) {
-                        if (alarm.message.isNotEmpty()) {
+                        if (alarm.description.isNotEmpty()) {
                             RowInfo(description = stringResource(id = R.string.sub_title_description_alarm),
-                                info = alarm.message)
+                                info = alarm.description)
                         }
                         RowInfo(description = stringResource(id = R.string.mini_title_type_alarm),
                             info = stringResource(id = alarm.typeAlarm.title))
-                        RowInfo(description = stringResource(id = R.string.sub_title_next_alarm),
-                            info = alarm.nextAlarm?.toFormat(context)
-                                ?: stringResource(R.string.text_finish_alarm))
+//                        RowInfo(description = stringResource(id = R.string.sub_title_next_alarm),
+//                            info = alarm.nextAlarm?.toFormat(context)
+//                                ?: stringResource(R.string.text_finish_alarm))
                     }
                 }
             }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
@@ -21,7 +20,6 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.nullpointer.noursecompose.R
-import com.nullpointer.noursecompose.core.delegates.PropertySavableImg
 import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
 import com.nullpointer.noursecompose.ui.share.EditableTextSavable
 import com.nullpointer.noursecompose.ui.states.AddAlarmScreenState
@@ -75,7 +73,7 @@ fun NameAndImgScreen(
 
 @Composable
 private fun ImageAlarm(
-    imageFile: PropertySavableImg,
+    imageFile: String?,
     modifier: Modifier = Modifier,
     actionEdit: () -> Unit
 ) {
@@ -87,7 +85,7 @@ private fun ImageAlarm(
     Card(modifier = modifier, shape = RoundedCornerShape(10.dp)) {
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
-                painter = if (imageFile.currentPath == null) painterResource(id = R.drawable.ic_image) else painter,
+                painter = if (imageFile == null) painterResource(id = R.drawable.ic_image) else painter,
                 modifier = Modifier.fillMaxSize(),
                 contentDescription = stringResource(id = R.string.description_img_alarm),
                 contentScale = if (painter.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.Fit

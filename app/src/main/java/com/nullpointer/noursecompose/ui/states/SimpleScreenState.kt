@@ -12,16 +12,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 
 open class SimpleScreenState(
     val scaffoldState: ScaffoldState,
-    val context: Context,
-    private val focusManager: FocusManager
+    val context: Context
 ) {
     suspend fun showSnackMessage(@StringRes stringRes: Int) {
         scaffoldState.snackbarHostState.showSnackbar(
             context.getString(stringRes)
         )
     }
-
-    fun hiddenKeyBoard() = focusManager.clearFocus()
 }
 
 @Composable
@@ -30,5 +27,5 @@ fun rememberSimpleScreenState(
     context: Context = LocalContext.current,
     focusManager: FocusManager = LocalFocusManager.current
 ) = remember(scaffoldState) {
-    SimpleScreenState(scaffoldState, context, focusManager)
+    SimpleScreenState(scaffoldState, context)
 }

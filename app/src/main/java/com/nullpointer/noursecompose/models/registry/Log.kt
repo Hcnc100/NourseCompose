@@ -11,7 +11,7 @@ data class Log(
     val idAlarm: Long=0,
     val timestamp: Long = System.currentTimeMillis(),
     @PrimaryKey(autoGenerate = true)
-    override val id: Long? = null,
+    override val id: Long=0,
 ):ItemSelected{
     @Ignore
     override var isSelected: Boolean = false

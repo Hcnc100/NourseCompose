@@ -12,18 +12,18 @@ import java.lang.Exception
 @Parcelize
 @Entity(tableName = "alarms_table")
 data class Alarm(
-    val title: String = "",
+    val name: String = "",
+    val description: String = "",
     val typeAlarm: AlarmTypes = AlarmTypes.ONE_SHOT,
     val nextAlarm: Long? = null,
-    val message: String = "",
-    val createdAt: Long = System.currentTimeMillis(),
-    val isActive: Boolean = true,
-    val nameFile: String? = null,
+    val pathFile: String? = null,
     val repeaterEvery: Long? = null,
     val rangeInitAlarm: Long? = null,
     val rangeFinishAlarm: Long? = null,
+    val createdAt: Long = System.currentTimeMillis(),
+    val isActive: Boolean = true,
     @PrimaryKey(autoGenerate = true)
-    override val id: Long? = null
+    override val id: Long=0
 ): ItemSelected, Parcelable {
     @IgnoredOnParcel
     @Ignore
@@ -43,7 +43,7 @@ data class Alarm(
 
     companion object{
         fun createAlarmRandom(): Alarm {
-         return Alarm(title = "Hola")
+         return Alarm(name = "Hola")
         }
     }
 }

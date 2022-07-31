@@ -11,7 +11,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -63,21 +62,21 @@ class AlarmScreen : AppCompatActivity() {
                                 .verticalScroll(rememberScrollState()),
                                 horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(stringResource(id = R.string.title_notify_alarm))
-                                Text(alarm.title,
+                                Text(alarm.name,
                                     style = MaterialTheme.typography.h5,
                                     modifier = Modifier.padding(vertical = 10.dp))
 
-                                if (alarm.nameFile == null) {
-                                    LottieContainer(modifier = Modifier.size(250.dp),
-                                        animation = R.raw.clock)
-                                } else {
-
-                                }
+//                                if (alarm.nameFile == null) {
+//                                    LottieContainer(modifier = Modifier.size(250.dp),
+//                                        animation = R.raw.clock)
+//                                } else {
+//
+//                                }
 
                                 Spacer(modifier = Modifier.height(70.dp))
 
-                                if (alarm.message.isNotEmpty()) {
-                                    Text(text = alarm.message)
+                                if (alarm.description.isNotEmpty()) {
+                                    Text(text = alarm.description)
                                 }
                             }
                         }
@@ -88,26 +87,26 @@ class AlarmScreen : AppCompatActivity() {
                                 .verticalScroll(rememberScrollState()),
                                 horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(stringResource(id = R.string.title_notify_alarm))
-                                Text(alarm.title,
+                                Text(alarm.name,
                                     style = MaterialTheme.typography.h5,
                                     modifier = Modifier.padding(vertical = 10.dp))
                                 Row {
                                     val modifier = Modifier
                                         .size(250.dp)
                                         .weight(4f)
-                                    if (alarm.nameFile == null) {
-                                        LottieContainer(modifier = modifier,
-                                            animation = R.raw.clock)
-                                    } else {
+//                                    if (alarm.nameFile == null) {
+//                                        LottieContainer(modifier = modifier,
+//                                            animation = R.raw.clock)
+//                                    } else {
 //                                        ImageAlarm(
 //                                            contentDescription = getString(R.string.description_img_current_alarm),
 //                                            modifier = modifier,
 //                                            urlImg = alarm.nameFile,
 //                                            contentScale = ContentScale.Crop
 //                                        )
-                                    }
-                                    if (alarm.message.isNotEmpty()) {
-                                        Text(text = alarm.message, modifier = Modifier.weight(6f))
+//                                    }
+                                    if (alarm.description.isNotEmpty()) {
+                                        Text(text = alarm.description, modifier = Modifier.weight(6f))
                                     }
                                 }
                             }

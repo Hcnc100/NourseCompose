@@ -70,9 +70,9 @@ fun BodyDialogDetails(alarm: Alarm) {
                 fontWeight = FontWeight.W500
             )
         }
-        Text(text = stringResource(R.string.sub_title_name_alarm) + " ${alarm.title}")
-        if (alarm.message.isNotEmpty()) {
-            Text(text = stringResource(R.string.sub_title_description_alarm) + " ${alarm.message}")
+        Text(text = stringResource(R.string.sub_title_name_alarm) + " ${alarm.name}")
+        if (alarm.description.isNotEmpty()) {
+            Text(text = stringResource(R.string.sub_title_description_alarm) + " ${alarm.description}")
         }
         Text(text = stringResource(R.string.sub_title_type_alarm) + " ${context.getString(alarm.typeAlarm.title)}")
         alarm.nextAlarm?.let {

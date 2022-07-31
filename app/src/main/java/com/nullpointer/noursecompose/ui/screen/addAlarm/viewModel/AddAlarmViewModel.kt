@@ -2,9 +2,10 @@ package com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.nullpointer.noursecompose.R
-import com.nullpointer.noursecompose.core.delegates.*
+import com.nullpointer.noursecompose.core.delegates.PropertySavableAlarmTime
+import com.nullpointer.noursecompose.core.delegates.PropertySavableString
+import com.nullpointer.noursecompose.core.delegates.SavableComposeState
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -41,21 +42,22 @@ class AddAlarmViewModel @Inject constructor(
         lengthError = R.string.error_description_long
     )
 
-    val imageAlarm = PropertySavableImg(
-        state = stateHandle,
-        scope = viewModelScope,
-        actionSendError = { _messageAddAlarm.trySend(R.string.error_img_compress) }
-    )
+    var imageAlarm: String? by SavableComposeState(stateHandle, "Pan", null)
+        private set
+
+    fun changeImg(newUri: String) {
+        imageAlarm = newUri
+    }
 
     val alarmTime = PropertySavableAlarmTime(
         state = stateHandle,
         defaultValue = AlarmTypes.ONE_SHOT,
         R.string.error_time_min_range
     )
-    var showDialogRepeat by SavableComposeState(stateHandle,"KEY_DIALOG_REPEAT",false)
-    private set
+    var showDialogRepeat by SavableComposeState(stateHandle, "KEY_DIALOG_REPEAT", false)
+        private set
 
-    fun changeVisibleDialogRepeat(isVisible: Boolean){
+    fun changeVisibleDialogRepeat(isVisible: Boolean) {
         showDialogRepeat = isVisible
     }
 

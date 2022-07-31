@@ -20,10 +20,9 @@ import com.ramcosta.composedestinations.spec.NavHostEngine
 class MainScreenState(
     scaffoldState: ScaffoldState,
     context: Context,
-    focusManager: FocusManager,
     val navController: NavHostController,
     val navHostEngine: NavHostEngine
-) : SimpleScreenState(scaffoldState, context, focusManager)
+) : SimpleScreenState(scaffoldState, context)
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
 @Composable
@@ -31,11 +30,10 @@ fun rememberMainScreenState(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     navController: NavHostController = rememberAnimatedNavController(),
     context: Context = LocalContext.current,
-    focusManager: FocusManager = LocalFocusManager.current,
     navHostEngine: NavHostEngine = rememberAnimatedNavHostEngine(
         navHostContentAlignment = Alignment.BottomEnd,
         rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING,
     )
 ) = remember(scaffoldState, navController) {
-    MainScreenState(scaffoldState, context, focusManager, navController,navHostEngine)
+    MainScreenState(scaffoldState, context, navController,navHostEngine)
 }

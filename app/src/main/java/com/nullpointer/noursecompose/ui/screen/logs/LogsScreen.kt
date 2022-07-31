@@ -104,7 +104,7 @@ fun LogsScreens(
 //                navigator.navigate(AddAlarmScreenDestination.invoke(it))
                               },
             deleterAlarm = {
-                alarmViewModel.deleterAlarm(it, context)
+//                alarmViewModel.deleterAlarm(it, context)
                 changeAlarmSelected(null)
             }
         )

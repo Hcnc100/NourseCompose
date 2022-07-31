@@ -9,11 +9,11 @@ interface AlarmRepository {
     val listAlarms:Flow<List<Alarm>>
     suspend fun addNewLog(log: Log)
     suspend fun getAlarmById(id: Long): Alarm?
-    suspend fun insertAlarm(alarm: Alarm,context: Context,isUpdate:Boolean): Long
-    suspend fun updateAlarm(alarm: Alarm,context: Context)
-    suspend fun deleterAlarm(alarm: Alarm,context: Context)
-    suspend fun restoreAlarm(alarm: Alarm,context: Context)
-    suspend fun deleterListAlarm(list: List<Long>,context: Context)
+    suspend fun insertAlarm(alarm: Alarm, uriImg:String?): Long
+    suspend fun updateAlarm(alarm: Alarm)
+    suspend fun deleterAlarm(alarm: Alarm)
+    suspend fun restoreAlarm(alarm: Alarm)
+    suspend fun deleterListAlarm(list: List<Long>)
     fun getAllAlarmActive():List<Alarm>
     suspend fun getAlarmsForIds(listIds:List<Long>):List<Alarm>
 }

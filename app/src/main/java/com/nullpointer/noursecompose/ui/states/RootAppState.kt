@@ -26,12 +26,11 @@ import kotlinx.coroutines.CoroutineScope
 class RootAppState(
     scaffoldState: ScaffoldState,
     context: Context,
-    focusManager: FocusManager,
     val navController: NavHostController,
     val scope: CoroutineScope,
     val navHostEngine: NavHostEngine
 
-) : SimpleScreenState(scaffoldState, context, focusManager) {
+) : SimpleScreenState(scaffoldState, context) {
     val rootActions = object : ActionRootDestinations {
         override fun backDestination() = navController.popBackStack()
         override fun changeRoot(direction: Direction) = navController.navigate(direction)
@@ -50,7 +49,6 @@ fun rememberRootAppState(
         rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING,
     ),
     context: Context = LocalContext.current,
-    focusManager: FocusManager = LocalFocusManager.current,
 ) = remember(scaffoldState, navController) {
-    RootAppState(scaffoldState, context, focusManager, navController,scope,navHostEngine)
+    RootAppState(scaffoldState, context, navController,scope,navHostEngine)
 }

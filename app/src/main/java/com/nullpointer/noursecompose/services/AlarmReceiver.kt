@@ -66,7 +66,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
             // * registry launch
             alarmRepository.addNewLog(Log(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
-            updateAlarm(alarm, currentTime, context)
+            updateAlarm(alarm, currentTime)
         } else {
             // * registry error
             alarmRepository.addNewLog(Log(idAlarm = idAlarm,
@@ -77,8 +77,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private suspend fun updateAlarm(
         alarm: Alarm,
-        currentTime: Long,
-        context: Context,
+        currentTime: Long
     ) {
         // ? update alarm
         val alarmUpdate = when (alarm.typeAlarm) {
@@ -96,7 +95,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         // * remove alarms it's needing
-        alarmRepository.updateAlarm(alarmUpdate, context)
+        alarmRepository.updateAlarm(alarmUpdate)
     }
 
 
@@ -115,9 +114,9 @@ class AlarmReceiver : BroadcastReceiver() {
                 if (currentTime > (alarm.nextAlarm ?: 0)) {
                     // * notify in group that alarm is lost
                     listAlarmLost.add(alarm)
-                    updateAlarm(alarm, currentTime, context)
+                    updateAlarm(alarm, currentTime)
                 } else {
-                    alarmRepository.restoreAlarm(alarm, context)
+                    alarmRepository.restoreAlarm(alarm)
                 }
             }
             if (listAlarmLost.isNotEmpty()) {

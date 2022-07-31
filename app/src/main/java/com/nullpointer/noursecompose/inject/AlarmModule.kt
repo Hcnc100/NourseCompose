@@ -1,5 +1,6 @@
 package com.nullpointer.noursecompose.inject
 
+import android.content.Context
 import com.nullpointer.noursecompose.data.local.datasource.alarm.AlarmDataSource
 import com.nullpointer.noursecompose.data.local.datasource.alarm.AlarmDataSourceImpl
 import com.nullpointer.noursecompose.data.local.datasource.logs.LogsDataSource
@@ -11,6 +12,7 @@ import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -33,6 +35,7 @@ object AlarmModule {
     @Singleton
     fun providerAlarmRepository(
         alarmDataSource: AlarmDataSource,
-        logsDataSource: LogsDataSource
-    ): AlarmRepoImpl = AlarmRepoImpl(alarmDataSource, logsDataSource)
+        logsDataSource: LogsDataSource,
+        @ApplicationContext context: Context
+    ): AlarmRepoImpl = AlarmRepoImpl(alarmDataSource, logsDataSource,context)
 }

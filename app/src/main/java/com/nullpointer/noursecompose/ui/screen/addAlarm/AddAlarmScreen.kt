@@ -11,7 +11,9 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.nullpointer.noursecompose.core.utils.shareViewModel
+import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.presentation.AlarmViewModel
+import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
 import com.nullpointer.noursecompose.ui.screen.addAlarm.descriptionScreen.DescriptionScreen
 import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.NameAndImgScreen
@@ -28,6 +30,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Composable
 @Destination
 fun AddAlarmScreen(
+    actionRootDestinations: ActionRootDestinations,
     alarmViewModel: AlarmViewModel = shareViewModel(),
     addAlarmViewModel: AddAlarmViewModel = shareViewModel(),
     addAlarmScreenState: AddAlarmScreenState = rememberAddAlarmScreenState()
@@ -51,16 +54,11 @@ fun AddAlarmScreen(
                 ) { uri ->
                     addAlarmScreenState.hiddenModal()
                     uri?.let {
-                        addAlarmViewModel.imageAlarm.changeValue(
-                            it,
-                            addAlarmScreenState.context
-                        )
+                        addAlarmViewModel.changeImg(it.toString())
                     }
                 }
             },
         ) {
-
-
             Box(modifier = Modifier.padding(it)) {
                 HorizontalPager(
                     count = 4,
@@ -88,6 +86,20 @@ fun AddAlarmScreen(
                                     addAlarmScreenState.nextPage()
                             }
                             1, 2 -> addAlarmScreenState.nextPage()
+                            3->{
+                               if(!addAlarmViewModel.alarmTime.hasErrorRange){
+                                   alarmViewModel.addNewAlarm(
+                                       alarm = Alarm(
+                                           name = addAlarmViewModel.nameAlarm.value,
+                                           description = addAlarmViewModel.description.value,
+                                           typeAlarm = addAlarmViewModel.alarmTime.typeAlarm,
+                                           nextAlarm = addAlarmViewModel.alarmTime.timeNextAlarm,
+                                       ),
+                                       uriImg = addAlarmViewModel.imageAlarm
+                                   )
+                                   actionRootDestinations.backDestination()
+                               }
+                            }
                         }
                     }
                 )

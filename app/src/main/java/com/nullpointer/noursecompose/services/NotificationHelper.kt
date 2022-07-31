@@ -59,7 +59,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         // * create notification
         val notificationBuilder = getBaseNotification(
             title = getString(R.string.title_notify_alarm),
-            message = alarm.message,
+            message = alarm.description,
             autoCancel = false,
             channelId = getString(CHANNEL_ID_ALARM),
             priority = NotificationCompat.PRIORITY_MAX
@@ -112,7 +112,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
             // * create notification
             getBaseNotification(
                 title = getString(R.string.title_notify_alarm),
-                message = it.title,
+                message = it.name,
                 autoCancel = true,
                 channelId = getString(CHANNEL_ID_ALARM),
                 group = ID_GROUP_ALARM
@@ -151,7 +151,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
             val pendingIntent = getPendingIntentCompose(listOf(alarm), true)
             getBaseNotification(
                 title = getString(R.string.title_notify_lost_alarm),
-                message = alarm.title + "\n${alarm.nextAlarm?.toFormat(this)}",
+                message = alarm.name + "\n${alarm.nextAlarm?.toFormat(this)}",
                 autoCancel = true,
                 channelId = getString(CHANNEL_ID_LOST),
                 group = ID_GROUP_LOST,

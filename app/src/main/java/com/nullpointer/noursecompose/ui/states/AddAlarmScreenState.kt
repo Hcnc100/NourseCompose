@@ -19,14 +19,16 @@ import kotlinx.coroutines.launch
 class AddAlarmScreenState(
     context: Context,
     val pagerState:PagerState,
-    focusManager: FocusManager,
+    val focusManager: FocusManager,
     val coroutineScope: CoroutineScope,
     scaffoldState: ScaffoldState,
     val modalBottomSheetState: ModalBottomSheetState
-):SimpleScreenState(scaffoldState, context, focusManager){
+):SimpleScreenState(scaffoldState, context){
 
     val currentPage get() = pagerState.currentPage
     val isShowModal get() = modalBottomSheetState.isVisible
+
+    private fun hiddenKeyBoard() = focusManager.clearFocus()
 
     fun hiddenModal(){
         coroutineScope.launch {
