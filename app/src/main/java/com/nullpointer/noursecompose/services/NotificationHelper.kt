@@ -16,7 +16,7 @@ import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_
 import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_STOP_SOUND
 import com.nullpointer.noursecompose.ui.activitys.AlarmScreen
 import com.nullpointer.noursecompose.ui.activitys.MainActivity
-import com.nullpointer.noursecompose.ui.navigation.types.ArgsAlarmsTypeSerializer
+//import com.nullpointer.noursecompose.ui.navigation.types.ArgsAlarmsTypeSerializer
 
 class NotificationHelper(context: Context) : ContextWrapper(context) {
     companion object {
@@ -171,9 +171,9 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
     private fun getPendingIntentCompose(listAlarms: List<Alarm>, isLost: Boolean): PendingIntent {
         // * create deep link
         // * this go to post for notification
-        val routeString = ArgsAlarmsTypeSerializer.generateRoute(isLost, listAlarms)
+//        val routeString = ArgsAlarmsTypeSerializer.generateRoute(isLost, listAlarms)
         val deepLinkIntent = Intent(Intent.ACTION_VIEW,
-            "https://www.nourse-compose.com/alarm/$routeString".toUri(),
+            "https://www.nourse-compose.com/alarm/".toUri(),
             this,
             MainActivity::class.java)
         // * create pending intent compose

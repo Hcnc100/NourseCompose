@@ -19,7 +19,6 @@ import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.core.utils.toFormat
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.ImageAlarm
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -48,10 +47,10 @@ fun SimpleItemAlarm(
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 2)
                     if (alarm.nameFile != null) {
-                        ImageAlarm(contentDescription = stringResource(id = R.string.description_img_alarm),
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(100.dp), bitmap = image)
+//                        ImageAlarm(contentDescription = stringResource(id = R.string.description_img_alarm),
+//                            modifier = Modifier
+//                                .weight(1f)
+//                                .height(100.dp), bitmap = image)
                     }
                 }
                 if (isExpanded) {

@@ -79,6 +79,7 @@
     <!-- name alarm screen -->
     <string name="title_change_name">Agrega un nombre a la alarma y una imagen, para recordarlo más fácil</string>
     <string name="hint_name_alarm">Nombre del recordatorio</string>
+    <string name="label_name_alarm" translatable="false">Escribe un nombre para el recordatorio</string>
     <string name="description_img_alarm">Imagen del recordatorio</string>
     <string name="description_change_img_alarm">Edita la imagen de la alarma actual</string>
     <string name="text_button_next">Siguiente</string>
@@ -214,5 +215,6 @@
     <!-- graph measure -->
     <string name="text_graph_min_value">Valor mínimo recomendado</string>
     <string name="text_graph_max_value">Valor máximo recomendado</string>
+    <string name="error_img_compress">Hubo un error al seleccionar la imagen</string>
 
 </resources>

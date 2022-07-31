@@ -23,7 +23,7 @@ import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.TimeUtils.getHourAndMinutesFromMillis
 
 @Composable
-fun DialogSelectHour(
+fun DialogSelectHourRepeat(
     changeTimeRepeater: (newValue: Long) -> Unit,
     valueDefects: Long,
     hideDialog: () -> Unit,

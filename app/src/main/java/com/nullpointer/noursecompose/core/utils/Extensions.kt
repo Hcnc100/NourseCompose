@@ -9,7 +9,12 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.text.format.DateFormat
 import android.view.WindowManager
+import androidx.activity.ComponentActivity
 import androidx.annotation.PluralsRes
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -180,3 +185,10 @@ fun Activity.turnScreenOffAndKeyguardOn() {
         )
     }
 }
+
+@Composable
+inline fun <reified VM : ViewModel> shareViewModel():VM {
+    val activity = LocalContext.current as ComponentActivity
+    return hiltViewModel(activity)
+}
+

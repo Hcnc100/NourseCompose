@@ -1,12 +1,10 @@
 package com.nullpointer.noursecompose.ui.screen.home.alarms
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyGridState
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.rememberLazyGridState
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -18,29 +16,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.core.utils.shareViewModel
 import com.nullpointer.noursecompose.models.ItemSelected
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.presentation.AlarmViewModel
 import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.dialogs.DialogDetails
+import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
+import com.nullpointer.noursecompose.ui.navigation.HomeNavGraph
 import com.nullpointer.noursecompose.ui.screen.destinations.AddAlarmScreenDestination
 import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
-import com.nullpointer.noursecompose.ui.share.backHandler.BackHandler
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.flow.first
 
-@OptIn(ExperimentalFoundationApi::class)
-@Destination(start = true)
+@HomeNavGraph(start = true)
+@Destination
 @Composable
 fun AlarmScreen(
-    alarmViewModel: AlarmViewModel = hiltViewModel(),
-    selectionViewModel: SelectionViewModel,
-    navigator: DestinationsNavigator,
+    alarmViewModel: AlarmViewModel = shareViewModel(),
+    selectionViewModel: SelectionViewModel = hiltViewModel(),
+    actionRootDestinations: ActionRootDestinations
 ) {
     val listAlarmState = alarmViewModel.listAlarm.collectAsState()
     val context = LocalContext.current
@@ -60,7 +58,9 @@ fun AlarmScreen(
             ButtonToggleAddRemove(isVisible = !listState.isScrollInProgress,
                 isSelectedEnable = selectionViewModel.isSelectedEnable,
                 descriptionButtonAdd = stringResource(R.string.description_add_alarm),
-                actionAdd = { navigator.navigate(AddAlarmScreenDestination.invoke()) },
+                actionAdd = {
+                    actionRootDestinations.changeRoot(AddAlarmScreenDestination)
+                },
                 descriptionButtonRemove = stringResource(R.string.description_remove_alarms),
                 actionRemove = {
                     alarmViewModel.deleterListAlarm(
@@ -84,7 +84,9 @@ fun AlarmScreen(
             actionHiddenDialog = {
                 changeAlarmSelected(null)
             },
-            actionEditAlarm = { navigator.navigate(AddAlarmScreenDestination.invoke(it)) },
+            actionEditAlarm = {
+//                navigator.navigate(AddAlarmScreenDestination.invoke(it))
+            },
             deleterAlarm = {
                 alarmViewModel.deleterAlarm(it, context)
                 changeAlarmSelected(null)
@@ -97,7 +99,6 @@ fun AlarmScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ListAlarm(
     listAlarm: List<Alarm>?,
@@ -113,18 +114,20 @@ fun ListAlarm(
             }
 
         listAlarm.isEmpty() ->
-            EmptyScreen(animation = R.raw.empty3,
-                textEmpty = stringResource(R.string.message_empty_alarm_screen))
+            EmptyScreen(
+                animation = R.raw.empty3,
+                textEmpty = stringResource(R.string.message_empty_alarm_screen)
+            )
 
-        listAlarm.isNotEmpty() ->
-            LazyVerticalGrid(cells = GridCells.Adaptive(150.dp), state = listState) {
-                items(listAlarm.size, key = { listAlarm[it].id ?: 0 }) { index ->
-                    ItemAlarm(alarm = listAlarm[index],
-                        isSelectedEnable = isSelectedEnable,
-                        changeSelectState = changeItemSelect,
-                        actionClickSimple = simpleClickAlarm
-                    )
-                }
-            }
+        listAlarm.isNotEmpty() -> {}
+//            LazyVerticalGrid(cells = GridCells.Adaptive(150.dp), state = listState) {
+//                items(listAlarm.size, key = { listAlarm[it].id ?: 0 }) { index ->
+//                    ItemAlarm(alarm = listAlarm[index],
+//                        isSelectedEnable = isSelectedEnable,
+//                        changeSelectState = changeItemSelect,
+//                        actionClickSimple = simpleClickAlarm
+//                    )
+//                }
+//            }
     }
 }

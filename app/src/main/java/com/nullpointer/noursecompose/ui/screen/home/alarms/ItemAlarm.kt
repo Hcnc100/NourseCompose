@@ -23,7 +23,6 @@ import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.core.utils.TimeUtils.getStringTimeAboutNow
 import com.nullpointer.noursecompose.models.ItemSelected
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.ImageAlarm
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -56,13 +55,13 @@ fun ItemAlarm(
                 )
             }
             alarm.nameFile?.let {
-                ImageAlarm(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .aspectRatio(1f),
-                    contentDescription = stringResource(R.string.description_img_alarm_item),
-                    bitmap = bitmap.value)
+//                ImageAlarm(
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .fillMaxWidth()
+//                        .aspectRatio(1f),
+//                    contentDescription = stringResource(R.string.description_img_alarm_item),
+//                    bitmap = bitmap.value)
             }
         }
     }

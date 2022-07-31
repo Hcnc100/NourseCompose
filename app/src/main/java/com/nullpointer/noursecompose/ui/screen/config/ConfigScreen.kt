@@ -21,13 +21,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.models.notify.TypeNotify
 import com.nullpointer.noursecompose.services.SoundServices
-import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.TextMiniTitle
+import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
 import com.nullpointer.noursecompose.ui.screen.config.viewModel.ConfigViewModel
 import com.nullpointer.noursecompose.ui.share.mpGraph.ToolbarBack
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
+@MainNavGraph
 @Composable
 @Destination
 fun ConfigScreen(
@@ -75,12 +76,12 @@ fun ConfigScreen(
         }
     ) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            TextMiniTitle(textTitle = stringResource(R.string.mini_title_type_alarm))
+//            TextMiniTitle(textTitle = stringResource(R.string.mini_title_type_alarm))
             RadioButtonNotifyType(
                 currentNotify = typeNotify.value,
                 changeNotify = configViewModel::changeTypeNotify)
             Spacer(modifier = Modifier.height(20.dp))
-            TextMiniTitle(textTitle = stringResource(R.string.mini_title_sound_alarm))
+//            TextMiniTitle(textTitle = stringResource(R.string.mini_title_sound_alarm))
             SelectSoundAlarm(
                 indexSound = indexSound.value,
                 changeIndexSound = {

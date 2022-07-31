@@ -21,7 +21,6 @@ import com.nullpointer.noursecompose.core.utils.turnScreenOffAndKeyguardOn
 import com.nullpointer.noursecompose.core.utils.turnScreenOnAndKeyguardOff
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.services.SoundServices
-import com.nullpointer.noursecompose.ui.screen.addAlarm.nameScreen.ImageAlarm
 import com.nullpointer.noursecompose.ui.share.lottieFiles.LottieContainer
 import com.nullpointer.noursecompose.ui.theme.NourseComposeTheme
 
@@ -72,12 +71,7 @@ class AlarmScreen : AppCompatActivity() {
                                     LottieContainer(modifier = Modifier.size(250.dp),
                                         animation = R.raw.clock)
                                 } else {
-                                    ImageAlarm(
-                                        contentDescription = "",
-                                        modifier = Modifier.size(250.dp),
-                                        urlImg = alarm.nameFile,
-                                        contentScale = ContentScale.Crop
-                                    )
+
                                 }
 
                                 Spacer(modifier = Modifier.height(70.dp))
@@ -105,12 +99,12 @@ class AlarmScreen : AppCompatActivity() {
                                         LottieContainer(modifier = modifier,
                                             animation = R.raw.clock)
                                     } else {
-                                        ImageAlarm(
-                                            contentDescription = getString(R.string.description_img_current_alarm),
-                                            modifier = modifier,
-                                            urlImg = alarm.nameFile,
-                                            contentScale = ContentScale.Crop
-                                        )
+//                                        ImageAlarm(
+//                                            contentDescription = getString(R.string.description_img_current_alarm),
+//                                            modifier = modifier,
+//                                            urlImg = alarm.nameFile,
+//                                            contentScale = ContentScale.Crop
+//                                        )
                                     }
                                     if (alarm.message.isNotEmpty()) {
                                         Text(text = alarm.message, modifier = Modifier.weight(6f))

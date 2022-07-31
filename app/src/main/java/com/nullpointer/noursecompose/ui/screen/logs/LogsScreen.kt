@@ -4,9 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.rememberLazyGridState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
@@ -27,6 +25,7 @@ import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.presentation.AlarmViewModel
 import com.nullpointer.noursecompose.presentation.LogViewModel
 import com.nullpointer.noursecompose.ui.dialogs.DialogDetails
+import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
 import com.nullpointer.noursecompose.ui.screen.destinations.AddAlarmScreenDestination
 import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.screen.logs.componets.ItemLog
@@ -36,7 +35,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@MainNavGraph
 @Destination
 @Composable
 fun LogsScreens(
@@ -75,24 +74,24 @@ fun LogsScreens(
                     textEmpty = stringResource(R.string.text_empty_registry))
             }
             else -> {
-                LazyVerticalGrid(state = stateScroll, cells = GridCells.Adaptive(180.dp)) {
-                    items(listAlarm.size) { index ->
-                        ItemLog(registry = listAlarm[index],
-                            actionClick = {
-                                scope.launch {
-                                    val alarm = alarmViewModel.getAlarmById(it)
-                                    if (alarm != null) {
-                                        changeAlarmSelected(alarm)
-                                    } else {
-                                        Toast.makeText(context,
-                                            context.getString(R.string.message_alarm_deleter),
-                                            Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            }
-                        )
-                    }
-                }
+//                LazyVerticalGrid(state = stateScroll, cells = GridCells.Adaptive(180.dp)) {
+//                    items(listAlarm.size) { index ->
+//                        ItemLog(registry = listAlarm[index],
+//                            actionClick = {
+//                                scope.launch {
+//                                    val alarm = alarmViewModel.getAlarmById(it)
+//                                    if (alarm != null) {
+//                                        changeAlarmSelected(alarm)
+//                                    } else {
+//                                        Toast.makeText(context,
+//                                            context.getString(R.string.message_alarm_deleter),
+//                                            Toast.LENGTH_SHORT).show()
+//                                    }
+//                                }
+//                            }
+//                        )
+//                    }
+//                }
             }
         }
     }
@@ -101,7 +100,9 @@ fun LogsScreens(
         DialogDetails(
             alarm = alarmSelected,
             actionHiddenDialog = { changeAlarmSelected(null) },
-            actionEditAlarm = { navigator.navigate(AddAlarmScreenDestination.invoke(it)) },
+            actionEditAlarm = {
+//                navigator.navigate(AddAlarmScreenDestination.invoke(it))
+                              },
             deleterAlarm = {
                 alarmViewModel.deleterAlarm(it, context)
                 changeAlarmSelected(null)
