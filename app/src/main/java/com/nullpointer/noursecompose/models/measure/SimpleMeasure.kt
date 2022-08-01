@@ -1,5 +1,8 @@
 package com.nullpointer.noursecompose.models.measure
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -14,8 +17,8 @@ data class SimpleMeasure(
     override val id: Long = 0,
 ) : ItemSelected {
 
-    @Ignore
-    override var isSelected: Boolean = false
+    @delegate:Ignore
+    override var isSelected by mutableStateOf(false)
 
 
     companion object {

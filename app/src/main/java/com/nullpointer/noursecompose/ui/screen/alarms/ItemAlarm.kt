@@ -11,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -36,13 +37,14 @@ fun ItemAlarm(
     modifier: Modifier = Modifier
 ) {
 
-    val backgroundColor by derivedStateOf {
-        if (alarm.isSelected) Color.Cyan.copy(alpha = 0.5f) else Color.Unspecified
+    val backgroundColor by remember {
+        derivedStateOf {
+            if (alarm.isSelected) Color.Cyan.copy(alpha = 0.5f) else Color.Unspecified
+        }
     }
 
     Card(
-        modifier = modifier
-            .padding(2.dp),
+        modifier = modifier.padding(2.dp),
         shape = RoundedCornerShape(10.dp)
     ) {
         Row(
@@ -82,9 +84,11 @@ private fun TextInfoAlarm(
     timeNextAlarm: Long?,
     context: Context= LocalContext.current
 ) {
-    val textNextAlarm by derivedStateOf {
-        if (timeNextAlarm != null) getStringTimeAboutNow(timeNextAlarm, context) else null
+    val textNextAlarm by remember {
+        derivedStateOf {
+            if (timeNextAlarm != null) getStringTimeAboutNow(timeNextAlarm, context) else null
 
+        }
     }
     Text(
         titleAlarm,

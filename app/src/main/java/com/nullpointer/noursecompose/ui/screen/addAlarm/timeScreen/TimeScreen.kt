@@ -67,8 +67,10 @@ private fun TextNextAlarm(
     context: Context = LocalContext.current
 ) {
 
-    val nextAlarmText by derivedStateOf {
-        TimeUtils.getStringTimeAboutNow(nextAlarm, context)
+    val nextAlarmText by remember {
+        derivedStateOf {
+            TimeUtils.getStringTimeAboutNow(nextAlarm, context)
+        }
     }
 
     Spacer(modifier = Modifier.height(20.dp))
@@ -113,12 +115,14 @@ private fun HoursToRepeat(
     context: Context = LocalContext.current,
     showDialogRepeat: () -> Unit
 ) {
-    val textValue by derivedStateOf {
-        TimeUtils.timeRepeatInMillisToString(
-            timeInMillis = timeToRepeat,
-            context = context,
-            includeSeconds = false
-        )
+    val textValue by remember {
+        derivedStateOf {
+            TimeUtils.timeRepeatInMillisToString(
+                timeInMillis = timeToRepeat,
+                context = context,
+                includeSeconds = false
+            )
+        }
     }
     Column {
         Spacer(modifier = Modifier.height(30.dp))
@@ -140,8 +144,10 @@ private fun SelectTimeInit(
     val timePicker = remember {
         showTimePicker(activity = context, updatedDate = changeTimeInit)
     }
-    val hourValue by derivedStateOf {
-        currentTime.toFormatOnlyTime(context)
+    val hourValue by remember {
+        derivedStateOf {
+            currentTime.toFormatOnlyTime(context)
+        }
     }
 
     Column {
@@ -197,8 +203,10 @@ private fun FieldRangeAlarm(
     activity: AppCompatActivity = LocalContext.current as AppCompatActivity
 ) {
 
-    val textRange by derivedStateOf {
-        calculateRangeInDays(activity, rangeAlarm)
+    val textRange by remember {
+        derivedStateOf {
+            calculateRangeInDays(activity, rangeAlarm)
+        }
     }
     Box(
         modifier = Modifier

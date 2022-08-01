@@ -4,11 +4,13 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.states.Resource
 import com.nullpointer.noursecompose.core.utils.shareViewModel
@@ -25,7 +27,6 @@ import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
 import com.nullpointer.noursecompose.ui.states.MeasureScreenState
 import com.nullpointer.noursecompose.ui.states.rememberMeasureScreenState
 import com.ramcosta.composedestinations.annotation.Destination
-import kotlinx.coroutines.launch
 
 @HomeNavGraph
 @Destination

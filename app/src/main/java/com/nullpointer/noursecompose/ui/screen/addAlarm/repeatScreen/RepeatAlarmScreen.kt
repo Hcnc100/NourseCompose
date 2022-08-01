@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -45,7 +46,9 @@ private fun ItemSelectType(
     changeType: (AlarmTypes) -> Unit
 ) {
 
-    val isSelect by derivedStateOf { currentType == alarmTypes }
+    val isSelect by remember {
+        derivedStateOf { currentType == alarmTypes }
+    }
 
     Row(modifier = Modifier
         .clickable { changeType(alarmTypes) }

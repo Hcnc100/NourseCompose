@@ -1,6 +1,9 @@
 package com.nullpointer.noursecompose.models.alarm
 
 import android.os.Parcelable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -25,9 +28,10 @@ data class Alarm(
     @PrimaryKey(autoGenerate = true)
     override val id: Long=0
 ): ItemSelected, Parcelable {
+
     @IgnoredOnParcel
-    @Ignore
-    override var isSelected: Boolean = false
+    @delegate:Ignore
+    override var isSelected by mutableStateOf(false)
 
     fun updateTime(currentTime: Long): Alarm {
         return try {

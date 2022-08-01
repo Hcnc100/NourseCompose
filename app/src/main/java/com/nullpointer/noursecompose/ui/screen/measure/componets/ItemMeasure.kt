@@ -13,6 +13,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
@@ -31,16 +32,21 @@ fun ItemMeasure(
     changeSelectState: (ItemSelected) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val backgroundColor by derivedStateOf {
-        if (measure.isSelected) Color.Cyan.copy(alpha = 0.5f) else Color.Unspecified
+    val selectColor by remember {
+        derivedStateOf {
+            if (measure.isSelected) Color.Cyan.copy(alpha = 0.5f) else Color.Unspecified
+        }
     }
+
     Card(
         modifier = modifier.padding(4.dp),
         shape = RoundedCornerShape(10.dp)
     ) {
         Column(
             modifier = Modifier
-                .drawBehind { drawRect(backgroundColor) }
+                .drawBehind {
+                    drawRect(selectColor)
+                }
                 .combinedClickable(
                     onClick = { if (isSelectedEnable) changeSelectState(measure) },
                     onLongClick = { if (!isSelectedEnable) changeSelectState(measure) },
