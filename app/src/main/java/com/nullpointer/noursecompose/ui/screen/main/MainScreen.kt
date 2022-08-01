@@ -18,7 +18,7 @@ import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.HomeDestinations
 import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
 import com.nullpointer.noursecompose.ui.screen.NavGraphs
-import com.nullpointer.noursecompose.ui.share.SimpleToolbar
+import com.nullpointer.noursecompose.ui.share.SelectToolbar
 import com.nullpointer.noursecompose.ui.states.MainScreenState
 import com.nullpointer.noursecompose.ui.states.rememberMainScreenState
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -35,7 +35,14 @@ fun MainScreen(
     mainScreenState: MainScreenState = rememberMainScreenState()
 ) {
     Scaffold(
-        topBar = { SimpleToolbar(title = stringResource(id = R.string.app_name)) },
+        topBar = {
+            SelectToolbar(
+                titleDefault = R.string.app_name,
+                titleSelection = R.plurals.selected_items,
+                numberSelection = selectViewModel.numberSelection,
+                actionClear = selectViewModel::clearSelection
+            )
+        },
         bottomBar = {
             MainButtonNavigation(
                 navController = mainScreenState.navController,

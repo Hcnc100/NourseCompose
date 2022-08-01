@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.states.Resource
+import com.nullpointer.noursecompose.core.utils.shareViewModel
 import com.nullpointer.noursecompose.models.ItemSelected
 import com.nullpointer.noursecompose.models.measure.MeasureType
 import com.nullpointer.noursecompose.models.measure.SimpleMeasure
@@ -31,7 +32,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun OxygenScreen(
     selectionViewModel: SelectionViewModel,
-    measureViewModel: MeasureViewModel = hiltViewModel(),
+    measureViewModel: MeasureViewModel = shareViewModel(),
     measureScreenState: MeasureScreenState = rememberMeasureScreenState()
 ) {
     val listOxygenState by measureViewModel.listOxygen.collectAsState()

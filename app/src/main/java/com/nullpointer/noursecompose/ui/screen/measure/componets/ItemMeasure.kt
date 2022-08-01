@@ -11,7 +11,11 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.models.ItemSelected
@@ -25,21 +29,32 @@ fun ItemMeasure(
     measure: SimpleMeasure,
     isSelectedEnable: Boolean,
     changeSelectState: (ItemSelected) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Card(modifier = Modifier
-        .padding(4.dp)
-        .combinedClickable(
-            onClick = { if (isSelectedEnable) changeSelectState(measure) },
-            onLongClick = { if (!isSelectedEnable) changeSelectState(measure) },
-        ),
-        shape = RoundedCornerShape(10.dp),
-        backgroundColor = if (measure.isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.surface) {
-        Column(modifier = Modifier.padding(10.dp)) {
+    val backgroundColor by derivedStateOf {
+        if (measure.isSelected) Color.Cyan.copy(alpha = 0.5f) else Color.Unspecified
+    }
+    Card(
+        modifier = modifier.padding(4.dp),
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .drawBehind { drawRect(backgroundColor) }
+                .combinedClickable(
+                    onClick = { if (isSelectedEnable) changeSelectState(measure) },
+                    onLongClick = { if (!isSelectedEnable) changeSelectState(measure) },
+                )
+                .padding(10.dp)
+
+        ) {
             Text(nameMeasure, style = MaterialTheme.typography.caption)
             Spacer(modifier = Modifier.height(20.dp))
-            Text("${measure.value} ${suffixMeasure[0]}",
+            Text(
+                "${measure.value} ${suffixMeasure[0]}",
                 style = MaterialTheme.typography.body1,
-                fontWeight = FontWeight.W600)
+                fontWeight = FontWeight.W600
+            )
         }
     }
 }

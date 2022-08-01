@@ -1,11 +1,9 @@
 package com.nullpointer.noursecompose.ui.screen.measure
 
 import android.content.res.Configuration
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.material.Scaffold
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -17,7 +15,7 @@ import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 import com.nullpointer.noursecompose.ui.screen.measure.componets.ItemMeasure
 import com.nullpointer.noursecompose.ui.share.mpGraph.MpGraphAndroid
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GraphAndTable(
     listMeasure: List<SimpleMeasure>,
@@ -33,8 +31,13 @@ fun GraphAndTable(
 
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> {
-            Scaffold(
-                topBar = {
+            LazyVerticalGrid(
+                modifier = modifier,
+                state = listState,
+                columns = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure)),
+                contentPadding = PaddingValues(4.dp),
+            ) {
+                item(span = { GridItemSpan(maxLineSpan) }, key = "graph-header") {
                     MpGraphAndroid(
                         list = listMeasure.reversed(),
                         minValue = minValue,
@@ -44,54 +47,50 @@ fun GraphAndTable(
                             .fillMaxWidth()
                             .height(250.dp)
                     )
-                },
-            ) {
-//                LazyVerticalGrid(
-//                    state = listState,
-//                    cells = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure)),
-//                    contentPadding = PaddingValues(4.dp),
-//                ) {
-//                    items(count = listMeasure.size) { index ->
-//                        ItemMeasure(
-//                            nameMeasure,
-//                            suffixMeasure,
-//                            listMeasure[index],
-//                            isSelectedEnable,
-//                            changeSelectState
-//                        )
-//                    }
-//                }
+                }
+                items(listMeasure, key = { it.id }) { measure ->
+                    ItemMeasure(
+                        modifier = Modifier.animateItemPlacement(),
+                        nameMeasure = nameMeasure,
+                        suffixMeasure = suffixMeasure,
+                        measure = measure,
+                        isSelectedEnable = isSelectedEnable,
+                        changeSelectState = changeSelectState
+                    )
+                }
             }
+
         }
-        // ? Configuration.ORIENTATION_PORTRAIT
         else -> {
-           Row(modifier = Modifier.fillMaxSize()) {
-               MpGraphAndroid(
-                   list = listMeasure.reversed(),
-                   minValue = minValue,
-                   maxValue = maxValues,
-                   suffixMeasure = suffixMeasure,
-                   modifier = Modifier
-                       .fillMaxWidth()
-                       .height(250.dp).weight(.5f)
-               )
-//               LazyVerticalGrid(
-//                   state = listState,
-//                   cells = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure)),
-//                   contentPadding = PaddingValues(4.dp),
-//                   modifier = Modifier.weight(.5f)
-//               ) {
-//                   items(count = listMeasure.size) { index ->
-//                       ItemMeasure(
-//                           nameMeasure,
-//                           suffixMeasure,
-//                           listMeasure[index],
-//                           isSelectedEnable,
-//                           changeSelectState
-//                       )
-//                   }
-//               }
-           }
+            Row(modifier = modifier.fillMaxSize()) {
+                MpGraphAndroid(
+                    list = listMeasure.reversed(),
+                    minValue = minValue,
+                    maxValue = maxValues,
+                    suffixMeasure = suffixMeasure,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .weight(.5f)
+                )
+                LazyVerticalGrid(
+                    state = listState,
+                    columns = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure)),
+                    contentPadding = PaddingValues(4.dp),
+                    modifier = Modifier.weight(.5f)
+                ) {
+                    items(listMeasure, key = { it.id }) { measure ->
+                        ItemMeasure(
+                            modifier = Modifier.animateItemPlacement(),
+                            nameMeasure = nameMeasure,
+                            suffixMeasure = suffixMeasure,
+                            measure = measure,
+                            isSelectedEnable = isSelectedEnable,
+                            changeSelectState = changeSelectState
+                        )
+                    }
+                }
+            }
         }
     }
 }

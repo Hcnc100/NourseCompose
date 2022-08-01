@@ -33,6 +33,7 @@ fun ItemAlarm(
     isSelectedEnable: Boolean,
     changeSelectState: (ItemSelected) -> Unit,
     actionClickSimple: (alarm: Alarm) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     val backgroundColor by derivedStateOf {
@@ -40,17 +41,19 @@ fun ItemAlarm(
     }
 
     Card(
-        modifier = Modifier
-            .padding(2.dp)
-            .combinedClickable(
-                onClick = { if (isSelectedEnable) changeSelectState(alarm) else actionClickSimple(alarm) },
-                onLongClick = { if (!isSelectedEnable) changeSelectState(alarm) },
-            ),
+        modifier = modifier
+            .padding(2.dp),
         shape = RoundedCornerShape(10.dp)
     ) {
         Row(
             modifier = Modifier
                 .drawBehind { drawRect(backgroundColor) }
+                .combinedClickable(
+                    onClick = {
+                        if (isSelectedEnable) changeSelectState(alarm) else actionClickSimple(alarm)
+                    },
+                    onLongClick = { if (!isSelectedEnable) changeSelectState(alarm) },
+                )
                 .padding(10.dp)
         ) {
             Column(modifier = Modifier.weight(2f)) {

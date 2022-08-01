@@ -29,11 +29,11 @@ class SelectionViewModel @Inject constructor(
         listIdsItemsSelected = if (listIdsItemsSelected.contains(item.id)) {
             item.isSelected = false
             listItemSelected.remove(item)
-            listIdsItemsSelected - item.id!!
+            listIdsItemsSelected - item.id
         } else {
             item.isSelected = true
             listItemSelected.add(item)
-            listIdsItemsSelected + item.id!!
+            listIdsItemsSelected + item.id
         }
     }
 

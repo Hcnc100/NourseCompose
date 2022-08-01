@@ -17,6 +17,7 @@ class MeasureViewModel @Inject constructor(
     private val measureRepo: MeasureRepoImpl,
 ) : ViewModel() {
 
+
     val listOxygen = flow<Resource<List<SimpleMeasure>>> {
         measureRepo.listOxygen.collect {
             emit(Resource.Success(it))

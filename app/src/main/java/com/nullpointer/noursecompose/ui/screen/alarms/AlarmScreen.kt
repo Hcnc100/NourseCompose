@@ -1,6 +1,7 @@
 package com.nullpointer.noursecompose.ui.screen.alarms
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -12,7 +13,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.states.Resource
 import com.nullpointer.noursecompose.core.utils.shareViewModel
@@ -90,6 +90,7 @@ fun AlarmScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ListAlarm(
     listAlarm: Resource<List<Alarm>>,
@@ -118,7 +119,8 @@ private fun ListAlarm(
                             alarm = alarm,
                             isSelectedEnable = isSelectedEnable,
                             changeSelectState = changeItemSelect,
-                            actionClickSimple = simpleClickAlarm
+                            actionClickSimple = simpleClickAlarm,
+                            modifier = Modifier.animateItemPlacement()
                         )
                     }
                 }

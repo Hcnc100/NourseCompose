@@ -24,20 +24,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-// for mutable list
+fun Context.getPlural(@PluralsRes stringQuality: Int,quality:Int): String {
+    return resources.getQuantityString(stringQuality,quality,quality)
+}
 
-//fun <T> MutableStateFlow<MutableList<T>>.plusAssign(item: T) {
-//    val value = this.value
-//    value.add(item)
-//    this.value = value
-//}
-//fun <T> MutableStateFlow<MutableList<T>>.minusAssign(item: T) {
-//    val value = this.value
-//    value.remove(item)
-//    this.value = value
-//}
-
-// for immutable list
 
 operator fun <T> MutableStateFlow<List<T>>.plusAssign(item: T) {
     this.value += item
