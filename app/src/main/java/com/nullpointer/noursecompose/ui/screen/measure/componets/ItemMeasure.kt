@@ -32,7 +32,7 @@ fun ItemMeasure(
     changeSelectState: (ItemSelected) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val selectColor by remember {
+    val selectColor by remember(measure.isSelected) {
         derivedStateOf {
             if (measure.isSelected) Color.Cyan.copy(alpha = 0.5f) else Color.Unspecified
         }

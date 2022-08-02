@@ -37,7 +37,7 @@ fun ItemAlarm(
     modifier: Modifier = Modifier
 ) {
 
-    val backgroundColor by remember {
+    val backgroundColor by remember(alarm.isSelected) {
         derivedStateOf {
             if (alarm.isSelected) Color.Cyan.copy(alpha = 0.5f) else Color.Unspecified
         }

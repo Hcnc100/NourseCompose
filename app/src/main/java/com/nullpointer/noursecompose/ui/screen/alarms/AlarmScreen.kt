@@ -11,6 +11,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
@@ -126,6 +127,6 @@ private fun ListAlarm(
                 }
             }
         }
-        else -> {}
+        else -> LoadingAlarm(modifier = modifier)
     }
 }
