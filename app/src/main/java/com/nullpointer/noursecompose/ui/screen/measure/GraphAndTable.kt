@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.models.ItemSelected
 import com.nullpointer.noursecompose.models.measure.SimpleMeasure
-import com.nullpointer.noursecompose.ui.screen.measure.componets.ItemMeasure
 import com.nullpointer.noursecompose.ui.share.mpGraph.MpGraphAndroid
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -45,7 +44,7 @@ fun GraphAndTable(
                         suffixMeasure = suffixMeasure,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(250.dp)
+                            .height(dimensionResource(id = R.dimen.height_graph_measure))
                     )
                 }
                 items(listMeasure, key = { it.id }) { measure ->
@@ -70,7 +69,7 @@ fun GraphAndTable(
                     suffixMeasure = suffixMeasure,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(250.dp)
+                        .height(dimensionResource(id = R.dimen.height_graph_measure))
                         .weight(.5f)
                 )
                 LazyVerticalGrid(

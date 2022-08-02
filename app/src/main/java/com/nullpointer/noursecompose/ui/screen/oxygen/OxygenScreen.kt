@@ -23,6 +23,7 @@ import com.nullpointer.noursecompose.ui.dialogs.DialogAddMeasure
 import com.nullpointer.noursecompose.ui.navigation.HomeNavGraph
 import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.screen.measure.GraphAndTable
+import com.nullpointer.noursecompose.ui.screen.measure.LoadingItemMeasure
 import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
 import com.nullpointer.noursecompose.ui.states.MeasureScreenState
 import com.nullpointer.noursecompose.ui.states.rememberMeasureScreenState
@@ -108,6 +109,6 @@ private fun ListOxygenState(
                 )
             }
         }
-        else -> {}
+        else -> LoadingItemMeasure(modifier = modifier)
     }
 }

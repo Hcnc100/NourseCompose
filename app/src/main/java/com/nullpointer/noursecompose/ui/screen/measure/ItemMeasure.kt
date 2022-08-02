@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.ui.screen.measure.componets
+package com.nullpointer.noursecompose.ui.screen.measure
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable

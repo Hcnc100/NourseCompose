@@ -2,4 +2,5 @@
 <resources>
     <dimen name="size_row_measure">150dp</dimen>
     <dimen name="size_row_alarm">150dp</dimen>
+    <dimen name="height_graph_measure">250dp</dimen>
 </resources>
