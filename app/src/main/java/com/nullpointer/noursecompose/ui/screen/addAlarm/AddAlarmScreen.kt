@@ -76,7 +76,9 @@ fun AddAlarmScreen(
                     }
                 }
                 ExtendedFloatingActionButton(
-                    modifier = Modifier.padding(20.dp).align(Alignment.BottomEnd),
+                    modifier = Modifier
+                        .padding(20.dp)
+                        .align(Alignment.BottomEnd),
                     text = { Text(text = "Next") },
                     onClick = {
                         when (addAlarmScreenState.currentPage) {

@@ -37,8 +37,8 @@ import kotlinx.coroutines.flow.first
 @Composable
 fun AlarmScreen(
     actionRootDestinations: ActionRootDestinations,
-    selectionViewModel: SelectionViewModel,
     alarmViewModel: AlarmViewModel = shareViewModel(),
+    selectionViewModel: SelectionViewModel= shareViewModel(),
     alarmScreenState: AlarmScreenState = rememberAlarmScreenState()
 ) {
     val listAlarmState by alarmViewModel.listAlarm.collectAsState()

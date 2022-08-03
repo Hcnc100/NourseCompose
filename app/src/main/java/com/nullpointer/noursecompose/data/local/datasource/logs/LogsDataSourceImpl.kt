@@ -18,4 +18,7 @@ class LogsDataSourceImpl(
     override suspend fun deleterAllLog() =
         logsDAO.deleterAllLogs()
 
+    override suspend fun deleteLogs(listIds: List<Long>) =
+        logsDAO.deleterLogs(listIds)
+
 }

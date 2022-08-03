@@ -181,4 +181,3 @@ inline fun <reified VM : ViewModel> shareViewModel():VM {
     val activity = LocalContext.current as ComponentActivity
     return hiltViewModel(activity)
 }
-

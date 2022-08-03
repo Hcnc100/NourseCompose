@@ -1,6 +1,8 @@
 package com.nullpointer.noursecompose.ui.states
 
 import android.content.Context
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.ScaffoldState
@@ -12,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class MeasureScreenState(
+class SelectedScreenState(
     context: Context,
     scaffoldState: ScaffoldState,
     val lazyGridState: LazyGridState,
@@ -26,14 +28,23 @@ class MeasureScreenState(
             lazyGridState.animateScrollToItem(0)
         }
     }
+
+    fun showToast(@StringRes messageRes: Int) {
+        Toast.makeText(
+            context,
+            context.getString(messageRes),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
 }
 
 @Composable
-fun rememberMeasureScreenState(
+fun rememberSelectedScreenState(
     context: Context = LocalContext.current,
     lazyGridState: LazyGridState = rememberLazyGridState(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) = remember(scaffoldState, coroutineScope, lazyGridState) {
-    MeasureScreenState(context, scaffoldState, lazyGridState, coroutineScope)
+    SelectedScreenState(context, scaffoldState, lazyGridState, coroutineScope)
 }

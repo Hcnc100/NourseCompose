@@ -16,4 +16,8 @@ class RegistryRepoImpl(
     override suspend fun deleterAllLogs() =
         logsDataSource.deleterAllLog()
 
+    override suspend fun deleterLogs(listId: List<Long>) =
+        logsDataSource.deleteLogs(listId)
+
+
 }

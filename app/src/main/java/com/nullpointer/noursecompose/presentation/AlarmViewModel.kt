@@ -22,7 +22,6 @@ class AlarmViewModel @Inject constructor(
     private val alarmRepo: AlarmRepoImpl,
 ) : ViewModel() {
 
-
     val listAlarm = flow<Resource<List<Alarm>>> {
         alarmRepo.listAlarms.collect{
             emit(Resource.Success(it))

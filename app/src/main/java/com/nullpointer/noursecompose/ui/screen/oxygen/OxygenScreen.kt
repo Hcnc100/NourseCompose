@@ -25,17 +25,17 @@ import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.screen.measure.GraphAndTable
 import com.nullpointer.noursecompose.ui.screen.measure.LoadingItemMeasure
 import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
-import com.nullpointer.noursecompose.ui.states.MeasureScreenState
-import com.nullpointer.noursecompose.ui.states.rememberMeasureScreenState
+import com.nullpointer.noursecompose.ui.states.SelectedScreenState
+import com.nullpointer.noursecompose.ui.states.rememberSelectedScreenState
 import com.ramcosta.composedestinations.annotation.Destination
 
 @HomeNavGraph
 @Destination
 @Composable
 fun OxygenScreen(
-    selectionViewModel: SelectionViewModel,
+    selectionViewModel: SelectionViewModel= shareViewModel(),
     measureViewModel: MeasureViewModel = shareViewModel(),
-    measureScreenState: MeasureScreenState = rememberMeasureScreenState()
+    measureScreenState: SelectedScreenState = rememberSelectedScreenState()
 ) {
     val listOxygenState by measureViewModel.listOxygen.collectAsState()
     val (isShowDialog, changeVisibleDialog) = rememberSaveable { mutableStateOf(false) }

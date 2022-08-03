@@ -1,5 +1,7 @@
 package com.nullpointer.noursecompose.ui.screen.main
 
+
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -13,11 +15,17 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.core.utils.shareViewModel
+import com.nullpointer.noursecompose.presentation.AlarmViewModel
 import com.nullpointer.noursecompose.presentation.SelectionViewModel
+import com.nullpointer.noursecompose.services.AlarmReceiver
 import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.HomeDestinations
 import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
 import com.nullpointer.noursecompose.ui.screen.NavGraphs
+import com.nullpointer.noursecompose.ui.screen.destinations.ConfigScreenDestination
+import com.nullpointer.noursecompose.ui.screen.destinations.LogsScreensDestination
+import com.nullpointer.noursecompose.ui.screen.main.ToolbarActions.*
 import com.nullpointer.noursecompose.ui.share.SelectToolbar
 import com.nullpointer.noursecompose.ui.states.MainScreenState
 import com.nullpointer.noursecompose.ui.states.rememberMainScreenState
@@ -31,8 +39,8 @@ import com.ramcosta.composedestinations.navigation.navigate
 @Composable
 fun MainScreen(
     actionRootDestinations: ActionRootDestinations,
-    selectViewModel: SelectionViewModel = hiltViewModel(),
-    mainScreenState: MainScreenState = rememberMainScreenState()
+    selectViewModel: SelectionViewModel = shareViewModel(),
+    mainScreenState: MainScreenState = rememberMainScreenState(),
 ) {
     Scaffold(
         topBar = {
@@ -40,7 +48,21 @@ fun MainScreen(
                 titleDefault = R.string.app_name,
                 titleSelection = R.plurals.selected_items,
                 numberSelection = selectViewModel.numberSelection,
-                actionClear = selectViewModel::clearSelection
+                actionToolbar = {action->
+                    when(action){
+                        CLEAR -> selectViewModel.clearSelection()
+                        SETTINGS -> actionRootDestinations.changeRoot(ConfigScreenDestination)
+                        LOGS -> actionRootDestinations.changeRoot(LogsScreensDestination)
+                        RE_INIT -> {
+                            val intent = Intent(
+                                mainScreenState.context,
+                                AlarmReceiver::class.java
+                            )
+                            intent.action="com.nullpointer.noursecompose.android.action.broadcast"
+                            mainScreenState.context.applicationContext.sendBroadcast(intent)
+                        }
+                    }
+                }
             )
         },
         bottomBar = {

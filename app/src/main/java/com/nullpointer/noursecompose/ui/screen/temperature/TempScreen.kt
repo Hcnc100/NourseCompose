@@ -11,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.states.Resource
 import com.nullpointer.noursecompose.core.utils.shareViewModel
@@ -26,17 +25,17 @@ import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.screen.measure.GraphAndTable
 import com.nullpointer.noursecompose.ui.screen.measure.LoadingItemMeasure
 import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
-import com.nullpointer.noursecompose.ui.states.MeasureScreenState
-import com.nullpointer.noursecompose.ui.states.rememberMeasureScreenState
+import com.nullpointer.noursecompose.ui.states.SelectedScreenState
+import com.nullpointer.noursecompose.ui.states.rememberSelectedScreenState
 import com.ramcosta.composedestinations.annotation.Destination
 
 @HomeNavGraph
 @Destination
 @Composable
 fun TempScreen(
-    selectionViewModel: SelectionViewModel,
+    selectionViewModel: SelectionViewModel= shareViewModel(),
     measureViewModel: MeasureViewModel = shareViewModel(),
-    measureScreenState: MeasureScreenState = rememberMeasureScreenState()
+    measureScreenState: SelectedScreenState = rememberSelectedScreenState()
 ) {
     val listTempState by measureViewModel.listTemp.collectAsState()
     val (isShowDialog, changeVisibleDialog) = rememberSaveable { mutableStateOf(false) }

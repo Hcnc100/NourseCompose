@@ -17,4 +17,7 @@ interface LogsDAO {
 
     @Query("SELECT * FROM logs_table ORDER BY timestamp DESC")
     fun getAllLogs(): Flow<List<Log>>
+
+    @Query("DELETE FROM logs_table where id in (:listIds)")
+    suspend fun deleterLogs(listIds:List<Long>)
 }

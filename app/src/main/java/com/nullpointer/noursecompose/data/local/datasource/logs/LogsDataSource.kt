@@ -8,4 +8,5 @@ interface LogsDataSource {
     suspend fun insertLog(newLog: Log)
     suspend fun deleterLog(log: Log)
     suspend fun deleterAllLog()
+    suspend fun deleteLogs(listIds:List<Long>)
 }

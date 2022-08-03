@@ -17,24 +17,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
+import com.valentinilk.shimmer.Shimmer
+import com.valentinilk.shimmer.ShimmerBounds
+import com.valentinilk.shimmer.rememberShimmer
 import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun LoadingAlarm(
     modifier: Modifier,
 ) {
+    val shimmerInstance = rememberShimmer(shimmerBounds = ShimmerBounds.View)
+
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_alarm)),
     ) {
-        items(10, key = { it }) {
-            ItemAlarmLoading()
+        items(15, key = { it }) {
+            ItemAlarmLoading(shimmerInstance)
         }
     }
 }
 
 @Composable
 private fun ItemAlarmLoading(
+    shimmer: Shimmer,
+    modifier: Modifier = Modifier,
     darkTheme: Boolean = isSystemInDarkTheme(),
 ) {
     val colorShimmer by remember {
@@ -42,7 +49,7 @@ private fun ItemAlarmLoading(
     }
 
     Card(
-        modifier = Modifier.padding(2.dp),
+        modifier = modifier.padding(2.dp),
         shape = RoundedCornerShape(10.dp)
     ) {
         Row(modifier = Modifier.padding(10.dp)) {
@@ -52,7 +59,7 @@ private fun ItemAlarmLoading(
                         .fillMaxWidth()
                         .height(15.dp)
                         .clip(RoundedCornerShape(5.dp))
-                        .shimmer()
+                        .shimmer(shimmer)
                         .background(colorShimmer)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -61,7 +68,7 @@ private fun ItemAlarmLoading(
                         .fillMaxWidth()
                         .height(30.dp)
                         .clip(RoundedCornerShape(5.dp))
-                        .shimmer()
+                        .shimmer(shimmer)
                         .background(colorShimmer)
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -70,7 +77,7 @@ private fun ItemAlarmLoading(
                         .fillMaxWidth()
                         .height(15.dp)
                         .clip(RoundedCornerShape(5.dp))
-                        .shimmer()
+                        .shimmer(shimmer)
                         .background(colorShimmer)
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -79,7 +86,7 @@ private fun ItemAlarmLoading(
                         .fillMaxWidth()
                         .height(15.dp)
                         .clip(RoundedCornerShape(5.dp))
-                        .shimmer()
+                        .shimmer(shimmer)
                         .background(colorShimmer)
                 )
             }
@@ -90,7 +97,7 @@ private fun ItemAlarmLoading(
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(5.dp))
-                    .shimmer()
+                    .shimmer(shimmer)
                     .background(colorShimmer)
 
             )
