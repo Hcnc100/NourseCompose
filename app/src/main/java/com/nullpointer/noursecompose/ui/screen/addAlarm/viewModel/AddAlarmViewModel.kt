@@ -6,6 +6,7 @@ import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.delegates.PropertySavableAlarmTime
 import com.nullpointer.noursecompose.core.delegates.PropertySavableString
 import com.nullpointer.noursecompose.core.delegates.SavableComposeState
+import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -59,6 +60,25 @@ class AddAlarmViewModel @Inject constructor(
 
     fun changeVisibleDialogRepeat(isVisible: Boolean) {
         showDialogRepeat = isVisible
+    }
+
+    fun createAlarm(): Alarm {
+        return Alarm(
+            name = nameAlarm.value,
+            description = description.value,
+            typeAlarm = alarmTime.typeAlarm,
+            nextAlarm = alarmTime.timeNextAlarm,
+            repeaterEvery = alarmTime.timeToRepeatAlarm,
+            rangeInitAlarm = alarmTime.rangeAlarm.first,
+            rangeFinishAlarm = alarmTime.rangeAlarm.second
+        )
+    }
+
+    fun clearAlarmFields() {
+        nameAlarm.clearValue()
+        description.clearValue()
+        alarmTime.clearValue()
+        imageAlarm = null
     }
 
 

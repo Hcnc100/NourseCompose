@@ -22,7 +22,7 @@ class PropertySavableAlarmTime(
     }
 
 
-    var typeAlarm: AlarmTypes by SavableComposeState(state, KEY_TYPE_ALARM, AlarmTypes.INDEFINITELY)
+    var typeAlarm: AlarmTypes by SavableComposeState(state, KEY_TYPE_ALARM, AlarmTypes.ONE_SHOT)
         private set
 
     var timeInitAlarm: Long by SavableComposeState(state, KEY_TIME_INIT, getTimeNowToClock())
@@ -120,6 +120,10 @@ class PropertySavableAlarmTime(
                 nextAlarmAprox
             }
         }
+    }
+
+    fun clearValue() {
+        changeType(AlarmTypes.ONE_SHOT)
     }
 
 }

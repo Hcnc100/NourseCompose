@@ -11,7 +11,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
@@ -24,6 +23,7 @@ import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.dialogs.DialogDetails
 import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.HomeNavGraph
+import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
 import com.nullpointer.noursecompose.ui.screen.destinations.AddAlarmScreenDestination
 import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
@@ -38,7 +38,8 @@ import kotlinx.coroutines.flow.first
 fun AlarmScreen(
     actionRootDestinations: ActionRootDestinations,
     alarmViewModel: AlarmViewModel = shareViewModel(),
-    selectionViewModel: SelectionViewModel= shareViewModel(),
+    addAlarmViewModel: AddAlarmViewModel = shareViewModel(),
+    selectionViewModel: SelectionViewModel = shareViewModel(),
     alarmScreenState: AlarmScreenState = rememberAlarmScreenState()
 ) {
     val listAlarmState by alarmViewModel.listAlarm.collectAsState()
@@ -62,8 +63,11 @@ fun AlarmScreen(
                 isSelectedEnable = selectionViewModel.isSelectedEnable,
                 descriptionButtonRemove = stringResource(R.string.description_remove_alarms),
                 descriptionButtonAdd = stringResource(R.string.description_add_alarm),
-                actionAdd = { actionRootDestinations.changeRoot(AddAlarmScreenDestination) },
-                actionRemove = { alarmViewModel.deleterListAlarm(selectionViewModel.getListSelectionAndClear()) }
+                actionRemove = { alarmViewModel.deleterListAlarm(selectionViewModel.getListSelectionAndClear()) },
+                actionAdd = {
+                    addAlarmViewModel.clearAlarmFields()
+                    actionRootDestinations.changeRoot(AddAlarmScreenDestination)
+                }
             )
         }
     ) { paddingValues ->

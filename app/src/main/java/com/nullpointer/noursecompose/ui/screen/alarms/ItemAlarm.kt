@@ -97,7 +97,7 @@ private fun TextInfoAlarm(
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
     )
-    if (textNextAlarm != null) {
+    textNextAlarm?.let {
         Text(stringResource(R.string.sub_title_next_alarm),
             fontWeight = FontWeight.W300,
             modifier = Modifier.padding(vertical = 2.dp),
@@ -105,7 +105,7 @@ private fun TextInfoAlarm(
             overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Text(text = titleAlarm,
+        Text(text = it,
             fontWeight = FontWeight.W300,
             modifier = Modifier.padding(vertical = 2.dp),
             style = MaterialTheme.typography.caption,

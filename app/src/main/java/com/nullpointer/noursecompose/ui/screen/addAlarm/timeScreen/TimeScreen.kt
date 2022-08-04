@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,14 +28,11 @@ import com.nullpointer.noursecompose.ui.dialogs.DialogDate.Companion.showTimePic
 import com.nullpointer.noursecompose.ui.dialogs.DialogSelectHourRepeat
 import com.nullpointer.noursecompose.ui.screen.addAlarm.TitleAddAlarm
 import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
-import com.nullpointer.noursecompose.ui.states.AddAlarmScreenState
 
 @Composable
 fun TimeScreen(
     addAlarmViewModel: AddAlarmViewModel,
 ) {
-
-
     Column(modifier = Modifier.fillMaxSize()) {
         TitleAddAlarm(title = stringResource(R.string.title_select_init_alarm))
         SelectTimeInit(
@@ -67,7 +67,7 @@ private fun TextNextAlarm(
     context: Context = LocalContext.current
 ) {
 
-    val nextAlarmText by remember {
+    val nextAlarmText by remember(nextAlarm) {
         derivedStateOf {
             TimeUtils.getStringTimeAboutNow(nextAlarm, context)
         }
@@ -115,7 +115,7 @@ private fun HoursToRepeat(
     context: Context = LocalContext.current,
     showDialogRepeat: () -> Unit
 ) {
-    val textValue by remember {
+    val textValue by remember(timeToRepeat) {
         derivedStateOf {
             TimeUtils.timeRepeatInMillisToString(
                 timeInMillis = timeToRepeat,
@@ -144,7 +144,7 @@ private fun SelectTimeInit(
     val timePicker = remember {
         showTimePicker(activity = context, updatedDate = changeTimeInit)
     }
-    val hourValue by remember {
+    val hourValue by remember(currentTime) {
         derivedStateOf {
             currentTime.toFormatOnlyTime(context)
         }
@@ -172,7 +172,7 @@ private fun SelectTimeInit(
 @Composable
 private fun TextCenterValue(textValue: String, actionClick: () -> Unit) {
     Text(
-        textValue,
+        text = textValue,
         modifier = Modifier
             .fillMaxWidth()
             .clickable { actionClick() },
@@ -186,7 +186,7 @@ private fun TextMiniTitle(
     textTitle: String,
 ) {
     Text(
-        textTitle,
+        text = textTitle,
         modifier = Modifier.padding(10.dp),
         style = MaterialTheme.typography.caption,
         fontWeight = FontWeight.Bold
@@ -203,7 +203,7 @@ private fun FieldRangeAlarm(
     activity: AppCompatActivity = LocalContext.current as AppCompatActivity
 ) {
 
-    val textRange by remember {
+    val textRange by remember(rangeAlarm) {
         derivedStateOf {
             calculateRangeInDays(activity, rangeAlarm)
         }

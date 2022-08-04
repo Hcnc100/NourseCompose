@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.nullpointer.noursecompose.core.utils.shareViewModel
-import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.presentation.AlarmViewModel
 import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
@@ -90,14 +89,11 @@ fun AddAlarmScreen(
                             1, 2 -> addAlarmScreenState.nextPage()
                             3->{
                                if(!addAlarmViewModel.alarmTime.hasErrorRange){
+                                   val uriImgAlarm = addAlarmViewModel.imageAlarm
+                                   val newAlarm = addAlarmViewModel.createAlarm()
                                    alarmViewModel.addNewAlarm(
-                                       alarm = Alarm(
-                                           name = addAlarmViewModel.nameAlarm.value,
-                                           description = addAlarmViewModel.description.value,
-                                           typeAlarm = addAlarmViewModel.alarmTime.typeAlarm,
-                                           nextAlarm = addAlarmViewModel.alarmTime.timeNextAlarm,
-                                       ),
-                                       uriImg = addAlarmViewModel.imageAlarm
+                                       alarm = newAlarm,
+                                       uriImg = uriImgAlarm
                                    )
                                    actionRootDestinations.backDestination()
                                }

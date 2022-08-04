@@ -30,7 +30,7 @@ fun RepeatAlarmScreen(
         AlarmTypes.values().forEach {
             ItemSelectType(
                 alarmTypes = it,
-                currentType = addAlarmViewModel.alarmTime.typeAlarm,
+                typeSelected = addAlarmViewModel.alarmTime.typeAlarm,
                 changeType = addAlarmViewModel.alarmTime::changeType
             )
         }
@@ -42,12 +42,12 @@ fun RepeatAlarmScreen(
 @Composable
 private fun ItemSelectType(
     alarmTypes: AlarmTypes,
-    currentType: AlarmTypes,
+    typeSelected: AlarmTypes,
     changeType: (AlarmTypes) -> Unit
 ) {
 
-    val isSelect by remember {
-        derivedStateOf { currentType == alarmTypes }
+    val isSelect by remember(typeSelected) {
+        derivedStateOf { typeSelected == alarmTypes }
     }
 
     Row(modifier = Modifier
