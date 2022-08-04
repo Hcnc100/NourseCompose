@@ -5,6 +5,8 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.os.CountDownTimer
 import android.os.VibrationEffect
@@ -15,12 +17,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.notify.TypeNotify
 import com.nullpointer.noursecompose.models.notify.TypeNotify.ALARM
 import com.nullpointer.noursecompose.models.notify.TypeNotify.NOTIFY
-import com.nullpointer.noursecompose.ui.screen.config.getUriMediaPlayer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
@@ -137,6 +139,21 @@ class SoundServices : LifecycleService() {
         }
     }
 
+    fun getUriMediaPlayer(indexSound: Int = -1): Uri {
+        return if (indexSound != -1) {
+            val sound = when (indexSound) {
+                0 -> R.raw.sound1
+                1 -> R.raw.sound2
+                2 -> R.raw.sound3
+                3 -> R.raw.sound4
+                else -> R.raw.sound5
+            }
+            Uri.parse("android.resource://$packageName/$sound")
+        } else {
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        }
+    }
+
     private suspend fun launchAlarm(alarm: Alarm) {
         // * saved alarm passed
         // ? this if no stop alarm , and notify last alarm
@@ -148,7 +165,7 @@ class SoundServices : LifecycleService() {
         isSound = true
         // * get type sound for alarm
         val index = prefRepoImpl.intSound.first()
-        val sound = getUriMediaPlayer(index, this@SoundServices)
+        val sound = getUriMediaPlayer(index)
         // * prepare media player
         withContext(Dispatchers.IO) {
             mediaPlayer.setDataSource(this@SoundServices, sound)

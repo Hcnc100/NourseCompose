@@ -1,215 +1,79 @@
 package com.nullpointer.noursecompose.ui.screen.config
 
-import android.content.Context
-import android.media.MediaPlayer
-import android.media.RingtoneManager
-import android.net.Uri
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
-import com.nullpointer.noursecompose.models.notify.TypeNotify
-import com.nullpointer.noursecompose.services.SoundServices
+import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
 import com.nullpointer.noursecompose.ui.screen.config.viewModel.ConfigViewModel
 import com.nullpointer.noursecompose.ui.share.mpGraph.ToolbarBack
+import com.nullpointer.noursecompose.ui.states.ConfigScreenState
+import com.nullpointer.noursecompose.ui.states.rememberConfigScreenState
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
 @MainNavGraph
 @Composable
 @Destination
 fun ConfigScreen(
+    actionRootDestinations: ActionRootDestinations,
     configViewModel: ConfigViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator,
+    configScreenState: ConfigScreenState = rememberConfigScreenState()
 ) {
-    val typeNotify = configViewModel.typeNotify.collectAsState()
-    val indexSound = configViewModel.intSound.collectAsState()
-    val isSoundServices = SoundServices.alarmIsAlive
-    val context = LocalContext.current
-    val mediaPlayer = remember { MediaPlayer() }
-    var isPlaying by remember { mutableStateOf(false) }
-    var currentSound by remember { mutableStateOf(getUriMediaPlayer(-1, context)) }
+    val typeNotify by configViewModel.typeNotify.collectAsState()
+    val indexSound by configViewModel.intSound.collectAsState()
 
-    DisposableEffect(key1 = Unit) {
-        onDispose {
-            if (mediaPlayer.isPlaying) mediaPlayer.stop()
-            mediaPlayer.release()
-        }
-    }
-    LaunchedEffect(key1 = indexSound.value) {
-        currentSound = getUriMediaPlayer(indexSound.value, context)
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.stop()
-            isPlaying = false
-        }
-        mediaPlayer.reset()
-    }
-
-    // * stop sound if launch services
-    LaunchedEffect(key1 = isSoundServices) {
-        if (isSoundServices) {
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.stop()
-                isPlaying = false
-            }
-            mediaPlayer.reset()
-        }
+    DisposableEffect(key1 = indexSound) {
+        configScreenState.setNewSong(indexSound)
+        onDispose { configScreenState.releaseMediaPlayer() }
     }
 
     Scaffold(
         topBar = {
-            ToolbarBack(title = stringResource(R.string.title_config_screen),
-                navigator::popBackStack)
+            ToolbarBack(
+                title = stringResource(R.string.title_config_screen),
+                actionBack = actionRootDestinations::backDestination
+            )
         }
     ) {
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-//            TextMiniTitle(textTitle = stringResource(R.string.mini_title_type_alarm))
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .verticalScroll(rememberScrollState())
+        ) {
             RadioButtonNotifyType(
-                currentNotify = typeNotify.value,
-                changeNotify = configViewModel::changeTypeNotify)
+                currentNotify = typeNotify,
+                changeNotify = configViewModel::changeTypeNotify
+            )
             Spacer(modifier = Modifier.height(20.dp))
-//            TextMiniTitle(textTitle = stringResource(R.string.mini_title_sound_alarm))
             SelectSoundAlarm(
-                indexSound = indexSound.value,
-                changeIndexSound = {
-                    configViewModel.changeIntSound(it)
-                })
+                indexSound = indexSound,
+                changeIndexSound = configViewModel::changeIntSound
+            )
             Spacer(modifier = Modifier.height(5.dp))
-            Row {
-                Box(modifier = Modifier.weight(.4f))
-                TextButton(modifier = Modifier
-                    .weight(.6f), onClick = {
-                    if (mediaPlayer.isPlaying) {
-                        isPlaying = false
-                        mediaPlayer.pause()
-                        mediaPlayer.seekTo(0)
-                    } else {
-                        mediaPlayer.setDataSource(context, currentSound)
-                        mediaPlayer.prepare()
-                        mediaPlayer.start()
-                        isPlaying = true
-                    }
-                }) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(if (isPlaying) painterResource(id = R.drawable.ic_stop) else painterResource(
-                            id = R.drawable.ic_play),
-                            contentDescription = stringResource(R.string.description_button_preview))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(R.string.title_sound_preview))
-                    }
-                }
-            }
-        }
-    }
-}
-
-fun getUriMediaPlayer(indexSound: Int, context: Context): Uri {
-    return if (indexSound != -1) {
-        val sound = when (indexSound) {
-            0 -> R.raw.sound1
-            1 -> R.raw.sound2
-            2 -> R.raw.sound3
-            3 -> R.raw.sound4
-            else -> R.raw.sound5
-        }
-        Uri.parse("android.resource://" + context.packageName.toString() + "/" + sound)
-    } else {
-        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-    }
-}
-
-@Composable
-fun SelectSoundAlarm(
-    indexSound: Int,
-    changeIndexSound: (Int) -> Unit,
-) {
-    val (expanded, changeExpanded) = rememberSaveable { mutableStateOf(false) }
-    Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(horizontal = 10.dp)) {
-        Text(text = stringResource(R.string.mini_title_sound), modifier = Modifier.weight(.4f))
-        Box(modifier = Modifier
-            .weight(.6f)) {
-            OutlinedTextField(
-                value = if (indexSound == -1) stringResource(R.string.text_sound_defect) else stringResource(
-                    id = R.string.text_sound_select, indexSound + 1),
-                onValueChange = {},
-                enabled = false,
-                modifier = Modifier.clickable {
-                    changeExpanded(true)
-                },
-                trailingIcon = {
-                    Icon(painter = painterResource(id = R.drawable.ic_arrow_drop),
-                        contentDescription = stringResource(R.string.description_drop_icon))
-                },
+            ButtonPlayOrPause(
+                togglePlayPause = configScreenState::togglePlayPause,
+                isPlaying = configScreenState.isPlaying
             )
-
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { changeExpanded(false) },
-            ) {
-                DropdownMenuItem(
-                    onClick = {
-                        changeExpanded(false)
-                        changeIndexSound(-1)
-                    }
-                ) {
-                    Text(text = stringResource(id = R.string.text_sound_defect))
-                }
-                (0..6).forEach {
-                    DropdownMenuItem(
-                        onClick = {
-                            changeExpanded(false)
-                            changeIndexSound(it)
-                        }
-                    ) {
-                        Text(text = stringResource(id = R.string.text_sound_select, it + 1))
-                    }
-                }
-            }
         }
     }
-
 }
-
-
 @Composable
-fun RadioButtonNotifyType(
-    changeNotify: (TypeNotify) -> Unit,
-    currentNotify: TypeNotify,
+fun TitleConfig(
+    textTitle: String
 ) {
-    val listType = listOf(
-        TypeNotify.ALARM,
-        TypeNotify.NOTIFY
+    Text(
+        text = textTitle,
+        style = MaterialTheme.typography.h5,
+        modifier = Modifier.padding(10.dp),
+        fontSize = 14.sp
     )
-    listType.forEach {
-        Row(modifier = Modifier
-            .clickable { changeNotify(it) }
-            .padding(horizontal = 15.dp)) {
-            RadioButton(
-                selected = it == currentNotify,
-                onClick = null,
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Column {
-                Text(stringResource(id = it.title))
-                Spacer(modifier = Modifier.height(5.dp))
-                Text(stringResource(id = it.description), style = MaterialTheme.typography.caption)
-            }
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-    }
-
 }
