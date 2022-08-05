@@ -1,7 +1,6 @@
 package com.nullpointer.noursecompose.ui.states
 
 import android.content.Context
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -11,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import com.nullpointer.noursecompose.core.utils.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -30,11 +30,7 @@ class SelectedScreenState(
     }
 
     fun showToast(@StringRes messageRes: Int) {
-        Toast.makeText(
-            context,
-            context.getString(messageRes),
-            Toast.LENGTH_SHORT
-        ).show()
+        context.showToast(messageRes)
     }
 
 }

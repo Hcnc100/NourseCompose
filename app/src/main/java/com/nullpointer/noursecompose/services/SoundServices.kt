@@ -139,7 +139,7 @@ class SoundServices : LifecycleService() {
         }
     }
 
-    fun getUriMediaPlayer(indexSound: Int = -1): Uri {
+    private fun getUriMediaPlayer(indexSound: Int = -1): Uri {
         return if (indexSound != -1) {
             val sound = when (indexSound) {
                 0 -> R.raw.sound1

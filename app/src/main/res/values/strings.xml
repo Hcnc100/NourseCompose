@@ -101,7 +101,7 @@
     <string name="title_select_init_alarm">Selecciona la hora de la alarma</string>
     <string name="title_range_days">Rango de días</string>
     <string name="error_time_min_range">Debe seleccionar mínimo el rango de un día</string>
-    <string name="title_repeat_every">Repetir cada...</string>
+    <string name="title_repeat_every">Repetir cada…</string>
     <string name="title_next_alarm">Próxima alarma</string>
 
     <!-- dialog select time repeat -->
@@ -143,6 +143,7 @@
     <string name="title_notify_alarm">Es hora de tomar tu medicamento</string>
     <string name="title_notify_lost_alarm">Recordatorio Perdido</string>
     <string name="init_process_restart">Se inició el proceso de restauración de las alarmas</string>
+    <string name="count_restore_alarm">Se han restaurado %d alarmas</string>
 
     <!-- alarm screen -->
     <string name="description_img_current_alarm">Imagen de la alarma actual</string>

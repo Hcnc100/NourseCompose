@@ -7,9 +7,7 @@ import com.nullpointer.noursecompose.core.utils.*
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 
 class PropertySavableAlarmTime(
-    state: SavedStateHandle,
-    defaultValue: AlarmTypes,
-    val errorRangeRes: Int,
+    state: SavedStateHandle
 ) {
     companion object {
         private const val KEY_TIME_INIT = "KEY_TIME_INIT"

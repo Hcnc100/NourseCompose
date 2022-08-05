@@ -9,8 +9,10 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.text.format.DateFormat
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.PluralsRes
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -180,4 +182,12 @@ fun Activity.turnScreenOffAndKeyguardOn() {
 inline fun <reified VM : ViewModel> shareViewModel():VM {
     val activity = LocalContext.current as ComponentActivity
     return hiltViewModel(activity)
+}
+
+fun Context.showToast(@StringRes resString: Int) {
+    Toast.makeText(this, getString(resString), Toast.LENGTH_SHORT).show()
+}
+
+fun Context.showToast(message:String) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }

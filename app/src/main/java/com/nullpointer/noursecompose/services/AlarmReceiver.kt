@@ -3,10 +3,10 @@ package com.nullpointer.noursecompose.services
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.getTimeNow
 import com.nullpointer.noursecompose.core.utils.myGoAsync
+import com.nullpointer.noursecompose.core.utils.showToast
 import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
 import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
 import com.nullpointer.noursecompose.models.alarm.Alarm
@@ -46,8 +46,10 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         intent.let {
             when (it.action) {
-                KEY_RESTORE, BOOT_COMPLETED, TIME_SET -> restoreAlarms(context,
-                    it.action == KEY_RESTORE)
+                KEY_RESTORE, BOOT_COMPLETED, TIME_SET -> restoreAlarms(
+                    context,
+                    it.action == KEY_RESTORE
+                )
                 WAKE_UP_ALARM -> launchAlarm(context, it.getLongExtra(ID_ALARM, -1))
                 else -> Timber.d("action intent $it")
             }
@@ -61,16 +63,13 @@ class AlarmReceiver : BroadcastReceiver() {
         val alarm = alarmRepository.getAlarmById(idAlarm)
         val currentTime = getTimeNow()
         if (alarm != null) {
-
             SoundServices.startServices(context, alarm)
-
             // * registry launch
             alarmRepository.addNewLog(Log(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
             updateAlarm(alarm, currentTime)
         } else {
             // * registry error
-            alarmRepository.addNewLog(Log(idAlarm = idAlarm,
-                type = TypeRegistry.ERROR_LAUNCH))
+            alarmRepository.addNewLog(Log(idAlarm = idAlarm, type = TypeRegistry.ERROR_LAUNCH))
             Timber.e("Alarm id non found $idAlarm")
         }
     }
@@ -89,8 +88,10 @@ class AlarmReceiver : BroadcastReceiver() {
             AlarmTypes.RANGE -> {
                 val rangeAlarm = (alarm.rangeInitAlarm!!..alarm.rangeFinishAlarm!!)
                 if (currentTime in rangeAlarm)
-                    alarm.updateTime(currentTime) else alarm.copy(isActive = false,
-                    nextAlarm = null)
+                    alarm.updateTime(currentTime) else alarm.copy(
+                    isActive = false,
+                    nextAlarm = null
+                )
             }
         }
 
@@ -99,31 +100,40 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
 
-    private fun restoreAlarms(context: Context, isRestoreUser: Boolean) =
-        myGoAsync(GlobalScope, Dispatchers.IO) {
-            val listAlarmLost = mutableListOf<Alarm>()
-            Timber.d("Se inició el proceso de restauración de las alarmas")
-            withContext(Dispatchers.Main){
-                if (isRestoreUser) Toast.makeText(context,
-                    context.getString(R.string.init_process_restart),
-                    Toast.LENGTH_SHORT).show()
-            }
-            val alarmsActive = alarmRepository.getAllAlarmActive()
-            val currentTime = getTimeNow()
-            alarmsActive.forEach { alarm ->
-                if (currentTime > (alarm.nextAlarm ?: 0)) {
-                    // * notify in group that alarm is lost
-                    listAlarmLost.add(alarm)
-                    updateAlarm(alarm, currentTime)
-                } else {
-                    alarmRepository.restoreAlarm(alarm)
-                }
-            }
-            if (listAlarmLost.isNotEmpty()) {
-                notificationHelper.showNotificationLost(listAlarmLost)
-                listAlarmLost.clear()
-            }
+    private fun restoreAlarms(
+        context: Context,
+        isRestoreUser: Boolean
+    ) = myGoAsync(GlobalScope, Dispatchers.IO) {
 
-            Timber.d("Alarmas restauradas ${alarmsActive.size}")
+        withContext(Dispatchers.Main) {
+            if (isRestoreUser) context.showToast(R.string.init_process_restart)
         }
+
+        val listAlarmLost = mutableListOf<Alarm>()
+        val alarmsActive = alarmRepository.getAllAlarmActive()
+        val currentTime = getTimeNow()
+        var count = 0
+        alarmsActive.forEach { alarm ->
+            if (currentTime > (alarm.nextAlarm ?: 0)) {
+                // * notify in group that alarm is lost
+                listAlarmLost.add(alarm)
+                updateAlarm(alarm, currentTime)
+            } else {
+                alarmRepository.restoreAlarm(alarm)
+                count++
+            }
+        }
+
+        withContext(Dispatchers.Main) {
+            if (isRestoreUser)  context.showToast(context.getString(R.string.count_restore_alarm, count))
+        }
+
+        if (listAlarmLost.isNotEmpty()) {
+            notificationHelper.showNotificationLost(listAlarmLost)
+            listAlarmLost.clear()
+        }
+
+        Timber.d("Alarms restored ${alarmsActive.size}")
+    }
+
 }

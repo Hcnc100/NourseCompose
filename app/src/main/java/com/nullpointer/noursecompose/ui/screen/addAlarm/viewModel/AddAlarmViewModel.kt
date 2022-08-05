@@ -50,11 +50,8 @@ class AddAlarmViewModel @Inject constructor(
         imageAlarm = newUri
     }
 
-    val alarmTime = PropertySavableAlarmTime(
-        state = stateHandle,
-        defaultValue = AlarmTypes.ONE_SHOT,
-        R.string.error_time_min_range
-    )
+    val alarmTime = PropertySavableAlarmTime(state = stateHandle)
+
     var showDialogRepeat by SavableComposeState(stateHandle, "KEY_DIALOG_REPEAT", false)
         private set
 

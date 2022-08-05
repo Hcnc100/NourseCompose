@@ -58,7 +58,7 @@ fun MainScreen(
                                 mainScreenState.context,
                                 AlarmReceiver::class.java
                             )
-                            intent.action="com.nullpointer.noursecompose.android.action.broadcast"
+                            intent.action=AlarmReceiver.KEY_RESTORE
                             mainScreenState.context.applicationContext.sendBroadcast(intent)
                         }
                     }
