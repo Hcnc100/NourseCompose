@@ -39,11 +39,11 @@
         </activity> <!-- get actions for AlarmReceiver -->
 
         <service
-            android:name=".services.SoundServices"
+            android:name=".services.sound.SoundServices"
             android:foregroundServiceType="mediaPlayback" />
 
         <receiver
-            android:name=".services.AlarmReceiver"
+            android:name=".services.alarms.AlarmReceiver"
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">

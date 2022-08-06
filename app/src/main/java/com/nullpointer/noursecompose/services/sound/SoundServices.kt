@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.services
+package com.nullpointer.noursecompose.services.sound
 
 import android.content.Context
 import android.content.Intent
@@ -18,12 +18,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.nullpointer.noursecompose.R
-import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
 import com.nullpointer.noursecompose.domain.pref.PrefRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.notify.TypeNotify
 import com.nullpointer.noursecompose.models.notify.TypeNotify.ALARM
 import com.nullpointer.noursecompose.models.notify.TypeNotify.NOTIFY
+import com.nullpointer.noursecompose.services.NotificationHelper
+import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_ALARM_PASS
+import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_START_SOUND
+import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_STOP_SOUND
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
@@ -33,30 +36,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SoundServices : LifecycleService() {
-    companion object {
-
-        var alarmIsAlive by mutableStateOf(false)
-
-        const val KEY_START_SOUND = "KEY_START_SOUND"
-        const val KEY_STOP_SOUND = "KEY_STOP_SOUND"
-        const val KEY_ALARM_PASS = "KEY_ALARM_PASS"
-        const val KEY_ALARM_PASS_ACTIVITY = "KEY_ALARM_PASS_ACTIVITY"
-
-        fun startServices(context: Context, alarm: Alarm) {
-            Intent(context, SoundServices::class.java).also { intent ->
-                intent.action = KEY_START_SOUND
-                intent.putExtra(KEY_ALARM_PASS, alarm)
-                context.startService(intent)
-            }
-        }
-
-        fun stopServices(context: Context) {
-            Intent(context, SoundServices::class.java).also { intent ->
-                intent.action = KEY_STOP_SOUND
-                context.startService(intent)
-            }
-        }
-    }
 
     @Inject
     lateinit var notificationHelper: NotificationHelper
@@ -66,21 +45,13 @@ class SoundServices : LifecycleService() {
 
     lateinit var alarmPassed: Alarm
 
-    private val mediaPlayer = MediaPlayer().apply {
-        // * set alarm attributes
-        setAudioAttributes(AudioAttributes.Builder()
-            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-            .setLegacyStreamType(AudioManager.STREAM_ALARM)
-            .setUsage(AudioAttributes.USAGE_ALARM)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .build())
-    }
-
     private var isSound = false
 
     private val listAlarmWait = mutableListOf<Alarm>()
 
     private var jobAwaitAlarm: Job? = null
+
+    private val mediaPlayer by lazy { createMediaPlayer() }
 
     private val timer = object : CountDownTimer(MINUTE_IN_MILLIS, 1000) {
         override fun onTick(millisUntilFinished: Long) = Unit
@@ -90,7 +61,6 @@ class SoundServices : LifecycleService() {
             cancelAlarm()
         }
     }
-
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
@@ -161,7 +131,7 @@ class SoundServices : LifecycleService() {
         alarmPassed = alarm
         // * change state services to live
         // ? this for can stop activity observed this
-        alarmIsAlive = true
+        prefRepo.changeIsAlarmSound(true)
         // * change var to control bucle alive
         isSound = true
         // * get type sound for alarm
@@ -196,13 +166,27 @@ class SoundServices : LifecycleService() {
         // * break loop
         isSound = false
         // * notify dead services
-        alarmIsAlive = false
+        prefRepo.changeIsAlarmSound(false)
         // * if media player is song to stop and release
         if (mediaPlayer.isPlaying) mediaPlayer.stop()
         mediaPlayer.release()
         // * stop services
         stopForeground(true)
         stopSelf()
+    }
+
+    private fun createMediaPlayer(): MediaPlayer {
+        return MediaPlayer().apply {
+            // * set alarm attributes
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+                    .setLegacyStreamType(AudioManager.STREAM_ALARM)
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
+        }
     }
 
     private fun vibratePhone() {

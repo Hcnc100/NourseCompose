@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,10 +11,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -23,23 +23,31 @@ import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.turnScreenOffAndKeyguardOn
 import com.nullpointer.noursecompose.core.utils.turnScreenOnAndKeyguardOff
+import com.nullpointer.noursecompose.domain.pref.PrefRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.services.SoundServices
+import com.nullpointer.noursecompose.services.sound.SoundServices
+import com.nullpointer.noursecompose.services.sound.SoundServicesControl
+import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_ALARM_PASS_ACTIVITY
 import com.nullpointer.noursecompose.ui.share.ImageAlarm
 import com.nullpointer.noursecompose.ui.share.lottieFiles.LottieContainer
 import com.nullpointer.noursecompose.ui.theme.NourseComposeTheme
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class AlarmScreen : AppCompatActivity() {
+
+    @Inject
+    lateinit var prefRepository: PrefRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         turnScreenOnAndKeyguardOff()
-        val alarm = intent.extras?.getParcelable<Alarm>(SoundServices.KEY_ALARM_PASS_ACTIVITY)!!
+        val alarm = intent.extras?.getParcelable<Alarm>(KEY_ALARM_PASS_ACTIVITY)!!
         setContent {
             NourseComposeTheme {
                 val context = LocalContext.current as AppCompatActivity
-                val alarmIsSound = SoundServices.alarmIsAlive
+                val alarmIsSound by prefRepository.isAlarmSound.collectAsState(initial = true)
 
                 LaunchedEffect(key1 = alarmIsSound) {
                     if (!alarmIsSound) context.finish()
@@ -152,7 +160,7 @@ private fun ButtonFinishServices(
     ExtendedFloatingActionButton(
         modifier = modifier,
         onClick = {
-            SoundServices.stopServices(context)
+            SoundServicesControl.stopServices(context)
             context.finish()
         },
         text = {

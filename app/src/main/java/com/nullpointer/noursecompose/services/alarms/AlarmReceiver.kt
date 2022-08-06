@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.services
+package com.nullpointer.noursecompose.services.alarms
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -8,12 +8,13 @@ import com.nullpointer.noursecompose.core.utils.getTimeNow
 import com.nullpointer.noursecompose.core.utils.myGoAsync
 import com.nullpointer.noursecompose.core.utils.showToast
 import com.nullpointer.noursecompose.domain.alarms.AlarmRepository
-import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
 import com.nullpointer.noursecompose.domain.pref.PrefRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import com.nullpointer.noursecompose.models.registry.Log
 import com.nullpointer.noursecompose.models.registry.TypeRegistry
+import com.nullpointer.noursecompose.services.NotificationHelper
+import com.nullpointer.noursecompose.services.sound.SoundServicesControl
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +65,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val alarm = alarmRepo.getAlarmById(idAlarm)
         val currentTime = getTimeNow()
         if (alarm != null) {
-            SoundServices.startServices(context, alarm)
+            SoundServicesControl.startServices(context, alarm)
             // * registry launch
             alarmRepo.addNewLog(Log(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
             updateAlarm(alarm, currentTime)

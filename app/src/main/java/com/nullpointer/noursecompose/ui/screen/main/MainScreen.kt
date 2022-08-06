@@ -10,15 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.shareViewModel
-import com.nullpointer.noursecompose.presentation.AlarmViewModel
 import com.nullpointer.noursecompose.presentation.SelectionViewModel
-import com.nullpointer.noursecompose.services.AlarmReceiver
+import com.nullpointer.noursecompose.services.alarms.AlarmReceiver
 import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.HomeDestinations
 import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
@@ -58,7 +56,7 @@ fun MainScreen(
                                 mainScreenState.context,
                                 AlarmReceiver::class.java
                             )
-                            intent.action=AlarmReceiver.KEY_RESTORE
+                            intent.action= AlarmReceiver.KEY_RESTORE
                             mainScreenState.context.applicationContext.sendBroadcast(intent)
                         }
                     }

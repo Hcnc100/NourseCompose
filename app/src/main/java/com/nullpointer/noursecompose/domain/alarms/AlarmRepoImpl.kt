@@ -8,7 +8,7 @@ import com.nullpointer.noursecompose.data.local.datasource.logs.LogsDataSource
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.registry.Log
 import com.nullpointer.noursecompose.models.registry.TypeRegistry
-import com.nullpointer.noursecompose.services.MyAlarmManager
+import com.nullpointer.noursecompose.services.alarms.MyAlarmManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

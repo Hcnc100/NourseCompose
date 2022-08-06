@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 interface PrefRepository {
     val typeNotify: Flow<TypeNotify>
     val intSound:Flow<Int>
+    val isAlarmSound:Flow<Boolean>
+    fun changeIsAlarmSound(isAlarmSound:Boolean)
     suspend fun changeTypeNotify(type:TypeNotify)
     suspend fun changeIntSound(intSound:Int)
 }

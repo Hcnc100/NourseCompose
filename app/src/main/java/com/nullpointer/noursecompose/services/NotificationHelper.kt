@@ -14,8 +14,9 @@ import com.nullpointer.noursecompose.core.utils.correctFlag
 import com.nullpointer.noursecompose.core.utils.getNotificationManager
 import com.nullpointer.noursecompose.core.utils.toFormat
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_PASS_ACTIVITY
-import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_STOP_SOUND
+import com.nullpointer.noursecompose.services.sound.SoundServices
+import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_ALARM_PASS_ACTIVITY
+import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_STOP_SOUND
 import com.nullpointer.noursecompose.ui.activitys.AlarmScreen
 import com.nullpointer.noursecompose.ui.activitys.MainActivity
 import com.nullpointer.noursecompose.ui.navigation.types.ArgsAlarms
@@ -86,7 +87,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         return notificationBuilder.build()
     }
 
-    @SuppressLint("InlinedApi")
+
     fun showNotifyAlarm(
         listAlarms: List<Alarm>,
     ) {

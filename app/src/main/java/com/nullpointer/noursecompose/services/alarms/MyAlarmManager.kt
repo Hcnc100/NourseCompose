@@ -1,14 +1,14 @@
-package com.nullpointer.noursecompose.services
+package com.nullpointer.noursecompose.services.alarms
 
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.nullpointer.noursecompose.services.AlarmReceiver.Companion.ID_ALARM
-import com.nullpointer.noursecompose.services.AlarmReceiver.Companion.WAKE_UP_ALARM
-import kotlinx.coroutines.DelicateCoroutinesApi
+import com.nullpointer.noursecompose.core.utils.correctFlag
+import com.nullpointer.noursecompose.services.alarms.AlarmReceiver.Companion.ID_ALARM
+import com.nullpointer.noursecompose.services.alarms.AlarmReceiver.Companion.WAKE_UP_ALARM
 
-@DelicateCoroutinesApi
+
 object MyAlarmManager {
 
     private fun getPendingAlarm(
@@ -23,7 +23,8 @@ object MyAlarmManager {
         }
         return PendingIntent.getBroadcast(
             context,
-            randomRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            randomRequestCode, intent,
+            context.correctFlag
         )
     }
 
@@ -41,13 +42,5 @@ object MyAlarmManager {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pending = getPendingAlarm(context, idAlarm)
         alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(timeInMillis, pending), pending)
-    }
-
-
-    fun cancelAlarms(context: Context, listId: List<Long>) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        listId.forEach {
-            alarmManager.cancel(getPendingAlarm(context, it))
-        }
     }
 }

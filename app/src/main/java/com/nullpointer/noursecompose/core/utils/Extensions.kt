@@ -7,8 +7,6 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.text.format.DateFormat
 import android.view.WindowManager
@@ -22,32 +20,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 fun Context.getPlural(@PluralsRes stringQuality: Int,quality:Int): String {
     return resources.getQuantityString(stringQuality,quality,quality)
-}
-
-
-operator fun <T> MutableStateFlow<List<T>>.plusAssign(item: T) {
-    this.value += item
-}
-
-operator fun <T> MutableStateFlow<List<T>>.plusAssign(listItems: List<T>) {
-    this.value += listItems
-}
-
-operator fun <T> MutableStateFlow<List<T>>.minusAssign(item: T) {
-    this.value -= item
-}
-
-operator fun <T> MutableStateFlow<List<T>>.minusAssign(listItems: List<T>) {
-    this.value -= listItems
 }
 
 fun Long.toFormatOnlyTime(context: Context): String {

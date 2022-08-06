@@ -1,9 +1,9 @@
 package com.nullpointer.noursecompose.domain.pref
 
 import com.nullpointer.noursecompose.data.local.datasource.pref.PrefDataSource
-import com.nullpointer.noursecompose.data.local.pref.MyDataStore
 import com.nullpointer.noursecompose.models.notify.TypeNotify
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class PrefRepoImpl(
     private val prefDataSource: PrefDataSource
@@ -13,6 +13,14 @@ class PrefRepoImpl(
 
     override val intSound: Flow<Int> =
         prefDataSource.intSoundFlow
+
+    private val _isAlarmSound = MutableStateFlow(false)
+
+    override val isAlarmSound: Flow<Boolean> = _isAlarmSound
+
+    override fun changeIsAlarmSound(isAlarmSound: Boolean) {
+        _isAlarmSound.value = isAlarmSound
+    }
 
     override suspend fun changeTypeNotify(type: TypeNotify) =
         prefDataSource.changeTypeNotify(type)
