@@ -3,7 +3,7 @@ package com.nullpointer.noursecompose.domain.registry
 import com.nullpointer.noursecompose.models.registry.Log
 import kotlinx.coroutines.flow.Flow
 
-interface RegistryRepository {
+interface LogsRepository {
     val listLogs: Flow<List<Log>>
     suspend fun removeLog(log: Log)
     suspend fun deleterAllLogs()

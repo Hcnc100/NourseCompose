@@ -19,6 +19,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
+import com.nullpointer.noursecompose.domain.pref.PrefRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.notify.TypeNotify
 import com.nullpointer.noursecompose.models.notify.TypeNotify.ALARM
@@ -61,7 +62,7 @@ class SoundServices : LifecycleService() {
     lateinit var notificationHelper: NotificationHelper
 
     @Inject
-    lateinit var prefRepoImpl: PrefRepoImpl
+    lateinit var prefRepo: PrefRepository
 
     lateinit var alarmPassed: Alarm
 
@@ -97,7 +98,7 @@ class SoundServices : LifecycleService() {
                 KEY_START_SOUND -> {
                     it.getParcelableExtra<Alarm>(KEY_ALARM_PASS)?.let { alarm ->
                         lifecycleScope.launch {
-                            val typeAlarm = prefRepoImpl.typeNotify.first()
+                            val typeAlarm = prefRepo.typeNotify.first()
                             launchAlarms(alarm, typeAlarm)
                         }
                     }
@@ -164,7 +165,7 @@ class SoundServices : LifecycleService() {
         // * change var to control bucle alive
         isSound = true
         // * get type sound for alarm
-        val index = prefRepoImpl.intSound.first()
+        val index = prefRepo.intSound.first()
         val sound = getUriMediaPlayer(index)
         // * prepare media player
         withContext(Dispatchers.IO) {

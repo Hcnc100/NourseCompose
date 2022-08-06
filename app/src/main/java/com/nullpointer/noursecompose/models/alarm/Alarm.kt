@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.Expose
 import com.nullpointer.noursecompose.models.ItemSelected
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -29,6 +30,7 @@ data class Alarm(
     override val id: Long=0
 ): ItemSelected, Parcelable {
 
+    @delegate:Expose
     @IgnoredOnParcel
     @delegate:Ignore
     override var isSelected by mutableStateOf(false)

@@ -3,11 +3,10 @@ package com.nullpointer.noursecompose.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nullpointer.noursecompose.core.states.Resource
-import com.nullpointer.noursecompose.domain.measure.MeasureRepoImpl
+import com.nullpointer.noursecompose.domain.measure.MeasureRepository
 import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -15,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MeasureViewModel @Inject constructor(
-    private val measureRepo: MeasureRepoImpl,
+    private val measureRepo: MeasureRepository
 ) : ViewModel() {
 
     val listOxygen = flow<Resource<List<SimpleMeasure>>> {

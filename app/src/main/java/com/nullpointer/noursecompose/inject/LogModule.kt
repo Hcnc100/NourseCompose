@@ -4,8 +4,7 @@ import com.nullpointer.noursecompose.data.local.datasource.logs.LogsDataSource
 import com.nullpointer.noursecompose.data.local.datasource.logs.LogsDataSourceImpl
 import com.nullpointer.noursecompose.data.local.room.NurseDatabase
 import com.nullpointer.noursecompose.data.local.room.daos.LogsDAO
-import com.nullpointer.noursecompose.domain.measure.MeasureRepository
-import com.nullpointer.noursecompose.domain.registry.RegistryRepoImpl
+import com.nullpointer.noursecompose.domain.registry.LogsRepoImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +29,6 @@ object LogModule {
     @Singleton
     fun provideLogsRepository(
         logsDataSource: LogsDataSource,
-    ): RegistryRepoImpl = RegistryRepoImpl(logsDataSource)
+    ): LogsRepoImpl = LogsRepoImpl(logsDataSource)
 
 }

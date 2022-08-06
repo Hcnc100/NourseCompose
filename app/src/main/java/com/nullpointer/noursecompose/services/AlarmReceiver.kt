@@ -7,8 +7,9 @@ import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.getTimeNow
 import com.nullpointer.noursecompose.core.utils.myGoAsync
 import com.nullpointer.noursecompose.core.utils.showToast
-import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
+import com.nullpointer.noursecompose.domain.alarms.AlarmRepository
 import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
+import com.nullpointer.noursecompose.domain.pref.PrefRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import com.nullpointer.noursecompose.models.registry.Log
@@ -34,13 +35,13 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     @Inject
-    lateinit var alarmRepository: AlarmRepoImpl
+    lateinit var alarmRepo: AlarmRepository
 
     @Inject
     lateinit var notificationHelper: NotificationHelper
 
     @Inject
-    lateinit var prefRepoImpl: PrefRepoImpl
+    lateinit var prefRepo: PrefRepository
 
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -60,16 +61,16 @@ class AlarmReceiver : BroadcastReceiver() {
         context: Context,
         idAlarm: Long,
     ) = myGoAsync(GlobalScope, Dispatchers.Default) {
-        val alarm = alarmRepository.getAlarmById(idAlarm)
+        val alarm = alarmRepo.getAlarmById(idAlarm)
         val currentTime = getTimeNow()
         if (alarm != null) {
             SoundServices.startServices(context, alarm)
             // * registry launch
-            alarmRepository.addNewLog(Log(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
+            alarmRepo.addNewLog(Log(idAlarm = idAlarm, type = TypeRegistry.LAUNCH))
             updateAlarm(alarm, currentTime)
         } else {
             // * registry error
-            alarmRepository.addNewLog(Log(idAlarm = idAlarm, type = TypeRegistry.ERROR_LAUNCH))
+            alarmRepo.addNewLog(Log(idAlarm = idAlarm, type = TypeRegistry.ERROR_LAUNCH))
             Timber.e("Alarm id non found $idAlarm")
         }
     }
@@ -96,7 +97,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         // * remove alarms it's needing
-        alarmRepository.updateAlarm(alarmUpdate)
+        alarmRepo.updateAlarm(alarmUpdate)
     }
 
 
@@ -110,7 +111,7 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         val listAlarmLost = mutableListOf<Alarm>()
-        val alarmsActive = alarmRepository.getAllAlarmActive()
+        val alarmsActive = alarmRepo.getAllAlarmActive()
         val currentTime = getTimeNow()
         var count = 0
         alarmsActive.forEach { alarm ->
@@ -119,7 +120,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 listAlarmLost.add(alarm)
                 updateAlarm(alarm, currentTime)
             } else {
-                alarmRepository.restoreAlarm(alarm)
+                alarmRepo.restoreAlarm(alarm)
                 count++
             }
         }

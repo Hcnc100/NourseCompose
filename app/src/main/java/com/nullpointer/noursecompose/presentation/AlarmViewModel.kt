@@ -1,25 +1,20 @@
 package com.nullpointer.noursecompose.presentation
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nullpointer.noursecompose.core.states.Resource
-import com.nullpointer.noursecompose.core.utils.ImageUtils
-import com.nullpointer.noursecompose.core.utils.toBitmap
-import com.nullpointer.noursecompose.domain.alarms.AlarmRepoImpl
+import com.nullpointer.noursecompose.domain.alarms.AlarmRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class AlarmViewModel @Inject constructor(
-    private val alarmRepo: AlarmRepoImpl,
+    private val alarmRepo: AlarmRepository
 ) : ViewModel() {
 
     val listAlarm = flow<Resource<List<Alarm>>> {

@@ -10,13 +10,16 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.core.utils.correctFlag
+import com.nullpointer.noursecompose.core.utils.getNotificationManager
 import com.nullpointer.noursecompose.core.utils.toFormat
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_ALARM_PASS_ACTIVITY
 import com.nullpointer.noursecompose.services.SoundServices.Companion.KEY_STOP_SOUND
 import com.nullpointer.noursecompose.ui.activitys.AlarmScreen
 import com.nullpointer.noursecompose.ui.activitys.MainActivity
-//import com.nullpointer.noursecompose.ui.navigation.types.ArgsAlarmsTypeSerializer
+import com.nullpointer.noursecompose.ui.navigation.types.ArgsAlarms
+import com.nullpointer.noursecompose.ui.screen.destinations.StatusAlarmDestination
 
 class NotificationHelper(context: Context) : ContextWrapper(context) {
     companion object {
@@ -30,7 +33,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         const val ID_GROUP_LOST = "ID_GROUP_LOST"
     }
 
-    private val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    private val notificationManager = context.getNotificationManager()
     private val rangeRandom = (123..9999)
 
     init {
@@ -39,7 +42,6 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         createNotificationChannelLost()
     }
 
-    @SuppressLint("InlinedApi")
     fun getNotifyAlarmFromServices(
         alarm: Alarm,
     ): Notification {
@@ -54,7 +56,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
             this,
             REQUEST_CODE_NOTIFICATION_ALARM,
             intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            correctFlag
         )
         // * create notification
         val notificationBuilder = getBaseNotification(
@@ -74,7 +76,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
                 this@NotificationHelper,
                 REQUEST_CODE_NOTIFICATION_ALARM,
                 stopIntent,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                correctFlag
             )
             addAction(R.drawable.ic_stop,
                 getString(R.string.name_action_stop_alarm),
@@ -89,7 +91,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         listAlarms: List<Alarm>,
     ) {
         if (listAlarms.size > 1) {
-            val pendingIntent = getPendingIntentCompose(listAlarms, false)
+            val pendingIntent = getPendingIntentCompose(false, listAlarms)
             getBaseNotification(
                 title = getString(R.string.title_group_alarm_pending),
                 message = getString(R.string.message_group_alarm_pending, listAlarms.size),
@@ -108,7 +110,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         }
 
         listAlarms.forEach {
-            val pendingIntent = getPendingIntentCompose(listOf(it), false)
+            val pendingIntent = getPendingIntentCompose(false, listOf(it))
             // * create notification
             getBaseNotification(
                 title = getString(R.string.title_notify_alarm),
@@ -120,17 +122,17 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
                 setContentIntent(pendingIntent)
             }.let { builder ->
                 notificationManager.notify(
-                    it.id!!.toInt(),
+                    it.id.toInt(),
                     builder.build()
                 )
             }
         }
     }
 
-    @SuppressLint("InlinedApi")
+
     fun showNotificationLost(listAlarms: List<Alarm>) {
         if (listAlarms.size > 1) {
-            val pendingIntent = getPendingIntentCompose(listAlarms, true)
+            val pendingIntent = getPendingIntentCompose(true, listAlarms)
             getBaseNotification(
                 title = getString(R.string.title_group_lost_alarm),
                 message = getString(R.string.message_group_lost_alarm_pending, listAlarms.size),
@@ -148,7 +150,7 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
             }
         }
         listAlarms.forEach { alarm ->
-            val pendingIntent = getPendingIntentCompose(listOf(alarm), true)
+            val pendingIntent = getPendingIntentCompose(true, listOf(alarm))
             getBaseNotification(
                 title = getString(R.string.title_notify_lost_alarm),
                 message = alarm.name + "\n${alarm.nextAlarm?.toFormat(this)}",
@@ -158,9 +160,8 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
             ).apply {
                 setContentIntent(pendingIntent)
             }.let { builder ->
-                createNotificationChannelLost()
                 notificationManager.notify(
-                    alarm.id!!.toInt(),
+                    alarm.id.toInt(),
                     builder.build()
                 )
             }
@@ -168,18 +169,20 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
     }
 
 
-    private fun getPendingIntentCompose(listAlarms: List<Alarm>, isLost: Boolean): PendingIntent {
+    private fun getPendingIntentCompose(isLost: Boolean, listAlarms: List<Alarm>): PendingIntent {
         // * create deep link
         // * this go to post for notification
-//        val routeString = ArgsAlarmsTypeSerializer.generateRoute(isLost, listAlarms)
-        val deepLinkIntent = Intent(Intent.ACTION_VIEW,
-            "https://www.nourse-compose.com/alarm/".toUri(),
+        val routeString = StatusAlarmDestination(ArgsAlarms(isLost, listAlarms)).route
+        val deepLinkIntent = Intent(
+            Intent.ACTION_VIEW,
+            "https://www.nourse-compose.com/$routeString".toUri(),
             this,
-            MainActivity::class.java)
+            MainActivity::class.java
+        )
         // * create pending intent compose
         val deepLinkPendingIntent = TaskStackBuilder.create(this).run {
             addNextIntentWithParentStack(deepLinkIntent)
-            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+            getPendingIntent(0, correctFlag)
         }
         return deepLinkPendingIntent
     }

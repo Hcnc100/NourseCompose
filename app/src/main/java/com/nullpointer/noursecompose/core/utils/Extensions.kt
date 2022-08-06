@@ -2,8 +2,11 @@ package com.nullpointer.noursecompose.core.utils
 
 import android.app.Activity
 import android.app.KeyguardManager
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -120,10 +123,7 @@ fun getFirstTimeDay(timeDayInMillis: Long? = null): Long {
 }
 
 
-fun File.toBitmap(): Bitmap {
-    val filePath: String = this.path
-    return BitmapFactory.decodeFile(filePath)
-}
+
 
 fun Context.getTimeString(@PluralsRes resource: Int, value: Number): String {
     return this.resources.getQuantityString(resource, value.toInt(), value.toInt())
@@ -142,11 +142,6 @@ fun BroadcastReceiver.myGoAsync(
     }
 }
 
-// * if contains this element so return new list without this element,
-// * else return new list with this element
-fun <E> List<E>.toggleItem(item: E): List<E> {
-    return if (contains(item)) this - item else this + item
-}
 
 fun Activity.turnScreenOnAndKeyguardOff() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -190,4 +185,16 @@ fun Context.showToast(@StringRes resString: Int) {
 
 fun Context.showToast(message:String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+}
+
+fun Context.getNotificationManager(): NotificationManager {
+    return getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+}
+
+val Context.correctFlag:Int get() {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    } else {
+        PendingIntent.FLAG_UPDATE_CURRENT
+    }
 }
