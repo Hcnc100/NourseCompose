@@ -1,96 +1,72 @@
 package com.nullpointer.noursecompose.ui.screen.statusAlarm.componets
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.nullpointer.noursecompose.R
-import com.nullpointer.noursecompose.core.utils.ImageUtils
-import com.nullpointer.noursecompose.core.utils.toFormat
+import androidx.compose.ui.unit.sp
 import com.nullpointer.noursecompose.models.alarm.Alarm
+import com.nullpointer.noursecompose.ui.share.AlarmCurrent
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SimpleItemAlarm(
     alarm: Alarm,
+    clickAlarm:(Alarm)->Unit
 ) {
-//    val context = LocalContext.current
-//    val image = remember { alarm.nameFile?.let { ImageUtils.loadImageFromStorage(it, context) } }
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
-
-    Card(onClick = { isExpanded = !isExpanded },
+    Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(3.dp),
-        shape = RoundedCornerShape(10.dp)) {
-        Box {
-            Column {
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = alarm.name,
-                        Modifier
-                            .weight(2f)
-                            .padding(horizontal = 20.dp),
-                        style = MaterialTheme.typography.body1,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 2)
-//                    if (alarm.nameFile != null) {
-//                        ImageAlarm(contentDescription = stringResource(id = R.string.description_img_alarm),
-//                            modifier = Modifier
-//                                .weight(1f)
-//                                .height(100.dp), bitmap = image)
-//                    }
-                }
-                if (isExpanded) {
-                    Column(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)) {
-                        if (alarm.description.isNotEmpty()) {
-                            RowInfo(description = stringResource(id = R.string.sub_title_description_alarm),
-                                info = alarm.description)
-                        }
-                        RowInfo(description = stringResource(id = R.string.mini_title_type_alarm),
-                            info = stringResource(id = alarm.typeAlarm.title))
-//                        RowInfo(description = stringResource(id = R.string.sub_title_next_alarm),
-//                            info = alarm.nextAlarm?.toFormat(context)
-//                                ?: stringResource(R.string.text_finish_alarm))
-                    }
-                }
-            }
-            Box(modifier = Modifier
-                .padding(10.dp)
-                .size(20.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colors.primary)
-                .align(Alignment.TopEnd),
-                contentAlignment = Alignment.Center) {
-                Icon(if (isExpanded) painterResource(id = R.drawable.ic_drop_up) else
-                        painterResource(id = R.drawable.ic_arrow_drop),
-                    contentDescription = stringResource(R.string.description_drop_up_icon))
-            }
+            .padding(2.dp)
+            .fillMaxWidth(),
+        onClick = {clickAlarm(alarm)}
+    ) {
+        Column(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            AlarmCurrent(
+                imgAlarm = alarm.pathFile,
+                modifier = Modifier
+                    .size(50.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+            TitleAlarm(titleAlarm = alarm.name)
+            DescriptionAlarm(descriptionAlarm = alarm.description)
         }
     }
 }
 
 @Composable
-fun RowInfo(description: String, info: String) {
-    Row {
-        Row {
-            Text(description, style = MaterialTheme.typography.caption)
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(info, style = MaterialTheme.typography.caption)
-        }
-    }
+private fun DescriptionAlarm(
+    descriptionAlarm: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        modifier = modifier,
+        text = descriptionAlarm,
+        style = MaterialTheme.typography.body1,
+        fontSize = 14.sp,
+        maxLines = 2
+    )
 }
+
+@Composable
+private fun TitleAlarm(
+    titleAlarm: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        modifier = modifier,
+        text = titleAlarm,
+        style = MaterialTheme.typography.h5,
+        fontSize = 16.sp, maxLines = 2
+    )
+}
+

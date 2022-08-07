@@ -6,6 +6,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -25,6 +27,7 @@ import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.TimeUtils.getStringTimeAboutNow
 import com.nullpointer.noursecompose.models.ItemSelected
 import com.nullpointer.noursecompose.models.alarm.Alarm
+import com.nullpointer.noursecompose.ui.share.AlarmCurrent
 import com.nullpointer.noursecompose.ui.share.ImageAlarm
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -65,15 +68,13 @@ fun ItemAlarm(
                     timeNextAlarm = alarm.nextAlarm
                 )
             }
-            alarm.pathFile?.let {
-                ImageAlarm(
-                    path = it,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                )
-            }
+            AlarmCurrent(
+                imgAlarm = alarm.pathFile,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+            )
         }
     }
 }
@@ -82,7 +83,7 @@ fun ItemAlarm(
 private fun TextInfoAlarm(
     titleAlarm: String,
     timeNextAlarm: Long?,
-    context: Context= LocalContext.current
+    context: Context = LocalContext.current
 ) {
     val textNextAlarm by remember {
         derivedStateOf {

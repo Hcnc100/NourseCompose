@@ -8,14 +8,16 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.core.utils.shareViewModel
+import com.nullpointer.noursecompose.models.alarm.Alarm
+import com.nullpointer.noursecompose.presentation.AlarmViewModel
+import com.nullpointer.noursecompose.ui.dialogs.DialogDetails
 import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
 import com.nullpointer.noursecompose.ui.navigation.types.ArgsAlarms
@@ -34,8 +36,10 @@ import com.ramcosta.composedestinations.annotation.FULL_ROUTE_PLACEHOLDER
 @Composable
 fun StatusAlarm(
     args: ArgsAlarms,
-    actionRootDestinations: ActionRootDestinations
+    actionRootDestinations: ActionRootDestinations,
+    alarmViewModel: AlarmViewModel = shareViewModel()
 ) {
+    val (alarmSelected, changeAlarmSelected) = rememberSaveable { mutableStateOf<Alarm?>(null) }
     val title by remember {
         derivedStateOf {
             if (args.isLost) R.string.title_lost_alarm else R.string.title_list_alarm
@@ -50,7 +54,7 @@ fun StatusAlarm(
         }
     ) { paddingValues ->
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(250.dp),
+            columns = GridCells.Adaptive(150.dp),
             modifier = Modifier.padding(paddingValues)
         ) {
 
@@ -64,8 +68,21 @@ fun StatusAlarm(
                     )
             }
             items(args.listIdAlarm, key = { it.id }) { alarm ->
-                SimpleItemAlarm(alarm = alarm)
+                SimpleItemAlarm(
+                    alarm = alarm,
+                    clickAlarm = changeAlarmSelected)
             }
         }
+    }
+
+    if (alarmSelected != null) {
+        DialogDetails(
+            alarm = alarmSelected,
+            actionHiddenDialog = { changeAlarmSelected(null) },
+            deleterAlarm = {
+                alarmViewModel.deleterAlarm(it)
+                changeAlarmSelected(null)
+            }
+        )
     }
 }

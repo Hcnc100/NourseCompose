@@ -84,9 +84,6 @@ fun AlarmScreen(
         DialogDetails(
             alarm = alarmSelected,
             actionHiddenDialog = { changeAlarmSelected(null) },
-            actionEditAlarm = {
-//                actionRootDestinations.changeRoot(AddAlarmScreenDestination)
-            },
             deleterAlarm = {
                 alarmViewModel.deleterAlarm(it)
                 changeAlarmSelected(null)

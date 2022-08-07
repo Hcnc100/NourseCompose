@@ -20,7 +20,6 @@ import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 @Composable
 fun DialogDetails(
     actionHiddenDialog: () -> Unit,
-    actionEditAlarm: (Alarm) -> Unit,
     deleterAlarm: (Alarm) -> Unit,
     alarm: Alarm,
 ) {
@@ -39,14 +38,8 @@ fun DialogDetails(
                     modifier = Modifier.size(45.dp)) {
                     Icon(imageVector = Icons.Default.Delete, contentDescription = "")
                 }
-                Row {
-                    Button(onClick = { actionEditAlarm(alarm) }) {
-                        Text(text = stringResource(R.string.text_edit_alarm))
-                    }
-                    Spacer(modifier = Modifier.width(15.dp))
-                    TextButton(onClick = actionHiddenDialog) {
-                        Text(stringResource(R.string.text_accept))
-                    }
+                OutlinedButton(onClick = actionHiddenDialog) {
+                    Text(stringResource(R.string.text_accept))
                 }
             }
         },

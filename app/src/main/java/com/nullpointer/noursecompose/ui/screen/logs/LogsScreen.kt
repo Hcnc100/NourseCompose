@@ -96,9 +96,6 @@ fun LogsScreens(
         DialogDetails(
             alarm = alarmSelected,
             actionHiddenDialog = { changeAlarmSelected(null) },
-            actionEditAlarm = {
-//                navigator.navigate(AddAlarmScreenDestination.invoke(it))
-            },
             deleterAlarm = {
                 alarmViewModel.deleterAlarm(it)
                 changeAlarmSelected(null)
