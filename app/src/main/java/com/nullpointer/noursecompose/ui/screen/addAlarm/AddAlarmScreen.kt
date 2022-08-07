@@ -4,12 +4,15 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.shareViewModel
 import com.nullpointer.noursecompose.presentation.AlarmViewModel
 import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
@@ -20,11 +23,12 @@ import com.nullpointer.noursecompose.ui.screen.addAlarm.repeatScreen.RepeatAlarm
 import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.TimeScreen
 import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
 import com.nullpointer.noursecompose.ui.share.SelectImgButtonSheet
+import com.nullpointer.noursecompose.ui.share.ToolbarBack
 import com.nullpointer.noursecompose.ui.states.AddAlarmScreenState
 import com.nullpointer.noursecompose.ui.states.rememberAddAlarmScreenState
 import com.ramcosta.composedestinations.annotation.Destination
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class, ExperimentalMaterialApi::class)
 @MainNavGraph
 @Composable
 @Destination
@@ -37,11 +41,10 @@ fun AddAlarmScreen(
     BackHandler(addAlarmScreenState.currentPage != 0, addAlarmScreenState::previousPage)
 
     Scaffold(
-//        topBar = {
-//            ToolbarBack(title = if (alarm == null) stringResource(R.string.title_new_alarm) else stringResource(
-//                R.string.title_edit_alarm),
-//                actionBack = navigator::popBackStack)
-//        }
+        topBar = {
+            ToolbarBack(title = stringResource(R.string.title_new_alarm),
+                actionBack = actionRootDestinations::backDestination)
+        }
     ) {
 
         ModalBottomSheetLayout(
@@ -78,7 +81,7 @@ fun AddAlarmScreen(
                     modifier = Modifier
                         .padding(20.dp)
                         .align(Alignment.BottomEnd),
-                    text = { Text(text = "Next") },
+                    text = { Text(text = stringResource(id = R.string.text_button_next)) },
                     onClick = {
                         when (addAlarmScreenState.currentPage) {
                             0 -> {
