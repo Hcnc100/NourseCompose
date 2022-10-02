@@ -1,24 +1,21 @@
-package com.nullpointer.noursecompose.ui.screen.alarms
+package com.nullpointer.noursecompose.ui.screen.alarms.componets.items
 
 import android.content.Context
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,7 +24,6 @@ import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.TimeUtils.getStringTimeAboutNow
 import com.nullpointer.noursecompose.models.ItemSelected
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.ui.share.AlarmCurrent
 import com.nullpointer.noursecompose.ui.share.ImageAlarm
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -35,45 +31,49 @@ import com.nullpointer.noursecompose.ui.share.ImageAlarm
 fun ItemAlarm(
     alarm: Alarm,
     isSelectedEnable: Boolean,
+    modifier: Modifier = Modifier,
     changeSelectState: (ItemSelected) -> Unit,
-    actionClickSimple: (alarm: Alarm) -> Unit,
-    modifier: Modifier = Modifier
+    actionClickSimple: (alarm: Alarm) -> Unit
 ) {
 
-    val backgroundColor by remember(alarm.isSelected) {
-        derivedStateOf {
-            if (alarm.isSelected) Color.Cyan.copy(alpha = 0.5f) else Color.Unspecified
-        }
-    }
+    val colorSelected by animateColorAsState(
+        targetValue = if (alarm.isSelected) MaterialTheme.colors.primary.copy(alpha = 0.8f) else MaterialTheme.colors.surface
+    )
 
-    Card(
-        modifier = modifier.padding(2.dp),
-        shape = RoundedCornerShape(10.dp)
+    Surface(
+        modifier = modifier,
+        color = colorSelected,
+        shape = MaterialTheme.shapes.small,
+        elevation = 2.dp
     ) {
         Row(
             modifier = Modifier
-                .drawBehind { drawRect(backgroundColor) }
                 .combinedClickable(
                     onClick = {
                         if (isSelectedEnable) changeSelectState(alarm) else actionClickSimple(alarm)
                     },
-                    onLongClick = { if (!isSelectedEnable) changeSelectState(alarm) },
+                    onLongClick = { if (!isSelectedEnable) changeSelectState(alarm) }
                 )
-                .padding(10.dp)
         ) {
-            Column(modifier = Modifier.weight(2f)) {
-                TextStateAlarm(alarmIsActivate = alarm.isActive)
+            Column(
+                modifier = Modifier
+                    .weight(2f)
+                    .padding(start = 5.dp, top = 5.dp, end = 5.dp)
+            ) {
+                TextStateAlarm(isActive = alarm.isActive)
                 TextInfoAlarm(
                     titleAlarm = alarm.name,
                     timeNextAlarm = alarm.nextAlarm
                 )
             }
-            AlarmCurrent(
-                imgAlarm = alarm.pathFile,
+            ImageAlarm(
+                path = alarm.pathFile,
+                imageDefault = R.drawable.ic_alarm,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
                     .aspectRatio(1f)
+                    .clip(MaterialTheme.shapes.small)
             )
         }
     }
@@ -85,41 +85,49 @@ private fun TextInfoAlarm(
     timeNextAlarm: Long?,
     context: Context = LocalContext.current
 ) {
-    val textNextAlarm by remember {
-        derivedStateOf {
-            if (timeNextAlarm != null) getStringTimeAboutNow(timeNextAlarm, context) else null
-
-        }
+    val textNextAlarm = remember(timeNextAlarm) {
+        if (timeNextAlarm != null) getStringTimeAboutNow(timeNextAlarm, context) else null
     }
     Text(
         titleAlarm,
-        modifier = Modifier.padding(vertical = 5.dp),
-        style = MaterialTheme.typography.h6,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
+        style = MaterialTheme.typography.h6,
+        modifier = Modifier.padding(vertical = 5.dp)
     )
     textNextAlarm?.let {
-        Text(stringResource(R.string.sub_title_next_alarm),
+        Text(
+            stringResource(R.string.sub_title_next_alarm),
             fontWeight = FontWeight.W300,
             modifier = Modifier.padding(vertical = 2.dp),
             style = MaterialTheme.typography.caption,
             overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Text(text = it,
+        Text(
+            text = it,
             fontWeight = FontWeight.W300,
             modifier = Modifier.padding(vertical = 2.dp),
             style = MaterialTheme.typography.caption,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis)
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
 
 @Composable
 private fun TextStateAlarm(
-    alarmIsActivate: Boolean,
+    isActive: Boolean,
 ) {
+
+    val (textState, colorTextState) = remember(isActive) {
+        if (isActive)
+            Pair(R.string.text_state_active, Color.Green)
+        else
+            Pair(R.string.text_state_inactive, Color.Red)
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(vertical = 5.dp)
@@ -130,10 +138,10 @@ private fun TextStateAlarm(
             fontWeight = FontWeight.W300
         )
         Text(
-            if (alarmIsActivate) stringResource(R.string.text_state_active) else stringResource(R.string.text_state_inactive),
-            color = if (alarmIsActivate) Color.Green else Color.Red,
-            style = MaterialTheme.typography.subtitle2,
-            fontWeight = FontWeight.W500
+            fontWeight = FontWeight.W500,
+            color = colorTextState,
+            text = stringResource(id = textState),
+            style = MaterialTheme.typography.subtitle2
         )
     }
 }

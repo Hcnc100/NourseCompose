@@ -2,6 +2,8 @@ package com.nullpointer.noursecompose.ui.screen.alarms
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -24,6 +26,7 @@ import com.nullpointer.noursecompose.ui.dialogs.DialogDetails
 import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.HomeNavGraph
 import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
+import com.nullpointer.noursecompose.ui.screen.alarms.componets.items.ItemAlarm
 import com.nullpointer.noursecompose.ui.screen.destinations.AddAlarmScreenDestination
 import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
@@ -114,9 +117,15 @@ private fun ListAlarm(
                 LazyVerticalGrid(
                     modifier = modifier,
                     state = listState,
-                    columns = GridCells.Adaptive(150.dp)
+                    columns = GridCells.Adaptive(150.dp),
+                    contentPadding = PaddingValues(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    items(listAlarm.data, key = { it.id }) { alarm ->
+                    items(
+                        items = listAlarm.data,
+                        key = { it.id }
+                    ) { alarm ->
                         ItemAlarm(
                             alarm = alarm,
                             isSelectedEnable = isSelectedEnable,
