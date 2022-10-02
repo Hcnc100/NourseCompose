@@ -1,10 +1,10 @@
 pluginManagement {
     repositories {
-        maven { url "https://www.jitpack.io" }
         gradlePluginPortal()
         google()
         mavenCentral()
     }
+
 
     resolutionStrategy {
         eachPlugin {
@@ -14,7 +14,6 @@ pluginManagement {
         }
     }
 }
-
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
