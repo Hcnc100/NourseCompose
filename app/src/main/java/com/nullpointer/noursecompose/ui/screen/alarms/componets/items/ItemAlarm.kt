@@ -13,13 +13,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.TimeUtils.getStringTimeAboutNow
 import com.nullpointer.noursecompose.models.ItemSelected
@@ -37,28 +38,38 @@ fun ItemAlarm(
 ) {
 
     val colorSelected by animateColorAsState(
-        targetValue = if (alarm.isSelected) MaterialTheme.colors.primary.copy(alpha = 0.8f) else MaterialTheme.colors.surface
+        targetValue = if (alarm.isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.surface
     )
 
     Surface(
         modifier = modifier,
         color = colorSelected,
         shape = MaterialTheme.shapes.small,
-        elevation = 2.dp
+        elevation = dimensionResource(id = R.dimen.elevation_surface)
     ) {
         Row(
             modifier = Modifier
+                .height(IntrinsicSize.Min)
                 .combinedClickable(
                     onClick = {
-                        if (isSelectedEnable) changeSelectState(alarm) else actionClickSimple(alarm)
+                        if (isSelectedEnable) changeSelectState(alarm) else actionClickSimple(
+                            alarm
+                        )
                     },
                     onLongClick = { if (!isSelectedEnable) changeSelectState(alarm) }
                 )
         ) {
+            ImageAlarm(
+                path = alarm.pathFile,
+                imageDefault = R.drawable.ic_alarm,
+                modifier = Modifier
+                    .weight(2F)
+                    .fillMaxHeight()
+            )
             Column(
                 modifier = Modifier
-                    .weight(2f)
-                    .padding(start = 5.dp, top = 5.dp, end = 5.dp)
+                    .weight(3F)
+                    .padding(10.dp)
             ) {
                 TextStateAlarm(isActive = alarm.isActive)
                 TextInfoAlarm(
@@ -66,15 +77,6 @@ fun ItemAlarm(
                     timeNextAlarm = alarm.nextAlarm
                 )
             }
-            ImageAlarm(
-                path = alarm.pathFile,
-                imageDefault = R.drawable.ic_alarm,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(MaterialTheme.shapes.small)
-            )
         }
     }
 }
@@ -93,25 +95,24 @@ private fun TextInfoAlarm(
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         style = MaterialTheme.typography.h6,
-        modifier = Modifier.padding(vertical = 5.dp)
+        modifier = Modifier.padding(vertical = 3.dp)
     )
     textNextAlarm?.let {
-        Text(
-            stringResource(R.string.sub_title_next_alarm),
-            fontWeight = FontWeight.W300,
-            modifier = Modifier.padding(vertical = 2.dp),
-            style = MaterialTheme.typography.caption,
-            overflow = TextOverflow.Ellipsis
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = it,
-            fontWeight = FontWeight.W300,
-            modifier = Modifier.padding(vertical = 2.dp),
-            style = MaterialTheme.typography.caption,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                stringResource(R.string.sub_title_next_alarm),
+                fontWeight = FontWeight.W300,
+                style = MaterialTheme.typography.caption,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = it,
+                fontWeight = FontWeight.W300,
+                style = MaterialTheme.typography.caption,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 
@@ -130,18 +131,22 @@ private fun TextStateAlarm(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 5.dp)
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Text(
             stringResource(R.string.sub_title_state_alarm),
-            style = MaterialTheme.typography.caption,
-            fontWeight = FontWeight.W300
+            style = MaterialTheme.typography.subtitle2.copy(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W300
+            )
         )
         Text(
-            fontWeight = FontWeight.W500,
-            color = colorTextState,
             text = stringResource(id = textState),
-            style = MaterialTheme.typography.subtitle2
+            style = MaterialTheme.typography.subtitle2.copy(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W500,
+                color = colorTextState
+            )
         )
     }
 }

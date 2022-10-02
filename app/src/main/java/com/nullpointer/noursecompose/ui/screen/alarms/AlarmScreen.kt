@@ -117,10 +117,10 @@ private fun ListAlarm(
                 LazyVerticalGrid(
                     modifier = modifier,
                     state = listState,
-                    columns = GridCells.Adaptive(150.dp),
+                    columns = GridCells.Adaptive(200.dp),
                     contentPadding = PaddingValues(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(
                         items = listAlarm.data,

@@ -4,4 +4,5 @@
     <dimen name="size_row_alarm">150dp</dimen>
     <dimen name="size_row_log">180dp</dimen>
     <dimen name="height_graph_measure">250dp</dimen>
+    <dimen name="elevation_surface">2dp</dimen>
 </resources>
