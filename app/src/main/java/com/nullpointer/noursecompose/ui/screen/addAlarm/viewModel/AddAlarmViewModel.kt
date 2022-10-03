@@ -7,7 +7,6 @@ import com.nullpointer.noursecompose.core.delegates.PropertySavableAlarmTime
 import com.nullpointer.noursecompose.core.delegates.PropertySavableString
 import com.nullpointer.noursecompose.core.delegates.SavableComposeState
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -27,20 +26,22 @@ class AddAlarmViewModel @Inject constructor(
     val messageAddAlarm = _messageAddAlarm.receiveAsFlow()
 
     val nameAlarm = PropertySavableString(
-        state = stateHandle,
+        savedState = stateHandle,
         label = R.string.label_name_alarm,
         hint = R.string.hint_name_alarm,
         maxLength = MAX_LENGTH_NAME,
         emptyError = R.string.error_empty_name,
-        lengthError = R.string.error_name_long
+        lengthError = R.string.error_name_long,
+        tagSavable = ""
     )
 
     val description = PropertySavableString(
-        state = stateHandle,
+        savedState = stateHandle,
         label = R.string.label_description_alarm,
         hint = R.string.hint_description_alarm,
         maxLength = MAX_LENGTH_DESCRIPTION,
-        lengthError = R.string.error_description_long
+        lengthError = R.string.error_description_long,
+        tagSavable = ""
     )
 
     var imageAlarm: String? by SavableComposeState(stateHandle, "Pan", null)
@@ -61,8 +62,8 @@ class AddAlarmViewModel @Inject constructor(
 
     fun createAlarm(): Alarm {
         return Alarm(
-            name = nameAlarm.value,
-            description = description.value,
+            name = nameAlarm.currentValue,
+            description = description.currentValue,
             typeAlarm = alarmTime.typeAlarm,
             nextAlarm = alarmTime.timeNextAlarm,
             repeaterEvery = alarmTime.timeToRepeatAlarm,

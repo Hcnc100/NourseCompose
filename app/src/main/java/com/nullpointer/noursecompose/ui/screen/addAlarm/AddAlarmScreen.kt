@@ -85,7 +85,7 @@ fun AddAlarmScreen(
                     onClick = {
                         when (addAlarmScreenState.currentPage) {
                             0 -> {
-                                addAlarmViewModel.nameAlarm.autoValue()
+                                addAlarmViewModel.nameAlarm.reValueField()
                                 if (!addAlarmViewModel.nameAlarm.hasError)
                                     addAlarmScreenState.nextPage()
                             }

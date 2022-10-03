@@ -45,9 +45,9 @@
     <string name="name_temp">Temperature</string>
     <string name="text_accept">OK</string>
     <string name="text_cancel">Cancel</string>
-    <string name="title_new_measure">Add a new measure</string>
-    <string name="message_error_measure">Check the measurement</string>
-    <string name="message_empty_measure_oxygen">No oxygen measurements</string>
+    <string name="title_new_measure">New measure</string>
+    <string name="message_error_measure_value">Check the measurement</string>
+    <string name="message_empty_oxygen">No oxygen measurements</string>
     <string name="message_empty_temp">No temperature measurements</string>
     <string name="description_add_oxygen">Add a new measure of oxygen</string>
     <string name="description_add_temp">Add a new temperature measure</string>
@@ -169,4 +169,8 @@
     <string name="text_graph_min_value">Recommended minimum value</string>
     <string name="text_graph_max_value">Recommended maximum value</string>
     <string name="error_img_compress">There was an error selecting the image</string>
+
+
+    <string name="message_error_measure_empty">The measure cannot be empty</string>
+    <string name="message_error_measure_length">Measurement can\'t be that long</string>
 </resources>

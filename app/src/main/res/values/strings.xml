@@ -52,12 +52,15 @@
     <string name="name_temp">Temperatura</string>
     <string name="text_accept">Aceptar</string>
     <string name="text_cancel">Cancelar</string>
-    <string name="title_new_measure">Agrega una nueva medida</string>
-    <string name="message_error_measure">Verifique la medida</string>
+    <string name="title_new_measure">Nueva medida</string>
+    <string name="message_error_measure_value">Verifique la medida</string>
+    <string name="message_error_measure_empty">La medida no puede estar vacía</string>
+    <string name="message_error_measure_length">La medida no puede ser tan larga</string>
+
 
     <!-- add new measure and selection -->
     <string name="error_value_repeat_invalid">Valor no válido</string>
-    <string name="message_empty_measure_oxygen">No hay medidas de oxígeno</string>
+    <string name="message_empty_oxygen">No hay medidas de oxígeno</string>
     <string name="message_empty_temp">No hay medidas de temperatura</string>
     <string name="description_add_oxygen">Agrega una nueva medida de oxígeno</string>
     <string name="description_add_temp">Agrega una nueva medida de temperatura</string>

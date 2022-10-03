@@ -39,6 +39,6 @@ fun ListEmptyOxygen(
     EmptyScreen(
         modifier = modifier,
         animation = R.raw.empty2,
-        textEmpty = stringResource(R.string.message_empty_measure_oxygen)
+        textEmpty = stringResource(R.string.message_empty_oxygen)
     )
 }

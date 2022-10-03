@@ -44,7 +44,7 @@ fun NameAndImgScreen(
                         .padding(10.dp)
                         .size(250.dp)
                 )
-                EditableTextSavable(valueProperty = addAlarmViewModel.nameAlarm, maxLines = 1)
+                EditableTextSavable(valueProperty = addAlarmViewModel.nameAlarm, singleLine = true)
             }
         }
         else -> {
@@ -62,7 +62,7 @@ fun NameAndImgScreen(
                 EditableTextSavable(
                     valueProperty = addAlarmViewModel.nameAlarm,
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    maxLines = 1
+                    singleLine = true
                 )
                 }
             }
