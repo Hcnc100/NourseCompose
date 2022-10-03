@@ -59,7 +59,7 @@ fun ItemAlarm(
                 )
         ) {
             ImageAlarm(
-                path = alarm.pathFile,
+                data = alarm.pathFile,
                 imageDefault = R.drawable.ic_alarm,
                 modifier = Modifier
                     .weight(2F)

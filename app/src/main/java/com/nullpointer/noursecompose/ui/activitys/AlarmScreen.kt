@@ -25,11 +25,8 @@ import com.nullpointer.noursecompose.core.utils.turnScreenOffAndKeyguardOn
 import com.nullpointer.noursecompose.core.utils.turnScreenOnAndKeyguardOff
 import com.nullpointer.noursecompose.domain.pref.PrefRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.services.sound.SoundServices
 import com.nullpointer.noursecompose.services.sound.SoundServicesControl
 import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_ALARM_PASS_ACTIVITY
-import com.nullpointer.noursecompose.ui.share.ImageAlarm
-import com.nullpointer.noursecompose.ui.share.lottieFiles.LottieContainer
 import com.nullpointer.noursecompose.ui.theme.NourseComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -126,17 +123,17 @@ private fun ImageSoundAlarm(
     modifier: Modifier = Modifier,
     imageAlarm: String?
 ) {
-    if (imageAlarm == null) {
-        LottieContainer(
-            modifier = modifier,
-            animation = R.raw.clock
-        )
-    } else {
-        ImageAlarm(
-            path = imageAlarm,
-            modifier = modifier
-        )
-    }
+//    if (imageAlarm == null) {
+//        LottieContainer(
+//            modifier = modifier,
+//            animation = R.raw.clock
+//        )
+//    } else {
+//        ImageAlarm(
+//            path = imageAlarm,
+//            modifier = modifier
+//        )
+//    }
 }
 
 @Composable
