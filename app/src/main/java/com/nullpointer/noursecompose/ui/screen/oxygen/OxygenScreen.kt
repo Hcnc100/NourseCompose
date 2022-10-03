@@ -95,7 +95,7 @@ private fun OxygenScreen(
             )
         }
     ) { paddingValues ->
-        ListOxygenState(
+        ListTempState(
             listOxygen = listOxygen,
             lazyGridState = lazyGridState,
             isSelectedEnable = isSelectedEnable,
@@ -114,7 +114,7 @@ private fun OxygenScreen(
 
 
 @Composable
-private fun ListOxygenState(
+private fun ListTempState(
     isSelectedEnable: Boolean,
     modifier: Modifier = Modifier,
     lazyGridState: LazyGridState,

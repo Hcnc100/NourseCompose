@@ -4,14 +4,14 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.ScaffoldState
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.actions.ActionMeasureScreen
+import com.nullpointer.noursecompose.actions.ActionMeasureScreen.*
 import com.nullpointer.noursecompose.core.states.Resource
 import com.nullpointer.noursecompose.core.utils.shareViewModel
 import com.nullpointer.noursecompose.models.ItemSelected
@@ -33,65 +33,104 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Destination
 @Composable
 fun TempScreen(
-    selectionViewModel: SelectionViewModel= shareViewModel(),
+    selectionViewModel: SelectionViewModel = shareViewModel(),
     measureViewModel: MeasureViewModel = shareViewModel(),
     measureScreenState: SelectedScreenState = rememberSelectedScreenState()
 ) {
     val listTempState by measureViewModel.listTemp.collectAsState()
-    val (isShowDialog, changeVisibleDialog) = rememberSaveable { mutableStateOf(false) }
+    var isShowDialog by rememberSaveable { mutableStateOf(false) }
 
     BackHandler(selectionViewModel.isSelectedEnable) {
         selectionViewModel.clearSelection()
     }
-    Scaffold(
+
+    TempScreen(
+        isShowDialog = isShowDialog,
+        isSelectedEnable = selectionViewModel.isSelectedEnable,
+        isScrollInProgress = measureScreenState.isScrollInProgress,
+        lazyGridState = measureScreenState.lazyGridState,
         scaffoldState = measureScreenState.scaffoldState,
-        floatingActionButton = {
-            ButtonToggleAddRemove(
-                isVisible = !measureScreenState.isScrollInProgress,
-                isSelectedEnable = selectionViewModel.isSelectedEnable,
-                descriptionButtonAdd = stringResource(id = R.string.description_add_temp),
-                actionAdd = { changeVisibleDialog(true) },
-                descriptionButtonRemove = stringResource(id = R.string.description_remove_temp),
-                actionRemove = {
+        listOxygen = listTempState,
+        actionOxygen = { actionMeasureScreen: ActionMeasureScreen, value: Float?, simpleMeasure: SimpleMeasure? ->
+            when (actionMeasureScreen) {
+                SHOW_ADD_DIALOG -> isShowDialog = true
+                HIDE_ADD_DIALOG -> isShowDialog = false
+                ADD_NEW_MEASURE -> {
+                    value?.let {
+                        measureViewModel.addNewMeasure(
+                            SimpleMeasure(
+                                value,
+                                MeasureType.TEMPERATURE
+                            )
+                        )
+                        measureScreenState.scrollToFirst()
+                    }
+                }
+                DELETER_LIST_MEASURE -> {
                     measureViewModel.deleterListMeasure(
                         selectionViewModel.getListSelectionAndClear()
                     )
                 }
-            )
+                CHANGE_MEASURE_SELECT -> {
+                    simpleMeasure?.let { selectionViewModel.changeItemSelected(it) }
+                }
+            }
         }
-    ) {
-        ListStateTemperature(
-            listTempState = listTempState,
-            lazyGridState = measureScreenState.lazyGridState,
-            isSelectedEnable = selectionViewModel.isSelectedEnable,
-            changeSelect = selectionViewModel::changeItemSelected,
-            modifier = Modifier.padding(it)
-        )
-    }
-
-    if (isShowDialog) {
-        DialogAddMeasure(
-            nameMeasure = stringResource(id = R.string.name_temp),
-            measureFullSuffix = stringResource(id = R.string.suffix_temp),
-            actionHiddenDialog = { changeVisibleDialog(false) },
-            actionAdd = {
-                measureViewModel.addNewMeasure(SimpleMeasure(it, MeasureType.TEMPERATURE))
-                measureScreenState.scrollToFirst()
-            })
-    }
+    )
 }
 
 @Composable
-private fun ListStateTemperature(
-    listTempState: Resource<List<SimpleMeasure>>,
+private fun TempScreen(
+    isShowDialog: Boolean,
+    isSelectedEnable: Boolean,
+    isScrollInProgress: Boolean,
+    lazyGridState: LazyGridState,
+    scaffoldState: ScaffoldState,
+    listOxygen: Resource<List<SimpleMeasure>>,
+    actionOxygen: (ActionMeasureScreen, Float?, SimpleMeasure?) -> Unit
+) {
+    Scaffold(
+        scaffoldState = scaffoldState,
+        floatingActionButton = {
+            ButtonToggleAddRemove(
+                isVisible = !isScrollInProgress,
+                isSelectedEnable = isSelectedEnable,
+                descriptionButtonAdd = stringResource(id = R.string.description_add_temp),
+                actionAdd = { actionOxygen(SHOW_ADD_DIALOG, null, null) },
+                descriptionButtonRemove = stringResource(id = R.string.description_remove_temp),
+                actionRemove = { actionOxygen(DELETER_LIST_MEASURE, null, null) }
+            )
+        }
+    ) { paddingValues ->
+        ListTempState(
+            listTemp = listOxygen,
+            lazyGridState = lazyGridState,
+            isSelectedEnable = isSelectedEnable,
+            modifier = Modifier.padding(paddingValues),
+            changeSelect = { actionOxygen(CHANGE_MEASURE_SELECT, null, it as SimpleMeasure) }
+        )
+    }
+    if (isShowDialog) {
+        DialogAddMeasure(
+            nameMeasure = stringResource(id = R.string.name_oxygen),
+            measureFullSuffix = stringResource(id = R.string.suffix_oxygen),
+            actionHiddenDialog = { actionOxygen(HIDE_ADD_DIALOG, null, null) },
+            actionAdd = { actionOxygen(ADD_NEW_MEASURE, it, null) })
+    }
+}
+
+
+@Composable
+private fun ListTempState(
+    listTemp: Resource<List<SimpleMeasure>>,
     lazyGridState: LazyGridState,
     isSelectedEnable: Boolean,
     changeSelect: (ItemSelected) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    when (listTempState) {
+    when (listTemp) {
         is Resource.Success -> {
-            if (listTempState.data.isEmpty()) {
+            if (listTemp.data.isEmpty()) {
                 EmptyScreen(
                     animation = R.raw.empty1,
                     textEmpty = stringResource(R.string.message_empty_temp),
@@ -100,7 +139,7 @@ private fun ListStateTemperature(
             } else {
                 GraphAndTable(
                     modifier = modifier,
-                    listMeasure = listTempState.data,
+                    listMeasure = listTemp.data,
                     suffixMeasure = stringResource(id = R.string.suffix_temp),
                     nameMeasure = stringResource(id = R.string.name_temp),
                     minValue = MeasureType.TEMPERATURE.minValue,
