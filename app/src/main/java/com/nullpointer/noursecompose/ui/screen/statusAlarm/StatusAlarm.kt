@@ -80,7 +80,7 @@ fun StatusAlarm(
             alarm = alarmSelected,
             actionHiddenDialog = { changeAlarmSelected(null) },
             deleterAlarm = {
-                alarmViewModel.deleterAlarm(it)
+                alarmViewModel.deleterAlarm(alarmSelected)
                 changeAlarmSelected(null)
             }
         )

@@ -19,9 +19,9 @@ import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 
 @Composable
 fun DialogDetails(
-    actionHiddenDialog: () -> Unit,
-    deleterAlarm: (Alarm) -> Unit,
     alarm: Alarm,
+    deleterAlarm: () -> Unit,
+    actionHiddenDialog: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = actionHiddenDialog,
@@ -33,9 +33,11 @@ fun DialogDetails(
                 .fillMaxWidth()
                 .padding(vertical = 5.dp, horizontal = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween) {
-                FloatingActionButton(onClick = { deleterAlarm(alarm) },
+                FloatingActionButton(
+                    onClick = deleterAlarm,
                     backgroundColor = MaterialTheme.colors.error,
-                    modifier = Modifier.size(45.dp)) {
+                    modifier = Modifier.size(45.dp)
+                ) {
                     Icon(imageVector = Icons.Default.Delete, contentDescription = "")
                 }
                 OutlinedButton(onClick = actionHiddenDialog) {

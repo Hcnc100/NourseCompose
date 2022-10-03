@@ -1,21 +1,16 @@
 package com.nullpointer.noursecompose.ui.screen.alarms
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.actions.ActionItem
+import com.nullpointer.noursecompose.actions.ActionItem.*
 import com.nullpointer.noursecompose.core.states.Resource
 import com.nullpointer.noursecompose.core.utils.shareViewModel
 import com.nullpointer.noursecompose.models.ItemSelected
@@ -26,9 +21,10 @@ import com.nullpointer.noursecompose.ui.dialogs.DialogDetails
 import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.HomeNavGraph
 import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
-import com.nullpointer.noursecompose.ui.screen.alarms.componets.items.ItemAlarm
+import com.nullpointer.noursecompose.ui.screen.alarms.componets.lists.ListEmptyAlarm
+import com.nullpointer.noursecompose.ui.screen.alarms.componets.lists.ListLoadAlarm
+import com.nullpointer.noursecompose.ui.screen.alarms.componets.lists.ListSuccessAlarm
 import com.nullpointer.noursecompose.ui.screen.destinations.AddAlarmScreenDestination
-import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
 import com.nullpointer.noursecompose.ui.states.AlarmScreenState
 import com.nullpointer.noursecompose.ui.states.rememberAlarmScreenState
@@ -46,7 +42,7 @@ fun AlarmScreen(
     alarmScreenState: AlarmScreenState = rememberAlarmScreenState()
 ) {
     val listAlarmState by alarmViewModel.listAlarm.collectAsState()
-    val (alarmSelected, changeAlarmSelected) = rememberSaveable { mutableStateOf<Alarm?>(null) }
+    var alarmSelected by rememberSaveable { mutableStateOf<Alarm?>(null) }
 
     BackHandler(selectionViewModel.isSelectedEnable, selectionViewModel::clearSelection)
 
@@ -59,84 +55,96 @@ fun AlarmScreen(
         }
     }
 
-    Scaffold(
-        floatingActionButton = {
-            ButtonToggleAddRemove(
-                isVisible = !alarmScreenState.isScrollInProgress,
-                isSelectedEnable = selectionViewModel.isSelectedEnable,
-                descriptionButtonRemove = stringResource(R.string.description_remove_alarms),
-                descriptionButtonAdd = stringResource(R.string.description_add_alarm),
-                actionRemove = { alarmViewModel.deleterListAlarm(selectionViewModel.getListSelectionAndClear()) },
-                actionAdd = {
+    AlarmScreen(
+        alarmSelected = alarmSelected,
+        stateListAlarm = listAlarmState,
+        listState = alarmScreenState.lazyGridState,
+        isSelectedEnable = selectionViewModel.isSelectedEnable,
+        isScrollInProgress = alarmScreenState.isScrollInProgress,
+        actionAlarm = { actionItem, alarm ->
+            when (actionItem) {
+                SIMPLE_CLICK_ITEM -> alarmSelected = alarm
+                CHANGE_SELECT_ITEM -> alarm?.let { selectionViewModel.changeItemSelected(it) }
+                REMOVE_LIST_SELECT -> {
+                    alarmViewModel.deleterListAlarm(selectionViewModel.getListSelectionAndClear())
+                }
+                REMOVE_ITEM -> {
+                    alarm?.let { alarmViewModel.deleterAlarm(it) }
+                    alarmSelected = null
+                }
+                ADD_ITEM -> {
                     addAlarmViewModel.clearAlarmFields()
                     actionRootDestinations.changeRoot(AddAlarmScreenDestination)
                 }
+            }
+        }
+    )
+}
+
+@Composable
+private fun AlarmScreen(
+    alarmSelected: Alarm?,
+    listState: LazyGridState,
+    isSelectedEnable: Boolean,
+    isScrollInProgress: Boolean,
+    stateListAlarm: Resource<List<Alarm>>,
+    actionAlarm: (ActionItem, Alarm?) -> Unit
+) {
+    Scaffold(
+        floatingActionButton = {
+            ButtonToggleAddRemove(
+                isVisible = !isScrollInProgress,
+                isSelectedEnable = isSelectedEnable,
+                actionAdd = { actionAlarm(ADD_ITEM, null) },
+                actionRemove = { actionAlarm(REMOVE_LIST_SELECT, null) },
+                descriptionButtonAdd = stringResource(R.string.description_add_alarm),
+                descriptionButtonRemove = stringResource(R.string.description_remove_alarms)
             )
         }
     ) { paddingValues ->
         ListAlarm(
-            listAlarm = listAlarmState,
-            isSelectedEnable = selectionViewModel.isSelectedEnable,
-            listState = alarmScreenState.lazyGridState,
-            changeItemSelect = selectionViewModel::changeItemSelected,
-            simpleClickAlarm = { changeAlarmSelected(it) },
-            modifier = Modifier.padding(paddingValues)
+            listState = listState,
+            listAlarm = stateListAlarm,
+            isSelectedEnable = isSelectedEnable,
+            modifier = Modifier.padding(paddingValues),
+            changeItemSelect = { actionAlarm(CHANGE_SELECT_ITEM, it as Alarm) },
+            simpleClickAlarm = { actionAlarm(SIMPLE_CLICK_ITEM, it) }
         )
     }
-    if (alarmSelected != null) {
+
+    alarmSelected?.let {
         DialogDetails(
-            alarm = alarmSelected,
-            actionHiddenDialog = { changeAlarmSelected(null) },
-            deleterAlarm = {
-                alarmViewModel.deleterAlarm(it)
-                changeAlarmSelected(null)
-            }
+            alarm = it,
+            actionHiddenDialog = { actionAlarm(SIMPLE_CLICK_ITEM, null) },
+            deleterAlarm = { actionAlarm(REMOVE_ITEM, it) }
         )
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ListAlarm(
-    listAlarm: Resource<List<Alarm>>,
     isSelectedEnable: Boolean,
     listState: LazyGridState,
-    changeItemSelect: (ItemSelected) -> Unit,
+    modifier: Modifier = Modifier,
+    listAlarm: Resource<List<Alarm>>,
     simpleClickAlarm: (Alarm) -> Unit,
-    modifier: Modifier = Modifier
+    changeItemSelect: (ItemSelected) -> Unit
 ) {
     when (listAlarm) {
         is Resource.Success -> {
             if (listAlarm.data.isEmpty()) {
-                EmptyScreen(
-                    modifier = modifier,
-                    animation = R.raw.empty3,
-                    textEmpty = stringResource(R.string.message_empty_alarm_screen)
-                )
+                ListEmptyAlarm(modifier = modifier)
             } else {
-                LazyVerticalGrid(
-                    modifier = modifier,
-                    state = listState,
-                    columns = GridCells.Adaptive(200.dp),
-                    contentPadding = PaddingValues(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(
-                        items = listAlarm.data,
-                        key = { it.id }
-                    ) { alarm ->
-                        ItemAlarm(
-                            alarm = alarm,
-                            isSelectedEnable = isSelectedEnable,
-                            changeSelectState = changeItemSelect,
-                            actionClickSimple = simpleClickAlarm,
-                            modifier = Modifier.animateItemPlacement()
-                        )
-                    }
-                }
+                ListSuccessAlarm(
+                    listState = listState,
+                    listAlarm = listAlarm.data,
+                    isSelectedEnable = isSelectedEnable,
+                    changeSelectState = changeItemSelect,
+                    simpleClickAlarm = simpleClickAlarm,
+                    modifier = modifier
+                )
             }
         }
-        else -> LoadingAlarm(modifier = modifier)
+        else -> ListLoadAlarm(modifier = modifier)
     }
 }
