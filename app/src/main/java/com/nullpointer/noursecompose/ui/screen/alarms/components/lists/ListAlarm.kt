@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.ui.screen.alarms.componets.lists
+package com.nullpointer.noursecompose.ui.screen.alarms.components.lists
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.models.ItemSelected
 import com.nullpointer.noursecompose.models.alarm.Alarm
-import com.nullpointer.noursecompose.ui.screen.alarms.componets.items.ItemAlarm
-import com.nullpointer.noursecompose.ui.screen.alarms.componets.items.ItemLoadAlarm
+import com.nullpointer.noursecompose.ui.screen.alarms.components.items.ItemAlarm
+import com.nullpointer.noursecompose.ui.screen.alarms.components.items.ItemLoadAlarm
 import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer

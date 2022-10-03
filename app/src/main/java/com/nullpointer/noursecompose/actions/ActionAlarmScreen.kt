@@ -1,6 +1,6 @@
 package com.nullpointer.noursecompose.actions
 
-enum class ActionItem {
+enum class ActionAlarmScreen {
     ADD_ITEM,
     REMOVE_ITEM,
     REMOVE_LIST_SELECT,

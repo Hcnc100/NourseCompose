@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.ui.screen.alarms.componets.items
+package com.nullpointer.noursecompose.ui.screen.alarms.components.items
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape

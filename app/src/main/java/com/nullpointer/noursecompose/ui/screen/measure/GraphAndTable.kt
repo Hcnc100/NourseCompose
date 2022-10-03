@@ -31,12 +31,17 @@ fun GraphAndTable(
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> {
             LazyVerticalGrid(
-                modifier = modifier,
                 state = listState,
+                modifier = modifier,
+                contentPadding = PaddingValues(2.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
                 columns = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure)),
-                contentPadding = PaddingValues(4.dp),
             ) {
-                item(span = { GridItemSpan(maxLineSpan) }, key = "graph-header") {
+                item(
+                    key = "graph-header",
+                    span = { GridItemSpan(maxLineSpan) },
+                ) {
                     MpGraphAndroid(
                         list = listMeasure.reversed(),
                         minValue = minValue,
@@ -49,12 +54,12 @@ fun GraphAndTable(
                 }
                 items(listMeasure, key = { it.id }) { measure ->
                     ItemMeasure(
-                        modifier = Modifier.animateItemPlacement(),
+                        measure = measure,
                         nameMeasure = nameMeasure,
                         suffixMeasure = suffixMeasure,
-                        measure = measure,
                         isSelectedEnable = isSelectedEnable,
-                        changeSelectState = changeSelectState
+                        changeSelectState = changeSelectState,
+                        modifier = Modifier.animateItemPlacement()
                     )
                 }
             }

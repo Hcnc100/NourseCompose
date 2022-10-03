@@ -1,24 +1,22 @@
 package com.nullpointer.noursecompose.ui.screen.measure
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.models.ItemSelected
 import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 
@@ -29,24 +27,21 @@ fun ItemMeasure(
     suffixMeasure: String,
     measure: SimpleMeasure,
     isSelectedEnable: Boolean,
-    changeSelectState: (ItemSelected) -> Unit,
     modifier: Modifier = Modifier,
+    changeSelectState: (ItemSelected) -> Unit,
 ) {
-    val selectColor by remember(measure.isSelected) {
-        derivedStateOf {
-            if (measure.isSelected) Color.Cyan.copy(alpha = 0.5f) else Color.Unspecified
-        }
-    }
+    val selectColor by animateColorAsState(
+        if (measure.isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.surface
+    )
 
-    Card(
-        modifier = modifier.padding(4.dp),
-        shape = RoundedCornerShape(10.dp)
+    Surface(
+        modifier = modifier,
+        color = selectColor,
+        shape = MaterialTheme.shapes.small,
+        elevation = dimensionResource(id = R.dimen.elevation_surface)
     ) {
         Column(
             modifier = Modifier
-                .drawBehind {
-                    drawRect(selectColor)
-                }
                 .combinedClickable(
                     onClick = { if (isSelectedEnable) changeSelectState(measure) },
                     onLongClick = { if (!isSelectedEnable) changeSelectState(measure) },

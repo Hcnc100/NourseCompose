@@ -9,8 +9,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.nullpointer.noursecompose.R
-import com.nullpointer.noursecompose.actions.ActionItem
-import com.nullpointer.noursecompose.actions.ActionItem.*
+import com.nullpointer.noursecompose.actions.ActionAlarmScreen
+import com.nullpointer.noursecompose.actions.ActionAlarmScreen.*
 import com.nullpointer.noursecompose.core.states.Resource
 import com.nullpointer.noursecompose.core.utils.shareViewModel
 import com.nullpointer.noursecompose.models.ItemSelected
@@ -21,9 +21,9 @@ import com.nullpointer.noursecompose.ui.dialogs.DialogDetails
 import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.HomeNavGraph
 import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
-import com.nullpointer.noursecompose.ui.screen.alarms.componets.lists.ListEmptyAlarm
-import com.nullpointer.noursecompose.ui.screen.alarms.componets.lists.ListLoadAlarm
-import com.nullpointer.noursecompose.ui.screen.alarms.componets.lists.ListSuccessAlarm
+import com.nullpointer.noursecompose.ui.screen.alarms.components.lists.ListEmptyAlarm
+import com.nullpointer.noursecompose.ui.screen.alarms.components.lists.ListLoadAlarm
+import com.nullpointer.noursecompose.ui.screen.alarms.components.lists.ListSuccessAlarm
 import com.nullpointer.noursecompose.ui.screen.destinations.AddAlarmScreenDestination
 import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
 import com.nullpointer.noursecompose.ui.states.AlarmScreenState
@@ -88,7 +88,7 @@ private fun AlarmScreen(
     isSelectedEnable: Boolean,
     isScrollInProgress: Boolean,
     stateListAlarm: Resource<List<Alarm>>,
-    actionAlarm: (ActionItem, Alarm?) -> Unit
+    actionAlarm: (ActionAlarmScreen, Alarm?) -> Unit
 ) {
     Scaffold(
         floatingActionButton = {

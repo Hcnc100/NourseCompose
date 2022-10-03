@@ -4,14 +4,14 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.ScaffoldState
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.actions.ActionMeasureScreen
+import com.nullpointer.noursecompose.actions.ActionMeasureScreen.*
 import com.nullpointer.noursecompose.core.states.Resource
 import com.nullpointer.noursecompose.core.utils.shareViewModel
 import com.nullpointer.noursecompose.models.ItemSelected
@@ -21,9 +21,9 @@ import com.nullpointer.noursecompose.presentation.MeasureViewModel
 import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.dialogs.DialogAddMeasure
 import com.nullpointer.noursecompose.ui.navigation.HomeNavGraph
-import com.nullpointer.noursecompose.ui.screen.empty.EmptyScreen
-import com.nullpointer.noursecompose.ui.screen.measure.GraphAndTable
 import com.nullpointer.noursecompose.ui.screen.measure.LoadingItemMeasure
+import com.nullpointer.noursecompose.ui.screen.oxygen.components.ListEmptyOxygen
+import com.nullpointer.noursecompose.ui.screen.oxygen.components.ListSuccessOxygen
 import com.nullpointer.noursecompose.ui.share.ButtonToggleAddRemove
 import com.nullpointer.noursecompose.ui.states.SelectedScreenState
 import com.nullpointer.noursecompose.ui.states.rememberSelectedScreenState
@@ -33,79 +33,105 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Destination
 @Composable
 fun OxygenScreen(
-    selectionViewModel: SelectionViewModel= shareViewModel(),
     measureViewModel: MeasureViewModel = shareViewModel(),
+    selectionViewModel: SelectionViewModel = shareViewModel(),
     measureScreenState: SelectedScreenState = rememberSelectedScreenState()
 ) {
     val listOxygenState by measureViewModel.listOxygen.collectAsState()
-    val (isShowDialog, changeVisibleDialog) = rememberSaveable { mutableStateOf(false) }
+    var isShowDialog by rememberSaveable { mutableStateOf(false) }
 
     BackHandler(selectionViewModel.isSelectedEnable, selectionViewModel::clearSelection)
 
-    Scaffold(
+    OxygenScreen(
+        listOxygen = listOxygenState,
+        lazyGridState = measureScreenState.lazyGridState,
+        isShowDialog = isShowDialog,
+        isSelectedEnable = selectionViewModel.isSelectedEnable,
+        isScrollInProgress = measureScreenState.isScrollInProgress,
         scaffoldState = measureScreenState.scaffoldState,
-        floatingActionButton = {
-            ButtonToggleAddRemove(
-                isVisible = !measureScreenState.isScrollInProgress,
-                isSelectedEnable = selectionViewModel.isSelectedEnable,
-                descriptionButtonAdd = stringResource(id = R.string.description_add_oxygen),
-                actionAdd = { changeVisibleDialog(true) },
-                descriptionButtonRemove = stringResource(id = R.string.description_remove_oxygen),
-                actionRemove = {
+        actionOxygen = { action, value, measure ->
+            when (action) {
+                SHOW_ADD_DIALOG -> isShowDialog = true
+                HIDE_ADD_DIALOG -> isShowDialog = false
+                ADD_NEW_MEASURE -> {
+                    value?.let {
+                        measureViewModel.addNewMeasure(SimpleMeasure(value, MeasureType.OXYGEN))
+                        measureScreenState.scrollToFirst()
+                    }
+                }
+                DELETER_LIST_MEASURE -> {
                     measureViewModel.deleterListMeasure(
                         selectionViewModel.getListSelectionAndClear()
                     )
                 }
+                CHANGE_MEASURE_SELECT -> {
+                    measure?.let { selectionViewModel.changeItemSelected(it) }
+                }
+            }
+        }
+    )
+}
+
+@Composable
+private fun OxygenScreen(
+    isShowDialog: Boolean,
+    isSelectedEnable: Boolean,
+    isScrollInProgress: Boolean,
+    lazyGridState: LazyGridState,
+    scaffoldState: ScaffoldState,
+    listOxygen: Resource<List<SimpleMeasure>>,
+    actionOxygen: (ActionMeasureScreen, Float?, SimpleMeasure?) -> Unit
+) {
+    Scaffold(
+        scaffoldState = scaffoldState,
+        floatingActionButton = {
+            ButtonToggleAddRemove(
+                isVisible = !isScrollInProgress,
+                isSelectedEnable = isSelectedEnable,
+                descriptionButtonAdd = stringResource(id = R.string.description_add_oxygen),
+                actionAdd = { actionOxygen(SHOW_ADD_DIALOG, null, null) },
+                descriptionButtonRemove = stringResource(id = R.string.description_remove_oxygen),
+                actionRemove = { actionOxygen(DELETER_LIST_MEASURE, null, null) }
             )
         }
-    ) {
+    ) { paddingValues ->
         ListOxygenState(
-            listOxygen = listOxygenState,
-            lazyGridState = measureScreenState.lazyGridState,
-            isSelectedEnable = selectionViewModel.isSelectedEnable,
-            changeSelect = selectionViewModel::changeItemSelected,
-            modifier = Modifier.padding(it)
+            listOxygen = listOxygen,
+            lazyGridState = lazyGridState,
+            isSelectedEnable = isSelectedEnable,
+            modifier = Modifier.padding(paddingValues),
+            changeSelect = { actionOxygen(CHANGE_MEASURE_SELECT, null, it as SimpleMeasure) }
         )
     }
     if (isShowDialog) {
         DialogAddMeasure(
             nameMeasure = stringResource(id = R.string.name_oxygen),
             measureFullSuffix = stringResource(id = R.string.suffix_oxygen),
-            actionHiddenDialog = { changeVisibleDialog(false) },
-            actionAdd = {
-                measureViewModel.addNewMeasure(SimpleMeasure(it, MeasureType.OXYGEN))
-                measureScreenState.scrollToFirst()
-            })
+            actionHiddenDialog = { actionOxygen(HIDE_ADD_DIALOG, null, null) },
+            actionAdd = { actionOxygen(ADD_NEW_MEASURE, it, null) })
     }
 }
 
+
 @Composable
 private fun ListOxygenState(
-    listOxygen: Resource<List<SimpleMeasure>>,
-    lazyGridState: LazyGridState,
     isSelectedEnable: Boolean,
+    modifier: Modifier = Modifier,
+    lazyGridState: LazyGridState,
     changeSelect: (ItemSelected) -> Unit,
-    modifier: Modifier = Modifier
+    listOxygen: Resource<List<SimpleMeasure>>
 ) {
     when (listOxygen) {
         is Resource.Success -> {
             if (listOxygen.data.isEmpty()) {
-                EmptyScreen(
-                    modifier = modifier,
-                    animation = R.raw.empty2,
-                    textEmpty = stringResource(R.string.message_empty_measure_oxygen)
-                )
+                ListEmptyOxygen(modifier = modifier)
             } else {
-                GraphAndTable(
+                ListSuccessOxygen(
                     modifier = modifier,
-                    listMeasure = listOxygen.data,
-                    suffixMeasure = stringResource(id = R.string.suffix_oxygen),
-                    nameMeasure = stringResource(id = R.string.name_oxygen),
-                    minValue = MeasureType.OXYGEN.minValue,
-                    maxValues = MeasureType.OXYGEN.maxValue,
-                    isSelectedEnable = isSelectedEnable,
-                    changeSelectState = changeSelect,
                     listState = lazyGridState,
+                    listOxygen = listOxygen.data,
+                    changeSelectState = changeSelect,
+                    isSelectedEnable = isSelectedEnable
                 )
             }
         }

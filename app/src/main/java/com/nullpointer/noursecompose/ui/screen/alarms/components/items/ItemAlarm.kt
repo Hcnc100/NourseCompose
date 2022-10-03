@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.ui.screen.alarms.componets.items
+package com.nullpointer.noursecompose.ui.screen.alarms.components.items
 
 import android.content.Context
 import androidx.compose.animation.animateColorAsState
