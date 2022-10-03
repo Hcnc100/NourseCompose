@@ -1,7 +1,8 @@
 package com.nullpointer.noursecompose.domain.alarms
 
 import android.content.Context
-import androidx.core.net.toUri
+import android.net.Uri
+import androidx.core.net.toFile
 import com.nullpointer.noursecompose.core.utils.ImageUtils
 import com.nullpointer.noursecompose.data.local.datasource.alarm.AlarmDataSource
 import com.nullpointer.noursecompose.data.local.datasource.logs.LogsDataSource
@@ -9,14 +10,8 @@ import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.registry.Log
 import com.nullpointer.noursecompose.models.registry.TypeRegistry
 import com.nullpointer.noursecompose.services.alarms.MyAlarmManager
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import me.shouheng.compress.Compress
-import me.shouheng.compress.concrete
-import me.shouheng.compress.strategy.config.ScaleMode
 
-@OptIn(DelicateCoroutinesApi::class)
 class AlarmRepoImpl(
     private val alarmDataSource: AlarmDataSource,
     private val logsDataSource: LogsDataSource,
@@ -31,23 +26,12 @@ class AlarmRepoImpl(
         alarmDataSource.getAlarmById(id)
 
 
-    override suspend fun insertAlarm(alarm: Alarm, uriImg:String?): Long {
-        val pathImg=uriImg?.let {
-            val nameImg="alarm-img-${alarm.createdAt}"
-            // * create a file with img compress
-            val fileImgTemp=Compress.with(context, it.toUri()).setQuality(80).concrete {
-                withMaxHeight(500f)
-                withMaxWidth(500f)
-                withScaleMode(ScaleMode.SCALE_SMALLER)
-                withIgnoreIfSmaller(true)
-            }.get(Dispatchers.IO)
-            // * save the img in internal memory
-            ImageUtils.saveToInternalStorage(fileImgTemp,nameImg,context)
+    override suspend fun insertAlarm(alarm: Alarm, uriImg: Uri): Long {
+        val pathImg = uriImg.let {
+            val nameImg = "alarm-img-${alarm.createdAt}"
+            ImageUtils.saveToInternalStorage(uriImg.toFile(), nameImg, context)
         }
         val idAlarm = alarmDataSource.insert(alarm.copy(pathFile = pathImg))
-
-//        val log = if (isUpdate) Log(TypeRegistry.UPDATE, idAlarm) else Log(TypeRegistry.CREATE, idAlarm)
-//        logsDataSource.insertLog(log)
         // ! is very important use this idAlarm
         MyAlarmManager.setAlarm(context, idAlarm, alarm.nextAlarm!!)
         return idAlarm

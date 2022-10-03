@@ -81,7 +81,7 @@ private fun ImageFakeAlarm(
 ) {
     Box(
         modifier = modifier
-            .height(110.dp)
+            .fillMaxHeight()
             .myShimmer(shimmer)
     )
 }

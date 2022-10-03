@@ -49,7 +49,6 @@ fun ItemAlarm(
     ) {
         Row(
             modifier = Modifier
-                .height(IntrinsicSize.Min)
                 .combinedClickable(
                     onClick = {
                         if (isSelectedEnable) changeSelectState(alarm) else actionClickSimple(
@@ -64,7 +63,7 @@ fun ItemAlarm(
                 imageDefault = R.drawable.ic_alarm,
                 modifier = Modifier
                     .weight(2F)
-                    .fillMaxHeight()
+                    .fillMaxWidth()
             )
             Column(
                 modifier = Modifier

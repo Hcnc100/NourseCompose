@@ -2,10 +2,13 @@ package com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.delegates.PropertySavableAlarmTime
+import com.nullpointer.noursecompose.core.delegates.PropertySavableImg
 import com.nullpointer.noursecompose.core.delegates.PropertySavableString
 import com.nullpointer.noursecompose.core.delegates.SavableComposeState
+import com.nullpointer.noursecompose.domain.compress.CompressRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -14,12 +17,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddAlarmViewModel @Inject constructor(
-    stateHandle: SavedStateHandle
+    stateHandle: SavedStateHandle,
+    private val compressRepository: CompressRepository
 ) : ViewModel() {
 
     companion object {
         private const val MAX_LENGTH_NAME = 70
         private const val MAX_LENGTH_DESCRIPTION = 250
+        private const val TAG_IMG_ALARM = "TAG_IMG_ALARM"
+        private const val TAG_NAME_ALARM = "TAG_NAME_ALARM"
+        private const val KEY_DIALOG_REPEAT = "KEY_DIALOG_REPEAT"
+        private const val TAG_DESCRIPTION_ALARM = "TAG_DESCRIPTION_ALARM"
     }
 
     private val _messageAddAlarm = Channel<Int>()
@@ -32,7 +40,7 @@ class AddAlarmViewModel @Inject constructor(
         maxLength = MAX_LENGTH_NAME,
         emptyError = R.string.error_empty_name,
         lengthError = R.string.error_name_long,
-        tagSavable = ""
+        tagSavable = TAG_NAME_ALARM
     )
 
     val description = PropertySavableString(
@@ -41,19 +49,20 @@ class AddAlarmViewModel @Inject constructor(
         hint = R.string.hint_description_alarm,
         maxLength = MAX_LENGTH_DESCRIPTION,
         lengthError = R.string.error_description_long,
-        tagSavable = ""
+        tagSavable = TAG_DESCRIPTION_ALARM
     )
 
-    var imageAlarm: String? by SavableComposeState(stateHandle, "Pan", null)
-        private set
-
-    fun changeImg(newUri: String) {
-        imageAlarm = newUri
-    }
+    val imageAlarm = PropertySavableImg(
+        state = stateHandle,
+        scope = viewModelScope,
+        tagSavable = TAG_IMG_ALARM,
+        actionSendErrorCompress = { _messageAddAlarm.trySend(R.string.error_img_compress) },
+        actionCompress = compressRepository::compressImage
+    )
 
     val alarmTime = PropertySavableAlarmTime(state = stateHandle)
 
-    var showDialogRepeat by SavableComposeState(stateHandle, "KEY_DIALOG_REPEAT", false)
+    var showDialogRepeat by SavableComposeState(stateHandle, KEY_DIALOG_REPEAT, false)
         private set
 
     fun changeVisibleDialogRepeat(isVisible: Boolean) {
@@ -76,7 +85,7 @@ class AddAlarmViewModel @Inject constructor(
         nameAlarm.clearValue()
         description.clearValue()
         alarmTime.clearValue()
-        imageAlarm = null
+        imageAlarm.clearValue()
     }
 
 

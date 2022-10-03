@@ -36,7 +36,7 @@ fun GraphAndTable(
                 contentPadding = PaddingValues(2.dp),
                 verticalArrangement = Arrangement.spacedBy(5.dp),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
-                columns = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure)),
+                columns = GridCells.Adaptive(dimensionResource(id = R.dimen.width_row_measure)),
             ) {
                 item(
                     key = "graph-header",
@@ -79,7 +79,7 @@ fun GraphAndTable(
                 )
                 LazyVerticalGrid(
                     state = listState,
-                    columns = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure)),
+                    columns = GridCells.Adaptive(dimensionResource(id = R.dimen.width_row_measure)),
                     contentPadding = PaddingValues(4.dp),
                     modifier = Modifier.weight(.5f)
                 ) {

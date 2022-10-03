@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.domain.registry
+package com.nullpointer.noursecompose.domain.logger
 
 import com.nullpointer.noursecompose.data.local.datasource.logs.LogsDataSource
 import com.nullpointer.noursecompose.models.registry.Log

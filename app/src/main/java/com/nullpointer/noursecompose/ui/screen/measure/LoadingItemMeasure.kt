@@ -45,7 +45,7 @@ fun LoadingItemMeasure(
                 )
                 LazyVerticalGrid(
                     modifier = Modifier.weight(.5f),
-                    columns = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure))
+                    columns = GridCells.Adaptive(dimensionResource(id = R.dimen.width_row_measure))
                 ) {
                     items(15, key = { it }) {
                         ItemMeasure(
@@ -59,7 +59,7 @@ fun LoadingItemMeasure(
         else -> {
             LazyVerticalGrid(
                 modifier = modifier.fillMaxSize(),
-                columns = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_measure))
+                columns = GridCells.Adaptive(dimensionResource(id = R.dimen.width_row_measure))
             ) {
                 item(key = "graph-fake", span = { GridItemSpan(maxLineSpan) }) {
                     GraphFake(

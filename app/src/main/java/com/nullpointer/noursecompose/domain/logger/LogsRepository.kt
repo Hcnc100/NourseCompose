@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.domain.registry
+package com.nullpointer.noursecompose.domain.logger
 
 import com.nullpointer.noursecompose.models.registry.Log
 import kotlinx.coroutines.flow.Flow

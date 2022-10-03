@@ -6,6 +6,7 @@ import timber.log.Timber
 import java.io.File
 
 object ImageUtils {
+
     fun saveToInternalStorage(
         bitmapImage: Bitmap,
         nameFile: String,

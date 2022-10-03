@@ -1,5 +1,6 @@
 package com.nullpointer.noursecompose.presentation
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nullpointer.noursecompose.core.states.Resource
@@ -32,7 +33,7 @@ class AlarmViewModel @Inject constructor(
 
     fun addNewAlarm(
         alarm: Alarm,
-        uriImg:String?,
+        uriImg: Uri,
     ) = viewModelScope.launch(Dispatchers.IO) {
         alarmRepo.insertAlarm(alarm,uriImg)
     }

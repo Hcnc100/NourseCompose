@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="size_row_measure">150dp</dimen>
-    <dimen name="size_row_alarm">200dp</dimen>
+
+    <!-- card -->
+    <dimen name="elevation_surface">2dp</dimen>
+
+    <!-- measure -->
+    <dimen name="width_row_measure">150dp</dimen>
+
+    <!-- log -->
     <dimen name="size_row_log">180dp</dimen>
     <dimen name="height_graph_measure">250dp</dimen>
-    <dimen name="elevation_surface">2dp</dimen>
+
+    <!-- item alarm -->
+    <dimen name="height_row_alarm">110dp</dimen>
+    <dimen name="width_row_alarm">250dp</dimen>
 </resources>

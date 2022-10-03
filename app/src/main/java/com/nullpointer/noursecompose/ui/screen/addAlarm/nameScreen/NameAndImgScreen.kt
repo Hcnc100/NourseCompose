@@ -16,10 +16,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.core.delegates.PropertySavableImg
+import com.nullpointer.noursecompose.core.utils.isSuccess
 import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
 import com.nullpointer.noursecompose.ui.share.EditableTextSavable
 import com.nullpointer.noursecompose.ui.states.AddAlarmScreenState
@@ -38,7 +39,7 @@ fun NameAndImgScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 ImageAlarm(
-                    imageFile = addAlarmViewModel.imageAlarm,
+                    imageProperty = addAlarmViewModel.imageAlarm,
                     actionEdit = addAlarmScreenState::showModal,
                     modifier = Modifier
                         .padding(10.dp)
@@ -51,7 +52,7 @@ fun NameAndImgScreen(
             Column(modifier = Modifier.fillMaxSize()) {
                 Spacer(modifier = Modifier.height(20.dp))
                 ImageAlarm(
-                    imageFile = addAlarmViewModel.imageAlarm,
+                    imageProperty = addAlarmViewModel.imageAlarm,
                     actionEdit = addAlarmScreenState::showModal,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -73,22 +74,23 @@ fun NameAndImgScreen(
 
 @Composable
 private fun ImageAlarm(
-    imageFile: String?,
+    imageProperty: PropertySavableImg,
     modifier: Modifier = Modifier,
     actionEdit: () -> Unit
 ) {
     val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current).data(imageFile).crossfade(true).build(),
+        model = ImageRequest.Builder(LocalContext.current).data(imageProperty.value).crossfade(true)
+            .build(),
         placeholder = painterResource(id = R.drawable.ic_image),
         error = painterResource(id = R.drawable.ic_broken_image)
     )
     Card(modifier = modifier, shape = RoundedCornerShape(10.dp)) {
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
-                painter = if (imageFile == null) painterResource(id = R.drawable.ic_image) else painter,
                 modifier = Modifier.fillMaxSize(),
+                painter = if (imageProperty.isNotEmpty) painter else painterResource(id = R.drawable.ic_image),
                 contentDescription = stringResource(id = R.string.description_img_alarm),
-                contentScale = if (painter.state is AsyncImagePainter.State.Success) ContentScale.Crop else ContentScale.Fit
+                contentScale = if (painter.isSuccess) ContentScale.Crop else ContentScale.Fit
             )
             FloatingActionButton(
                 onClick = actionEdit, modifier = Modifier

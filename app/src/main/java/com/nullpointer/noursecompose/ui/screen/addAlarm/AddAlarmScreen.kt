@@ -56,7 +56,7 @@ fun AddAlarmScreen(
                 ) { uri ->
                     addAlarmScreenState.hiddenModal()
                     uri?.let {
-                        addAlarmViewModel.changeImg(it.toString())
+                        addAlarmViewModel.imageAlarm.changeValue(it)
                     }
                 }
             },
@@ -96,7 +96,7 @@ fun AddAlarmScreen(
                                    val newAlarm = addAlarmViewModel.createAlarm()
                                    alarmViewModel.addNewAlarm(
                                        alarm = newAlarm,
-                                       uriImg = uriImgAlarm
+                                       uriImg = uriImgAlarm.value
                                    )
                                    actionRootDestinations.backDestination()
                                }

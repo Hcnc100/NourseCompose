@@ -3,7 +3,7 @@ package com.nullpointer.noursecompose.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nullpointer.noursecompose.core.states.Resource
-import com.nullpointer.noursecompose.domain.registry.LogsRepository
+import com.nullpointer.noursecompose.domain.logger.LogsRepository
 import com.nullpointer.noursecompose.models.registry.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

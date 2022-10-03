@@ -4,7 +4,7 @@ import com.nullpointer.noursecompose.data.local.datasource.logs.LogsDataSource
 import com.nullpointer.noursecompose.data.local.datasource.logs.LogsDataSourceImpl
 import com.nullpointer.noursecompose.data.local.room.NurseDatabase
 import com.nullpointer.noursecompose.data.local.room.daos.LogsDAO
-import com.nullpointer.noursecompose.domain.registry.LogsRepoImpl
+import com.nullpointer.noursecompose.domain.logger.LogsRepoImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

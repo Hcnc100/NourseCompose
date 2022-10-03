@@ -3,6 +3,7 @@ package com.nullpointer.noursecompose.ui.screen.alarms.components.lists
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -31,10 +32,13 @@ fun ListLoadAlarm(
         contentPadding = PaddingValues(4.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        columns = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_alarm))
+        columns = GridCells.Adaptive(dimensionResource(id = R.dimen.width_row_alarm))
     ) {
         items(10, key = { it }) {
-            ItemLoadAlarm(shimmer)
+            ItemLoadAlarm(
+                shimmer,
+                modifier = Modifier.height(dimensionResource(id = R.dimen.height_row_alarm))
+            )
         }
     }
 }
@@ -55,7 +59,7 @@ fun ListSuccessAlarm(
         contentPadding = PaddingValues(4.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        columns = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_alarm))
+        columns = GridCells.Adaptive(dimensionResource(id = R.dimen.width_row_alarm))
     ) {
         items(
             items = listAlarm,
@@ -66,7 +70,9 @@ fun ListSuccessAlarm(
                 isSelectedEnable = isSelectedEnable,
                 changeSelectState = changeSelectState,
                 actionClickSimple = simpleClickAlarm,
-                modifier = Modifier.animateItemPlacement()
+                modifier = Modifier
+                    .height(dimensionResource(id = R.dimen.height_row_alarm))
+                    .animateItemPlacement()
             )
         }
     }
