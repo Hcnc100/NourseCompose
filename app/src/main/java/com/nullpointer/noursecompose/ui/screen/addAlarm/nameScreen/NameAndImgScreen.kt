@@ -25,6 +25,7 @@ import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.delegates.PropertySavableImg
 import com.nullpointer.noursecompose.core.delegates.PropertySavableString
 import com.nullpointer.noursecompose.core.utils.isSuccess
+import com.nullpointer.noursecompose.ui.screen.addAlarm.TitleAddAlarm
 import com.nullpointer.noursecompose.ui.share.EditableTextSavable
 
 @Composable
@@ -34,52 +35,59 @@ fun NameAndImgScreen(
     modifier: Modifier = Modifier,
     imageAlarmProperty: PropertySavableImg,
     nameAlarmProperty: PropertySavableString,
-    config: Configuration = LocalConfiguration.current
+    config: Configuration = LocalConfiguration.current,
 ) {
-    when (config.orientation) {
-        Configuration.ORIENTATION_LANDSCAPE -> {
-            Row(
-                modifier = modifier.fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                ImageAlarm(
-                    imageProperty = imageAlarmProperty,
-                    actionEdit = showModalSelectImg,
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(250.dp)
-                )
-                EditableTextSavable(
-                    singleLine = true,
-                    valueProperty = nameAlarmProperty,
-                    keyboardActions = KeyboardActions(onDone = { actionNext() }),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
-                )
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        TitleAddAlarm(title = "Inicia agregando un nombre para la alarma y una imagen para identificarla")
+        when (config.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    ImageAlarm(
+                        imageProperty = imageAlarmProperty,
+                        actionEdit = showModalSelectImg,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(150.dp)
+                    )
+                    Spacer(modifier = Modifier.width(20.dp))
+                    EditableTextSavable(
+                        singleLine = true,
+                        valueProperty = nameAlarmProperty,
+                        keyboardActions = KeyboardActions(onDone = { actionNext() }),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
+                    )
+                }
             }
-        }
-        else -> {
-            Column(modifier = modifier) {
-                Spacer(modifier = Modifier.height(20.dp))
-                ImageAlarm(
-                    imageProperty = imageAlarmProperty,
-                    actionEdit = showModalSelectImg,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(10.dp)
-                        .size(200.dp)
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                EditableTextSavable(
-                    singleLine = true,
-                    valueProperty = nameAlarmProperty,
-                    modifier = Modifier.padding(horizontal = 20.dp),
-                    keyboardActions = KeyboardActions(onDone = { actionNext() }),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
-                )
+            else -> {
+                Column(
+                    modifier = Modifier,
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    ImageAlarm(
+                        imageProperty = imageAlarmProperty,
+                        actionEdit = showModalSelectImg,
+                        modifier = Modifier.size(200.dp)
+                    )
+                    EditableTextSavable(
+                        singleLine = true,
+                        modifier = Modifier,
+                        valueProperty = nameAlarmProperty,
+                        keyboardActions = KeyboardActions(onDone = { actionNext() }),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
+                    )
+                }
             }
         }
     }
+
 }
 
 @Composable

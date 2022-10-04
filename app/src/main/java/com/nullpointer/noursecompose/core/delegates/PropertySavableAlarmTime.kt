@@ -10,10 +10,10 @@ class PropertySavableAlarmTime(
     state: SavedStateHandle
 ) {
     companion object {
-        private const val KEY_TIME_INIT = "KEY_TIME_INIT"
-        private const val KEY_ERROR_RANGE = "KEY_ERROR_RANGE"
-        private const val KEY_TYPE_ALARM = "KEY_TYPE_ALARM"
         private const val KEY_RANGE = "KEY_RANGE"
+        private const val KEY_TIME_INIT = "KEY_TIME_INIT"
+        private const val KEY_TYPE_ALARM = "KEY_TYPE_ALARM"
+        private const val KEY_ERROR_RANGE = "KEY_ERROR_RANGE"
         private const val KEY_NEXT_ALARM = "KEY_NEXT_ALARM"
         private const val KEY_TIME_REPEAT = "KEY_TIME_REPEAT"
         const val DEFAULT_RESOURCE = -1

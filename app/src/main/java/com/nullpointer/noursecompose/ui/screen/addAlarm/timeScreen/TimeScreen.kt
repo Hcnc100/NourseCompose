@@ -8,8 +8,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -116,14 +114,12 @@ private fun HoursToRepeat(
     context: Context = LocalContext.current,
     showDialogRepeat: () -> Unit
 ) {
-    val textValue by remember(timeToRepeat) {
-        derivedStateOf {
-            TimeUtils.timeRepeatInMillisToString(
-                timeInMillis = timeToRepeat,
-                context = context,
-                includeSeconds = false
-            )
-        }
+    val textValue = remember(timeToRepeat) {
+        TimeUtils.timeRepeatInMillisToString(
+            timeInMillis = timeToRepeat,
+            context = context,
+            includeSeconds = false
+        )
     }
     Column {
         Spacer(modifier = Modifier.height(30.dp))
@@ -145,10 +141,8 @@ private fun SelectTimeInit(
     val timePicker = remember {
         showTimePicker(activity = context, updatedDate = changeTimeInit)
     }
-    val hourValue by remember(currentTime) {
-        derivedStateOf {
-            currentTime.toFormatOnlyTime(context)
-        }
+    val hourValue = remember(currentTime) {
+        currentTime.toFormatOnlyTime(context)
     }
 
     Column {
@@ -204,10 +198,8 @@ private fun FieldRangeAlarm(
     activity: AppCompatActivity = LocalContext.current as AppCompatActivity
 ) {
 
-    val textRange by remember(rangeAlarm) {
-        derivedStateOf {
-            calculateRangeInDays(activity, rangeAlarm)
-        }
+    val textRange = remember(rangeAlarm) {
+        calculateRangeInDays(activity, rangeAlarm)
     }
     Box(
         modifier = Modifier

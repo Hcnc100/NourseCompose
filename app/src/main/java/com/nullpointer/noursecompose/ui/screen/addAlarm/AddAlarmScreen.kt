@@ -2,18 +2,17 @@ package com.nullpointer.noursecompose.ui.screen.addAlarm
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -108,44 +107,47 @@ fun AddAlarmScreen(
             )
         }
     ) { padding ->
-        Box(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) {
-            HorizontalPager(
-                count = 4,
-                state = pagerState,
-                userScrollEnabled = false
-            ) { page ->
-                when (page) {
-                    0 -> NameAndImgScreen(
-                        actionNext = { actionAddScreen(NEXT_PAGE, false) },
-                        modifier = Modifier.imePadding(),
-                        nameAlarmProperty = nameAlarmProperty,
-                        imageAlarmProperty = imageAlarmProperty,
-                        showModalSelectImg = { actionAddScreen(CHANGE_VISIBLE_MODAL, true) },
-                    )
-                    1 -> DescriptionScreen(
-                        descriptionProperty = descriptionProperty,
-                        modifier = Modifier.imePadding()
-                    )
-                    2 -> RepeatAlarmScreen(alarmTime = timeProperty)
-                    3 -> TimeScreen(
-                        alarmTime = timeProperty,
-                        isShowDialogRepeat = isShowDialogRepeat,
-                        changeShowDialogRepeat = { actionAddScreen(CHANGE_VISIBLE_REPEAT, it) },
-                    )
-                }
-            }
-            ButtonNext(
+        BoxWithConstraints {
+            val realHeight = remember { this.maxHeight }
+            Box(
                 modifier = Modifier
-                    .padding(10.dp)
-                    .align(Alignment.BottomEnd),
-                actionClick = { actionAddScreen(NEXT_PAGE, false) },
-            )
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                HorizontalPager(
+                    count = 4,
+                    state = pagerState,
+                    userScrollEnabled = false,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(realHeight)
+                        .padding(10.dp)
+                ) { page ->
+                    when (page) {
+                        0 -> NameAndImgScreen(
+                            actionNext = { actionAddScreen(NEXT_PAGE, false) },
+                            nameAlarmProperty = nameAlarmProperty,
+                            imageAlarmProperty = imageAlarmProperty,
+                            showModalSelectImg = { actionAddScreen(CHANGE_VISIBLE_MODAL, true) },
+                        )
+                        1 -> DescriptionScreen(descriptionProperty = descriptionProperty)
+                        2 -> RepeatAlarmScreen(alarmTime = timeProperty)
+                        3 -> TimeScreen(
+                            alarmTime = timeProperty,
+                            isShowDialogRepeat = isShowDialogRepeat,
+                            changeShowDialogRepeat = { actionAddScreen(CHANGE_VISIBLE_REPEAT, it) },
+                        )
+                    }
+                }
+                ButtonNext(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .align(Alignment.BottomEnd),
+                    actionClick = { actionAddScreen(NEXT_PAGE, false) },
+                )
+            }
         }
+
     }
 }
 
@@ -164,11 +166,12 @@ private fun ButtonNext(
 
 @Composable
 fun TitleAddAlarm(
-    title: String
+    title: String,
+    modifier: Modifier = Modifier
 ) {
     Text(
         text = title,
-        style = MaterialTheme.typography.h5,
-        modifier = Modifier.padding(30.dp)
+        style = MaterialTheme.typography.h5.copy(fontSize = 22.sp),
+        modifier = modifier
     )
 }

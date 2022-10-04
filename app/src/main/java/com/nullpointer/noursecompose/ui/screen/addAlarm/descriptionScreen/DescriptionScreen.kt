@@ -15,9 +15,11 @@ fun DescriptionScreen(
     modifier: Modifier = Modifier,
     descriptionProperty: PropertySavableString
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(50.dp)
+    ) {
         TitleAddAlarm(title = stringResource(id = R.string.title_description_alarm))
-        Spacer(modifier = Modifier.height(20.dp))
         EditableTextSavable(
             valueProperty = descriptionProperty,
             modifier = Modifier.padding(horizontal = 20.dp),
