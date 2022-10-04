@@ -13,16 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.core.delegates.PropertySavableAlarmTime
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import com.nullpointer.noursecompose.ui.screen.addAlarm.TitleAddAlarm
-import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
 
 @Composable
 fun RepeatAlarmScreen(
-    addAlarmViewModel: AddAlarmViewModel
+    modifier: Modifier = Modifier,
+    alarmTime: PropertySavableAlarmTime
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = 10.dp)
             .fillMaxSize(),
     ) {
@@ -30,8 +31,8 @@ fun RepeatAlarmScreen(
         AlarmTypes.values().forEach {
             ItemSelectType(
                 alarmTypes = it,
-                typeSelected = addAlarmViewModel.alarmTime.typeAlarm,
-                changeType = addAlarmViewModel.alarmTime::changeType
+                typeSelected = alarmTime.typeAlarm,
+                changeType = alarmTime::changeType
             )
         }
         Spacer(modifier = Modifier.width(20.dp))

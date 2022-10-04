@@ -12,7 +12,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
@@ -30,32 +29,26 @@ class AddAlarmScreenState(
 
     private fun hiddenKeyBoard() = focusManager.clearFocus()
 
-    fun hiddenModal(){
-        coroutineScope.launch {
-            modalBottomSheetState.hide()
-        }
+    fun changeVisibleModal(newValue: Boolean) = coroutineScope.launch {
+        hiddenKeyBoard()
+        if (newValue) modalBottomSheetState.show() else modalBottomSheetState.hide()
     }
 
-    fun showModal(){
-        coroutineScope.launch {
-            hiddenKeyBoard()
-            modalBottomSheetState.show()
-        }
-    }
 
-    fun nextPage(){
+    fun nextPage() {
         coroutineScope.launch {
             hiddenKeyBoard()
             pagerState.scrollToPage(pagerState.currentPage + 1)
         }
     }
 
-    fun previousPage(){
+    fun previousPage() {
         coroutineScope.launch {
             hiddenKeyBoard()
             pagerState.scrollToPage(pagerState.currentPage - 1)
         }
     }
+
 }
 
 

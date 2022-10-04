@@ -9,7 +9,7 @@ interface AlarmRepository {
     val listAlarms:Flow<List<Alarm>>
     suspend fun addNewLog(log: Log)
     suspend fun getAlarmById(id: Long): Alarm?
-    suspend fun insertAlarm(alarm: Alarm, uriImg: Uri): Long
+    suspend fun insertAlarm(alarm: Alarm, uriImg: Uri?): Long
     suspend fun updateAlarm(alarm: Alarm)
     suspend fun deleterAlarm(alarm: Alarm)
     suspend fun restoreAlarm(alarm: Alarm)

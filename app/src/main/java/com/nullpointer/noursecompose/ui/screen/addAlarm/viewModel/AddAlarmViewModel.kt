@@ -1,5 +1,6 @@
 package com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -69,6 +70,21 @@ class AddAlarmViewModel @Inject constructor(
         showDialogRepeat = isVisible
     }
 
+    fun valueNameAlarm(callbackSuccess: () -> Unit) {
+        nameAlarm.reValueField()
+        if (!nameAlarm.hasError) {
+            callbackSuccess()
+        }
+    }
+
+    fun valueAlarmTime(callbackSuccess: (Alarm, Uri?) -> Unit) {
+        if (!alarmTime.hasErrorRange) {
+            val alarm = createAlarm()
+            val imageAlarm = imageAlarm.getValueOrNull()
+            callbackSuccess(alarm, imageAlarm)
+        }
+    }
+
     fun createAlarm(): Alarm {
         return Alarm(
             name = nameAlarm.currentValue,
@@ -77,7 +93,7 @@ class AddAlarmViewModel @Inject constructor(
             nextAlarm = alarmTime.timeNextAlarm,
             repeaterEvery = alarmTime.timeToRepeatAlarm,
             rangeInitAlarm = alarmTime.rangeAlarm.first,
-            rangeFinishAlarm = alarmTime.rangeAlarm.second
+            rangeFinishAlarm = alarmTime.rangeAlarm.second,
         )
     }
 

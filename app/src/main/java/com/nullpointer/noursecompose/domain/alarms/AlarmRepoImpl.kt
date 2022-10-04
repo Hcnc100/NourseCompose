@@ -26,10 +26,10 @@ class AlarmRepoImpl(
         alarmDataSource.getAlarmById(id)
 
 
-    override suspend fun insertAlarm(alarm: Alarm, uriImg: Uri): Long {
-        val pathImg = uriImg.let {
+    override suspend fun insertAlarm(alarm: Alarm, uriImg: Uri?): Long {
+        val pathImg = uriImg?.let {
             val nameImg = "alarm-img-${alarm.createdAt}"
-            ImageUtils.saveToInternalStorage(uriImg.toFile(), nameImg, context)
+            ImageUtils.saveToInternalStorage(it.toFile(), nameImg, context)
         }
         val idAlarm = alarmDataSource.insert(alarm.copy(pathFile = pathImg))
         // ! is very important use this idAlarm

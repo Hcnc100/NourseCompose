@@ -56,6 +56,10 @@ class PropertySavableImg(
         }
     }
 
+    fun getValueOrNull(): Uri? {
+        return if (value == Uri.EMPTY) null else value
+    }
+
     fun clearValue() {
         isCompress = false
         value = defaultValue

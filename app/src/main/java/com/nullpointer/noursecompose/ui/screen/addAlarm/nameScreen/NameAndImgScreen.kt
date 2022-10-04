@@ -4,6 +4,8 @@ import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -15,45 +17,53 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.delegates.PropertySavableImg
+import com.nullpointer.noursecompose.core.delegates.PropertySavableString
 import com.nullpointer.noursecompose.core.utils.isSuccess
-import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
 import com.nullpointer.noursecompose.ui.share.EditableTextSavable
-import com.nullpointer.noursecompose.ui.states.AddAlarmScreenState
 
 @Composable
 fun NameAndImgScreen(
-    addAlarmViewModel: AddAlarmViewModel,
-    addAlarmScreenState: AddAlarmScreenState,
-    config: Configuration = LocalConfiguration.current,
+    actionNext: () -> Unit,
+    showModalSelectImg: () -> Unit,
+    modifier: Modifier = Modifier,
+    imageAlarmProperty: PropertySavableImg,
+    nameAlarmProperty: PropertySavableString,
+    config: Configuration = LocalConfiguration.current
 ) {
     when (config.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             Row(
-                modifier = Modifier.fillMaxSize(),
+                modifier = modifier.fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 ImageAlarm(
-                    imageProperty = addAlarmViewModel.imageAlarm,
-                    actionEdit = addAlarmScreenState::showModal,
+                    imageProperty = imageAlarmProperty,
+                    actionEdit = showModalSelectImg,
                     modifier = Modifier
                         .padding(10.dp)
                         .size(250.dp)
                 )
-                EditableTextSavable(valueProperty = addAlarmViewModel.nameAlarm, singleLine = true)
+                EditableTextSavable(
+                    singleLine = true,
+                    valueProperty = nameAlarmProperty,
+                    keyboardActions = KeyboardActions(onDone = { actionNext() }),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
+                )
             }
         }
         else -> {
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = modifier) {
                 Spacer(modifier = Modifier.height(20.dp))
                 ImageAlarm(
-                    imageProperty = addAlarmViewModel.imageAlarm,
-                    actionEdit = addAlarmScreenState::showModal,
+                    imageProperty = imageAlarmProperty,
+                    actionEdit = showModalSelectImg,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(10.dp)
@@ -61,15 +71,15 @@ fun NameAndImgScreen(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 EditableTextSavable(
-                    valueProperty = addAlarmViewModel.nameAlarm,
+                    singleLine = true,
+                    valueProperty = nameAlarmProperty,
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    singleLine = true
+                    keyboardActions = KeyboardActions(onDone = { actionNext() }),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
                 )
-                }
             }
         }
-
-
+    }
 }
 
 @Composable
@@ -79,7 +89,9 @@ private fun ImageAlarm(
     actionEdit: () -> Unit
 ) {
     val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current).data(imageProperty.value).crossfade(true)
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageProperty.value)
+            .crossfade(true)
             .build(),
         placeholder = painterResource(id = R.drawable.ic_image),
         error = painterResource(id = R.drawable.ic_broken_image)

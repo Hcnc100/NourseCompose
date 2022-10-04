@@ -33,7 +33,7 @@ class AlarmViewModel @Inject constructor(
 
     fun addNewAlarm(
         alarm: Alarm,
-        uriImg: Uri,
+        uriImg: Uri?,
     ) = viewModelScope.launch(Dispatchers.IO) {
         alarmRepo.insertAlarm(alarm,uriImg)
     }

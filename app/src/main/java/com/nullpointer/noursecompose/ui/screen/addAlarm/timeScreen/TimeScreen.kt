@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.core.delegates.PropertySavableAlarmTime
 import com.nullpointer.noursecompose.core.utils.TimeUtils
 import com.nullpointer.noursecompose.core.utils.TimeUtils.calculateRangeInDays
 import com.nullpointer.noursecompose.core.utils.toFormatOnlyTime
@@ -27,38 +28,40 @@ import com.nullpointer.noursecompose.ui.dialogs.DialogDate
 import com.nullpointer.noursecompose.ui.dialogs.DialogDate.Companion.showTimePicker
 import com.nullpointer.noursecompose.ui.dialogs.DialogSelectHourRepeat
 import com.nullpointer.noursecompose.ui.screen.addAlarm.TitleAddAlarm
-import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
 
 @Composable
 fun TimeScreen(
-    addAlarmViewModel: AddAlarmViewModel,
+    modifier: Modifier = Modifier,
+    alarmTime: PropertySavableAlarmTime,
+    isShowDialogRepeat: Boolean,
+    changeShowDialogRepeat: (Boolean) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         TitleAddAlarm(title = stringResource(R.string.title_select_init_alarm))
         SelectTimeInit(
-            currentTime = addAlarmViewModel.alarmTime.timeInitAlarm,
-            changeTimeInit = addAlarmViewModel.alarmTime::changeTimeInitAlarm
+            currentTime = alarmTime.timeInitAlarm,
+            changeTimeInit = alarmTime::changeTimeInitAlarm
         )
-        if (addAlarmViewModel.alarmTime.typeAlarm != AlarmTypes.ONE_SHOT) {
+        if (alarmTime.typeAlarm != AlarmTypes.ONE_SHOT) {
             HoursToRepeat(
-                timeToRepeat = addAlarmViewModel.alarmTime.timeToRepeatAlarm,
-                showDialogRepeat = { addAlarmViewModel.changeVisibleDialogRepeat(true) })
+                timeToRepeat = alarmTime.timeToRepeatAlarm,
+                showDialogRepeat = { changeShowDialogRepeat(true) })
         }
-        if (addAlarmViewModel.alarmTime.typeAlarm == AlarmTypes.RANGE) {
+        if (alarmTime.typeAlarm == AlarmTypes.RANGE) {
             RangeAlarm(
-                rangeAlarm = addAlarmViewModel.alarmTime.rangeAlarm,
-                changeRangeAlarm = addAlarmViewModel.alarmTime::changeRangeAlarm,
-                hasError = addAlarmViewModel.alarmTime.hasErrorRange,
-                errorRange = addAlarmViewModel.alarmTime.errorRange
+                rangeAlarm = alarmTime.rangeAlarm,
+                changeRangeAlarm = alarmTime::changeRangeAlarm,
+                hasError = alarmTime.hasErrorRange,
+                errorRange = alarmTime.errorRange
             )
         }
-        TextNextAlarm(addAlarmViewModel.alarmTime.timeNextAlarm)
+        TextNextAlarm(alarmTime.timeNextAlarm)
     }
-    if (addAlarmViewModel.showDialogRepeat)
+    if (isShowDialogRepeat)
         DialogSelectHourRepeat(
-            valueDefects =addAlarmViewModel.alarmTime.timeToRepeatAlarm,
-            changeTimeRepeater = addAlarmViewModel.alarmTime::changeTimeToRepeatAlarm,
-            hideDialog = { addAlarmViewModel.changeVisibleDialogRepeat(false) })
+            valueDefects = alarmTime.timeToRepeatAlarm,
+            changeTimeRepeater = alarmTime::changeTimeToRepeatAlarm,
+            hideDialog = { changeShowDialogRepeat(false) })
 }
 
 @Composable
@@ -67,10 +70,8 @@ private fun TextNextAlarm(
     context: Context = LocalContext.current
 ) {
 
-    val nextAlarmText by remember(nextAlarm) {
-        derivedStateOf {
-            TimeUtils.getStringTimeAboutNow(nextAlarm, context)
-        }
+    val nextAlarmText = remember(nextAlarm) {
+        TimeUtils.getStringTimeAboutNow(nextAlarm, context)
     }
 
     Spacer(modifier = Modifier.height(20.dp))
