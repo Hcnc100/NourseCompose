@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,7 +33,6 @@ import com.nullpointer.noursecompose.ui.screen.addAlarm.repeatScreen.RepeatAlarm
 import com.nullpointer.noursecompose.ui.screen.addAlarm.timeScreen.TimeScreen
 import com.nullpointer.noursecompose.ui.screen.addAlarm.viewModel.AddAlarmViewModel
 import com.nullpointer.noursecompose.ui.share.ScaffoldModal
-import com.nullpointer.noursecompose.ui.share.ToolbarBack
 import com.nullpointer.noursecompose.ui.states.AddAlarmScreenState
 import com.nullpointer.noursecompose.ui.states.rememberAddAlarmScreenState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -47,8 +47,14 @@ fun AddAlarmScreen(
     actionRootDestinations: ActionRootDestinations,
     alarmViewModel: AlarmViewModel = shareViewModel(),
     addAlarmViewModel: AddAlarmViewModel = shareViewModel(),
-    addAlarmScreenState: AddAlarmScreenState = rememberAddAlarmScreenState()
+    addAlarmScreenState: AddAlarmScreenState = rememberAddAlarmScreenState(
+        actionUpdatePickerTime = addAlarmViewModel.alarmTime::changeTimeInitAlarm,
+        actionUpdateDateRange = addAlarmViewModel.alarmTime::changeRangeAlarm,
+        timeInitAlarm = addAlarmViewModel.alarmTime.timeInitAlarm,
+        rangeInitAlarm = addAlarmViewModel.alarmTime.rangeAlarm
+    )
 ) {
+
     BackHandler(addAlarmScreenState.currentPage != 0, addAlarmScreenState::previousPage)
 
     AddAlarmScreen(
@@ -63,9 +69,15 @@ fun AddAlarmScreen(
         callBackSelection = addAlarmViewModel.imageAlarm::changeValue,
         actionAddScreen = { action, change ->
             when (action) {
+                CHANGE_VISIBLE_MODAL -> change?.let { addAlarmScreenState.changeVisibleModal(it) }
+                CHANGE_VISIBLE_REPEAT -> change?.let {
+                    addAlarmViewModel.changeVisibleDialogRepeat(
+                        it
+                    )
+                }
                 ACTION_BACK -> actionRootDestinations.backDestination()
-                CHANGE_VISIBLE_MODAL -> addAlarmScreenState.changeVisibleModal(change)
-                CHANGE_VISIBLE_REPEAT -> addAlarmViewModel.changeVisibleDialogRepeat(change)
+                SHOW_TIME_PICKER -> addAlarmScreenState.showTimePicker()
+                SHOW_DATE_RANGE_PICKER -> addAlarmScreenState.showDateRangePicker()
                 NEXT_PAGE -> {
                     when (addAlarmScreenState.currentPage) {
                         0 -> addAlarmViewModel.valueNameAlarm(addAlarmScreenState::nextPage)
@@ -93,19 +105,14 @@ fun AddAlarmScreen(
     imageAlarmProperty: PropertySavableImg,
     nameAlarmProperty: PropertySavableString,
     descriptionProperty: PropertySavableString,
-    actionAddScreen: (ActionAddScreen, Boolean) -> Unit
+    actionAddScreen: (ActionAddScreen, Boolean?) -> Unit,
 ) {
     ScaffoldModal(
-        isVisibleModal = isVisibleModal,
-        actionHideModal = { actionAddScreen(CHANGE_VISIBLE_MODAL, false) },
-        callBackSelection = callBackSelection,
         sheetState = sheetState,
-        topBar = {
-            ToolbarBack(
-                title = stringResource(R.string.title_new_alarm),
-                actionBack = { actionAddScreen(ACTION_BACK, false) }
-            )
-        }
+        isVisibleModal = isVisibleModal,
+        callBackSelection = callBackSelection,
+        actionHideModal = { actionAddScreen(CHANGE_VISIBLE_MODAL, false) },
+        topBar = { IconClose(actionClick = { actionAddScreen(ACTION_BACK, false) }) }
     ) { padding ->
         BoxWithConstraints {
             val realHeight = remember { this.maxHeight }
@@ -135,7 +142,9 @@ fun AddAlarmScreen(
                         3 -> TimeScreen(
                             alarmTime = timeProperty,
                             isShowDialogRepeat = isShowDialogRepeat,
+                            showPickerTime = { actionAddScreen(SHOW_TIME_PICKER, null) },
                             changeShowDialogRepeat = { actionAddScreen(CHANGE_VISIBLE_REPEAT, it) },
+                            showDateRangePicker = { actionAddScreen(SHOW_DATE_RANGE_PICKER, null) },
                         )
                     }
                 }
@@ -153,15 +162,36 @@ fun AddAlarmScreen(
 
 
 @Composable
+private fun IconClose(
+    actionClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        IconButton(
+            onClick = actionClick,
+            modifier = Modifier.align(Alignment.TopEnd)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_clear),
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Composable
 private fun ButtonNext(
     actionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ExtendedFloatingActionButton(
+    Button(
         modifier = modifier,
-        text = { Text(text = stringResource(id = R.string.text_button_next)) },
         onClick = actionClick
-    )
+    ) {
+        Text(text = stringResource(id = R.string.text_button_next))
+    }
 }
 
 @Composable

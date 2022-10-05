@@ -26,24 +26,34 @@ class PropertySavableAlarmTime(
     var timeInitAlarm: Long by SavableComposeState(state, KEY_TIME_INIT, getTimeNowToClock())
         private set
 
-    var rangeAlarm by SavableComposeState(state, KEY_RANGE, Pair(0L, 0L))
-        private set
-
-    var timeNextAlarm by SavableComposeState(state, KEY_NEXT_ALARM, timeInitAlarm)
+    var rangeAlarm by SavableComposeState(state, KEY_RANGE, getRangeInit())
         private set
 
     var timeToRepeatAlarm by SavableComposeState(
-        state,
-        KEY_TIME_REPEAT,
-        8 * DateUtils.HOUR_IN_MILLIS
+        key = KEY_TIME_REPEAT,
+        savedStateHandle = state,
+        defaultValue = getTimeRepeatInit()
     )
         private set
+
+    var timeNextAlarm by SavableComposeState(state, KEY_NEXT_ALARM, 0L)
+        private set
+
 
     var errorRange by SavableComposeState(state, KEY_ERROR_RANGE, DEFAULT_RESOURCE)
     val hasErrorRange get() = errorRange != DEFAULT_RESOURCE
 
     init {
         calculateNextAlarm()
+    }
+
+    private fun getRangeInit(): Pair<Long, Long> {
+        val firstTime = getFirstTimeDay()
+        return Pair(firstTime, firstTime + DateUtils.WEEK_IN_MILLIS)
+    }
+
+    private fun getTimeRepeatInit(): Long {
+        return 8 * DateUtils.HOUR_IN_MILLIS
     }
 
     fun changeTimeToRepeatAlarm(newHour: Long) {
@@ -58,14 +68,16 @@ class PropertySavableAlarmTime(
     }
 
     fun changeType(newType: AlarmTypes) {
+        // * set new type
         typeAlarm = newType
-        timeToRepeatAlarm = 8 * DateUtils.HOUR_IN_MILLIS
-        if (newType == AlarmTypes.RANGE) {
-            val firstTime = getFirstTimeDay()
-            rangeAlarm = Pair(firstTime, firstTime + DateUtils.WEEK_IN_MILLIS)
-        }
+        // * re set new values
+        timeInitAlarm = getTimeNowToClock()
+        timeToRepeatAlarm = getTimeRepeatInit()
+        rangeAlarm = getRangeInit()
+        // * calculate next alarm
         calculateNextAlarm()
     }
+
 
     fun changeRangeAlarm(newRange: Pair<Long, Long>) {
         rangeAlarm = newRange

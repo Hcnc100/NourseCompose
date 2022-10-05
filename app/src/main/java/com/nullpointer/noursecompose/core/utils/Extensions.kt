@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import coil.compose.AsyncImagePainter
+import com.google.android.material.timepicker.TimeFormat
 import com.valentinilk.shimmer.Shimmer
 import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.CoroutineDispatcher
@@ -200,3 +201,8 @@ fun Modifier.myShimmer(
 ): Modifier = composed {
     shimmer(shimmer).background(getGrayColor())
 }
+
+fun Context.getFormatTime(): Int {
+    return if (DateFormat.is24HourFormat(this)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+}
+

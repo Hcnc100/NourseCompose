@@ -66,7 +66,7 @@ class DialogDate {
             }
         }
 
-        fun showTimePicker(
+        fun getTimePicker(
             activity: Context,
             updatedDate: (Long) -> Unit,
         ): MaterialTimePicker {

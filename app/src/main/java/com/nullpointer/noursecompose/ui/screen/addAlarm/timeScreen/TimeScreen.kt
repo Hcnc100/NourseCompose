@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -16,44 +18,54 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.delegates.PropertySavableAlarmTime
 import com.nullpointer.noursecompose.core.utils.TimeUtils
 import com.nullpointer.noursecompose.core.utils.TimeUtils.calculateRangeInDays
 import com.nullpointer.noursecompose.core.utils.toFormatOnlyTime
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
-import com.nullpointer.noursecompose.ui.dialogs.DialogDate
-import com.nullpointer.noursecompose.ui.dialogs.DialogDate.Companion.showTimePicker
 import com.nullpointer.noursecompose.ui.dialogs.DialogSelectHourRepeat
 import com.nullpointer.noursecompose.ui.screen.addAlarm.TitleAddAlarm
 
 @Composable
 fun TimeScreen(
+    showPickerTime: () -> Unit,
+    showDateRangePicker: () -> Unit,
+    isShowDialogRepeat: Boolean,
     modifier: Modifier = Modifier,
     alarmTime: PropertySavableAlarmTime,
-    isShowDialogRepeat: Boolean,
     changeShowDialogRepeat: (Boolean) -> Unit
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
         TitleAddAlarm(title = stringResource(R.string.title_select_init_alarm))
-        SelectTimeInit(
-            currentTime = alarmTime.timeInitAlarm,
-            changeTimeInit = alarmTime::changeTimeInitAlarm
-        )
-        if (alarmTime.typeAlarm != AlarmTypes.ONE_SHOT) {
-            HoursToRepeat(
-                timeToRepeat = alarmTime.timeToRepeatAlarm,
-                showDialogRepeat = { changeShowDialogRepeat(true) })
-        }
-        if (alarmTime.typeAlarm == AlarmTypes.RANGE) {
-            RangeAlarm(
-                rangeAlarm = alarmTime.rangeAlarm,
-                changeRangeAlarm = alarmTime::changeRangeAlarm,
-                hasError = alarmTime.hasErrorRange,
-                errorRange = alarmTime.errorRange
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            SelectTimeInit(
+                currentTime = alarmTime.timeInitAlarm,
+                showPickerTime = showPickerTime
             )
+            if (alarmTime.typeAlarm != AlarmTypes.ONE_SHOT) {
+                HoursToRepeat(
+                    timeToRepeat = alarmTime.timeToRepeatAlarm,
+                    showDialogRepeat = { changeShowDialogRepeat(true) })
+            }
+            if (alarmTime.typeAlarm == AlarmTypes.RANGE) {
+                RangeAlarm(
+                    rangeAlarm = alarmTime.rangeAlarm,
+                    hasError = alarmTime.hasErrorRange,
+                    errorRange = alarmTime.errorRange,
+                    showDateRangePicker = showDateRangePicker
+                )
+            }
+            TextNextAlarm(alarmTime.timeNextAlarm)
         }
-        TextNextAlarm(alarmTime.timeNextAlarm)
+
     }
     if (isShowDialogRepeat)
         DialogSelectHourRepeat(
@@ -71,19 +83,23 @@ private fun TextNextAlarm(
     val nextAlarmText = remember(nextAlarm) {
         TimeUtils.getStringTimeAboutNow(nextAlarm, context)
     }
-
-    Spacer(modifier = Modifier.height(20.dp))
-    Row(modifier = Modifier.padding(vertical = 10.dp)) {
+    Row(
+        modifier = Modifier.padding(vertical = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(7.dp)
+    ) {
         Text(
             text = stringResource(R.string.title_next_alarm),
-            style = MaterialTheme.typography.caption,
-            fontWeight = FontWeight.W200
+            style = MaterialTheme.typography.caption.copy(
+                fontWeight = FontWeight.W400,
+                fontSize = 14.sp
+            ),
         )
-        Spacer(modifier = Modifier.width(7.dp))
         Text(
             text = nextAlarmText,
-            style = MaterialTheme.typography.caption,
-            fontWeight = FontWeight.W300
+            style = MaterialTheme.typography.caption.copy(
+                fontWeight = FontWeight.W500,
+                fontSize = 14.sp
+            )
         )
     }
 }
@@ -91,19 +107,18 @@ private fun TextNextAlarm(
 @Composable
 private fun RangeAlarm(
     rangeAlarm: Pair<Long, Long>,
-    changeRangeAlarm: (Pair<Long, Long>) -> Unit,
     hasError: Boolean,
     errorRange: Int,
+    showDateRangePicker: () -> Unit
 ) {
 
     Column {
-        Spacer(modifier = Modifier.height(30.dp))
         TextMiniTitle(textTitle = stringResource(R.string.title_range_days))
         FieldRangeAlarm(
             rangeAlarm = rangeAlarm,
-            changeRangeAlarm = changeRangeAlarm,
             hasError = hasError,
-            errorRange = errorRange
+            errorRange = errorRange,
+            showDateRangePicker = showDateRangePicker
         )
     }
 }
@@ -116,13 +131,12 @@ private fun HoursToRepeat(
 ) {
     val textValue = remember(timeToRepeat) {
         TimeUtils.timeRepeatInMillisToString(
-            timeInMillis = timeToRepeat,
             context = context,
-            includeSeconds = false
+            includeSeconds = false,
+            timeInMillis = timeToRepeat
         )
     }
     Column {
-        Spacer(modifier = Modifier.height(30.dp))
         TextMiniTitle(textTitle = stringResource(R.string.title_repeat_every))
         TextCenterValue(
             textValue = textValue,
@@ -135,12 +149,9 @@ private fun HoursToRepeat(
 @Composable
 private fun SelectTimeInit(
     currentTime: Long,
-    changeTimeInit: (Long) -> Unit,
-    context: Context = LocalContext.current,
+    showPickerTime: () -> Unit,
+    context: Context = LocalContext.current
 ) {
-    val timePicker = remember {
-        showTimePicker(activity = context, updatedDate = changeTimeInit)
-    }
     val hourValue = remember(currentTime) {
         currentTime.toFormatOnlyTime(context)
     }
@@ -149,16 +160,8 @@ private fun SelectTimeInit(
         TextMiniTitle(textTitle = stringResource(R.string.title_init_time))
         TextCenterValue(
             textValue = hourValue,
-            actionClick = {
-                if (timePicker.isAdded) {
-                    timePicker.dismiss()
-                } else {
-                    timePicker.show(
-                        (context as AppCompatActivity).supportFragmentManager,
-                        timePicker.toString()
-                    )
-                }
-            })
+            actionClick = showPickerTime
+        )
     }
 
 }
@@ -192,19 +195,17 @@ private fun TextMiniTitle(
 @Composable
 private fun FieldRangeAlarm(
     rangeAlarm: Pair<Long, Long>,
-    changeRangeAlarm: (Pair<Long, Long>) -> Unit,
     hasError: Boolean,
     errorRange: Int,
-    activity: AppCompatActivity = LocalContext.current as AppCompatActivity
+    activity: AppCompatActivity = LocalContext.current as AppCompatActivity,
+    showDateRangePicker: () -> Unit
 ) {
 
     val textRange = remember(rangeAlarm) {
         calculateRangeInDays(activity, rangeAlarm)
     }
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 15.dp),
+        modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -214,13 +215,7 @@ private fun FieldRangeAlarm(
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {
-                        DialogDate.showDatePickerRange(
-                            activity = activity,
-                            updatedDate = changeRangeAlarm,
-                            currentSelect = rangeAlarm
-                        )
-                    },
+                    .clickable { showDateRangePicker() },
                 label = { Text(stringResource(R.string.title_range_days)) },
                 value = textRange,
                 onValueChange = {},

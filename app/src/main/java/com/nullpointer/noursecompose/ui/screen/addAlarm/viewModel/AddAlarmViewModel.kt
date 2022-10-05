@@ -34,6 +34,7 @@ class AddAlarmViewModel @Inject constructor(
     private val _messageAddAlarm = Channel<Int>()
     val messageAddAlarm = _messageAddAlarm.receiveAsFlow()
 
+
     val nameAlarm = PropertySavableString(
         savedState = stateHandle,
         label = R.string.label_name_alarm,
