@@ -14,33 +14,38 @@ import com.nullpointer.noursecompose.models.notify.TypeNotify
 
 @Composable
 fun RadioButtonNotifyType(
-    changeNotify: (TypeNotify) -> Unit,
     currentNotify: TypeNotify,
+    changeNotify: (TypeNotify) -> Unit,
 ) {
-    Column {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
         TitleConfig(textTitle = stringResource(R.string.mini_title_type_alarm))
 
-        TypeNotify.values().forEach {
-            Row(modifier = Modifier
-                .clickable { changeNotify(it) }
-                .padding(horizontal = 15.dp)) {
-                RadioButton(
-                    selected = it == currentNotify,
-                    onClick = null,
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Column {
-                    Text(stringResource(id = it.title))
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text(
-                        stringResource(id = it.description),
-                        style = MaterialTheme.typography.caption
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+
+
+            TypeNotify.values().forEach {
+                Row(modifier = Modifier
+                    .clickable { changeNotify(it) }
+                    .padding(horizontal = 15.dp)) {
+                    RadioButton(
+                        selected = it == currentNotify,
+                        onClick = null,
                     )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column {
+                        Text(stringResource(id = it.title))
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(
+                            stringResource(id = it.description),
+                            style = MaterialTheme.typography.caption
+                        )
+                    }
                 }
             }
-            Spacer(modifier = Modifier.height(10.dp))
         }
     }
-
-
 }

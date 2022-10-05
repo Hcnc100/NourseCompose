@@ -6,10 +6,7 @@ import com.nullpointer.noursecompose.domain.sound.SoundRepository
 import com.nullpointer.noursecompose.models.notify.TypeNotify
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -39,6 +36,8 @@ class SettingsViewModel @Inject constructor(
         false
     )
 
+    val listSoundSize get() = soundRepository.listSoundRaw.size
+
 
     val intSound = soundRepository.indexSound.catch {
         Timber.e("Error al obtener el sonido $it")
@@ -55,6 +54,9 @@ class SettingsViewModel @Inject constructor(
 
     fun changeTypeNotify(type: TypeNotify) = viewModelScope.launch(Dispatchers.IO) {
         soundRepository.changeTypeNotify(type)
+        if (soundRepository.isPlaying.first() && !soundRepository.isPlayingInLoop.first()) {
+            soundRepository.togglePlayPause()
+        }
     }
 
     fun changeIntSound(intSound: Int) = viewModelScope.launch(Dispatchers.IO) {

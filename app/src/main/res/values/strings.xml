@@ -220,5 +220,7 @@
     <string name="text_graph_min_value">Valor mínimo recomendado</string>
     <string name="text_graph_max_value">Valor máximo recomendado</string>
     <string name="error_img_compress">Hubo un error al seleccionar la imagen</string>
+    <string name="text_play_sound">Reproduce el sonido</string>
+    <string name="text_stop_sound">Deten el sonido</string>
 
 </resources>
