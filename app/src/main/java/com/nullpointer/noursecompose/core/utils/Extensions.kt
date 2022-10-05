@@ -7,12 +7,14 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
+import android.net.Uri
 import android.os.Build
 import android.text.format.DateFormat
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.PluralsRes
+import androidx.annotation.RawRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -204,5 +206,11 @@ fun Modifier.myShimmer(
 
 fun Context.getFormatTime(): Int {
     return if (DateFormat.is24HourFormat(this)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+}
+
+fun Context.getUriRaw(
+    @RawRes sound: Int
+): Uri {
+    return Uri.parse("android.resource://$packageName/$sound")
 }
 

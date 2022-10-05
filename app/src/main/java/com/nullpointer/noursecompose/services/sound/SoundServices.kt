@@ -2,23 +2,14 @@ package com.nullpointer.noursecompose.services.sound
 
 import android.content.Context
 import android.content.Intent
-import android.media.AudioAttributes
-import android.media.AudioManager
-import android.media.MediaPlayer
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import android.os.CountDownTimer
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.format.DateUtils.MINUTE_IN_MILLIS
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.nullpointer.noursecompose.R
-import com.nullpointer.noursecompose.domain.pref.PrefRepository
+import com.nullpointer.noursecompose.domain.sound.SoundRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.notify.TypeNotify
 import com.nullpointer.noursecompose.models.notify.TypeNotify.ALARM
@@ -28,8 +19,10 @@ import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_ALA
 import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_START_SOUND
 import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_STOP_SOUND
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -41,17 +34,14 @@ class SoundServices : LifecycleService() {
     lateinit var notificationHelper: NotificationHelper
 
     @Inject
-    lateinit var prefRepo: PrefRepository
+    lateinit var soundRepository: SoundRepository
 
     lateinit var alarmPassed: Alarm
-
-    private var isSound = false
 
     private val listAlarmWait = mutableListOf<Alarm>()
 
     private var jobAwaitAlarm: Job? = null
 
-    private val mediaPlayer by lazy { createMediaPlayer() }
 
     private val timer = object : CountDownTimer(MINUTE_IN_MILLIS, 1000) {
         override fun onTick(millisUntilFinished: Long) = Unit
@@ -68,7 +58,7 @@ class SoundServices : LifecycleService() {
                 KEY_START_SOUND -> {
                     it.getParcelableExtra<Alarm>(KEY_ALARM_PASS)?.let { alarm ->
                         lifecycleScope.launch {
-                            val typeAlarm = prefRepo.typeNotify.first()
+                            val typeAlarm = soundRepository.typeNotify.first()
                             launchAlarms(alarm, typeAlarm)
                         }
                     }
@@ -110,84 +100,25 @@ class SoundServices : LifecycleService() {
         }
     }
 
-    private fun getUriMediaPlayer(indexSound: Int = -1): Uri {
-        return if (indexSound != -1) {
-            val sound = when (indexSound) {
-                0 -> R.raw.sound1
-                1 -> R.raw.sound2
-                2 -> R.raw.sound3
-                3 -> R.raw.sound4
-                else -> R.raw.sound5
-            }
-            Uri.parse("android.resource://$packageName/$sound")
-        } else {
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        }
-    }
-
     private suspend fun launchAlarm(alarm: Alarm) {
         // * saved alarm passed
         // ? this if no stop alarm , and notify last alarm
         alarmPassed = alarm
-        // * change state services to live
-        // ? this for can stop activity observed this
-        prefRepo.changeIsAlarmSound(true)
-        // * change var to control bucle alive
-        isSound = true
-        // * get type sound for alarm
-        val index = prefRepo.intSound.first()
-        val sound = getUriMediaPlayer(index)
-        // * prepare media player
-        withContext(Dispatchers.IO) {
-            mediaPlayer.setDataSource(this@SoundServices, sound)
-            mediaPlayer.prepare()
-        }
-        // * start sound and count down
-        // ? if the user no stop alarm in one minute, so  stop the services with help
-        // ? of timer
-        mediaPlayer.start()
+        soundRepository.startSoundInLoopAlarm()
         timer.start()
-        // * loop media player
-        // ? when stop , repeat
-        mediaPlayer.setOnCompletionListener {
-            if (isSound) {
-                mediaPlayer.seekTo(0)
-                mediaPlayer.start()
-            }
-        }
         // * vibrate phone
-        while (isSound) {
+        while (soundRepository.isPlaying.first()) {
             vibratePhone()
             delay(1000)
         }
     }
 
-    private fun cancelAlarm() {
-        // * break loop
-        isSound = false
-        // * notify dead services
-        prefRepo.changeIsAlarmSound(false)
-        // * if media player is song to stop and release
-        if (mediaPlayer.isPlaying) mediaPlayer.stop()
-        mediaPlayer.release()
-        // * stop services
+    private fun cancelAlarm() = lifecycleScope.launch {
+        soundRepository.stopSoundInLoopAlarm()
         stopForeground(true)
         stopSelf()
     }
 
-    private fun createMediaPlayer(): MediaPlayer {
-        return MediaPlayer().apply {
-            // * set alarm attributes
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-                    .setLegacyStreamType(AudioManager.STREAM_ALARM)
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build()
-            )
-        }
-    }
 
     private fun vibratePhone() {
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator

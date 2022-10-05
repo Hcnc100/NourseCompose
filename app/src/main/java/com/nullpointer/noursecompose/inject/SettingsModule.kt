@@ -1,11 +1,10 @@
 package com.nullpointer.noursecompose.inject
 
 import android.content.Context
-import com.nullpointer.noursecompose.data.local.datasource.pref.PrefDataSource
 import com.nullpointer.noursecompose.data.local.datasource.pref.PrefDataSourceImpl
-import com.nullpointer.noursecompose.data.local.pref.MyDataStore
-import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
-import com.nullpointer.noursecompose.domain.pref.PrefRepository
+import com.nullpointer.noursecompose.data.local.datasource.pref.SettingsDataSource
+import com.nullpointer.noursecompose.data.local.settings.MyDataStore
+import com.nullpointer.noursecompose.domain.pref.SettingsRepoImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object PrefModule {
+object SettingsModule {
     @Provides
     @Singleton
     fun providerPreferences(
@@ -24,13 +23,13 @@ object PrefModule {
 
     @Provides
     @Singleton
-    fun providePrefDataSource(
-        dataStore:MyDataStore
-    ):PrefDataSource= PrefDataSourceImpl(dataStore)
+    fun provideSettingsDataSource(
+        dataStore: MyDataStore
+    ): SettingsDataSource = PrefDataSourceImpl(dataStore)
 
     @Provides
     @Singleton
-    fun providePreferenceRepository(
-        prefDataSource: PrefDataSource
-    ): PrefRepoImpl = PrefRepoImpl(prefDataSource)
+    fun provideSettingsRepository(
+        prefDataSource: SettingsDataSource
+    ): SettingsRepoImpl = SettingsRepoImpl(prefDataSource)
 }

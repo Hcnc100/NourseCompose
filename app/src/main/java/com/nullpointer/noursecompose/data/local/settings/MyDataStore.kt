@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.data.local.pref
+package com.nullpointer.noursecompose.data.local.settings
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit

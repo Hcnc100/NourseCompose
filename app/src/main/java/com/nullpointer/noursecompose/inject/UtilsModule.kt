@@ -18,4 +18,5 @@ object UtilsModule {
     fun provideCompressRepository(
         @ApplicationContext context: Context
     ): CompressImgRepoImpl = CompressImgRepoImpl(context)
+
 }

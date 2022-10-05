@@ -1,13 +1,13 @@
 package com.nullpointer.noursecompose.domain.pref
 
-import com.nullpointer.noursecompose.data.local.datasource.pref.PrefDataSource
+import com.nullpointer.noursecompose.data.local.datasource.pref.SettingsDataSource
 import com.nullpointer.noursecompose.models.notify.TypeNotify
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class PrefRepoImpl(
-    private val prefDataSource: PrefDataSource
-) : PrefRepository {
+class SettingsRepoImpl(
+    private val prefDataSource: SettingsDataSource
+) : SettingsRepository {
     override val typeNotify: Flow<TypeNotify> =
         prefDataSource.typeNotifyFlow
 

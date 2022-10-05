@@ -21,8 +21,8 @@ import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.HomeDestinations
 import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
 import com.nullpointer.noursecompose.ui.screen.NavGraphs
-import com.nullpointer.noursecompose.ui.screen.destinations.ConfigScreenDestination
 import com.nullpointer.noursecompose.ui.screen.destinations.LogsScreensDestination
+import com.nullpointer.noursecompose.ui.screen.destinations.SettingsScreenDestination
 import com.nullpointer.noursecompose.ui.screen.main.ToolbarActions.*
 import com.nullpointer.noursecompose.ui.share.SelectToolbar
 import com.nullpointer.noursecompose.ui.states.MainScreenState
@@ -49,7 +49,7 @@ fun MainScreen(
                 actionToolbar = {action->
                     when(action){
                         CLEAR -> selectViewModel.clearSelection()
-                        SETTINGS -> actionRootDestinations.changeRoot(ConfigScreenDestination)
+                        SETTINGS -> actionRootDestinations.changeRoot(SettingsScreenDestination)
                         LOGS -> actionRootDestinations.changeRoot(LogsScreensDestination)
                         RE_INIT -> {
                             val intent = Intent(

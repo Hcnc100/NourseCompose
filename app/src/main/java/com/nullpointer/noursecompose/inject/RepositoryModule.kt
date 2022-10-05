@@ -8,8 +8,10 @@ import com.nullpointer.noursecompose.domain.logger.LogsRepoImpl
 import com.nullpointer.noursecompose.domain.logger.LogsRepository
 import com.nullpointer.noursecompose.domain.measure.MeasureRepoImpl
 import com.nullpointer.noursecompose.domain.measure.MeasureRepository
-import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
-import com.nullpointer.noursecompose.domain.pref.PrefRepository
+import com.nullpointer.noursecompose.domain.pref.SettingsRepoImpl
+import com.nullpointer.noursecompose.domain.pref.SettingsRepository
+import com.nullpointer.noursecompose.domain.sound.SoundRepoImpl
+import com.nullpointer.noursecompose.domain.sound.SoundRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,8 +43,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun providePrefRepository(
-        prefRepoImpl: PrefRepoImpl
-    ): PrefRepository
+        prefRepoImpl: SettingsRepoImpl
+    ): SettingsRepository
 
 
     @Binds
@@ -50,4 +52,10 @@ abstract class RepositoryModule {
     abstract fun provideCompressRepository(
         compressImgRepoImpl: CompressImgRepoImpl
     ): CompressRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideSoundRepository(
+        soundRepoImpl: SoundRepoImpl
+    ): SoundRepository
 }

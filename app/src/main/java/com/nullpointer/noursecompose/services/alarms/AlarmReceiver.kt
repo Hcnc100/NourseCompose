@@ -8,7 +8,7 @@ import com.nullpointer.noursecompose.core.utils.getTimeNow
 import com.nullpointer.noursecompose.core.utils.myGoAsync
 import com.nullpointer.noursecompose.core.utils.showToast
 import com.nullpointer.noursecompose.domain.alarms.AlarmRepository
-import com.nullpointer.noursecompose.domain.pref.PrefRepository
+import com.nullpointer.noursecompose.domain.pref.SettingsRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.models.alarm.AlarmTypes
 import com.nullpointer.noursecompose.models.registry.Log
@@ -42,7 +42,7 @@ class AlarmReceiver : BroadcastReceiver() {
     lateinit var notificationHelper: NotificationHelper
 
     @Inject
-    lateinit var prefRepo: PrefRepository
+    lateinit var prefRepo: SettingsRepository
 
 
     override fun onReceive(context: Context, intent: Intent) {

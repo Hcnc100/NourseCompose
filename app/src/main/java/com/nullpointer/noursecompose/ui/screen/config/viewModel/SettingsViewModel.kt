@@ -2,7 +2,7 @@ package com.nullpointer.noursecompose.ui.screen.config.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nullpointer.noursecompose.domain.pref.PrefRepoImpl
+import com.nullpointer.noursecompose.domain.sound.SoundRepository
 import com.nullpointer.noursecompose.models.notify.TypeNotify
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,11 +15,17 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class ConfigViewModel @Inject constructor(
-    private val prefRepo: PrefRepoImpl,
+class SettingsViewModel @Inject constructor(
+    private val soundRepository: SoundRepository
 ) : ViewModel() {
 
-    val typeNotify = prefRepo.typeNotify.catch {
+    init {
+        viewModelScope.launch {
+            soundRepository.prepareSoundSaved()
+        }
+    }
+
+    val typeNotify = soundRepository.typeNotify.catch {
         Timber.e("Error al obtener el tipo de las notificaciones $it")
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
@@ -27,9 +33,14 @@ class ConfigViewModel @Inject constructor(
         TypeNotify.NOTIFY
     )
 
+    val isPlaying = soundRepository.isPlaying.flowOn(Dispatchers.IO).stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        false
+    )
 
 
-    val intSound = prefRepo.intSound.catch {
+    val intSound = soundRepository.indexSound.catch {
         Timber.e("Error al obtener el sonido $it")
     }.flowOn(Dispatchers.IO).stateIn(
         viewModelScope,
@@ -37,14 +48,21 @@ class ConfigViewModel @Inject constructor(
         -1
     )
 
-
+    fun togglePlayPauseSound() = viewModelScope.launch(Dispatchers.IO) {
+        soundRepository.togglePlayPause()
+    }
 
 
     fun changeTypeNotify(type: TypeNotify) = viewModelScope.launch(Dispatchers.IO) {
-        prefRepo.changeTypeNotify(type)
+        soundRepository.changeTypeNotify(type)
     }
 
     fun changeIntSound(intSound: Int) = viewModelScope.launch(Dispatchers.IO) {
-        prefRepo.changeIntSound(intSound)
+        soundRepository.changeSound(intSound)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        soundRepository.releaseSound()
     }
 }

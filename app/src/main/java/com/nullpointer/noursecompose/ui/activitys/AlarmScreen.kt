@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.utils.turnScreenOffAndKeyguardOn
 import com.nullpointer.noursecompose.core.utils.turnScreenOnAndKeyguardOff
-import com.nullpointer.noursecompose.domain.pref.PrefRepository
+import com.nullpointer.noursecompose.domain.pref.SettingsRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.services.sound.SoundServicesControl
 import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_ALARM_PASS_ACTIVITY
@@ -35,7 +35,7 @@ import javax.inject.Inject
 class AlarmScreen : AppCompatActivity() {
 
     @Inject
-    lateinit var prefRepository: PrefRepository
+    lateinit var prefRepository: SettingsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
