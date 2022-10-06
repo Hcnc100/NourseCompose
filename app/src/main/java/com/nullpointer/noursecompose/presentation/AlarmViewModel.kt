@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nullpointer.noursecompose.core.states.Resource
+import com.nullpointer.noursecompose.core.utils.launchSafeIO
 import com.nullpointer.noursecompose.domain.alarms.AlarmRepository
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,16 +36,16 @@ class AlarmViewModel @Inject constructor(
         alarm: Alarm,
         uriImg: Uri?,
     ) = viewModelScope.launch(Dispatchers.IO) {
-        alarmRepo.insertAlarm(alarm,uriImg)
+        alarmRepo.insertAlarm(alarm, uriImg)
     }
 
-    fun deleterAlarm(alarm: Alarm) = viewModelScope.launch(Dispatchers.IO) {
+    fun deleterAlarm(alarm: Alarm) = launchSafeIO {
         alarmRepo.deleterAlarm(alarm)
     }
 
-    fun deleterListAlarm(listIds: List<Long>) = viewModelScope.launch(Dispatchers.IO) {
-            alarmRepo.deleterListAlarm(listIds)
-        }
+    fun deleterListAlarm(listIds: List<Long>) = launchSafeIO {
+        alarmRepo.deleterListAlarm(listIds)
+    }
 
     suspend fun getAlarmById(id: Long): Alarm? {
         return alarmRepo.getAlarmById(id)

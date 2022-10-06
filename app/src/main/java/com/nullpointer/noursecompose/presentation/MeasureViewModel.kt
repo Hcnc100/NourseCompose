@@ -7,13 +7,13 @@ import com.nullpointer.noursecompose.R
 import com.nullpointer.noursecompose.core.delegates.PropertySavableString
 import com.nullpointer.noursecompose.core.delegates.SavableComposeState
 import com.nullpointer.noursecompose.core.states.Resource
+import com.nullpointer.noursecompose.core.utils.launchSafeIO
 import com.nullpointer.noursecompose.domain.measure.MeasureRepository
 import com.nullpointer.noursecompose.models.measure.MeasureType
 import com.nullpointer.noursecompose.models.measure.SimpleMeasure
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -82,7 +82,7 @@ class MeasureViewModel @Inject constructor(
     fun addNewMeasure(
         type: MeasureType,
         callbackSuccess: () -> Unit
-    ) = viewModelScope.launch(Dispatchers.IO) {
+    ) = launchSafeIO {
         measureInputProperty?.let { measureInputProperty ->
             measureInputProperty.reValueField()
             if (!measureInputProperty.hasError) {
@@ -102,13 +102,13 @@ class MeasureViewModel @Inject constructor(
 
     fun deleterListMeasure(
         listIdMeasure: List<Long>
-    ) = viewModelScope.launch(Dispatchers.IO) {
+    ) = launchSafeIO {
         measureRepo.deleterListMeasure(listIdMeasure)
     }
 
     fun deleterMeasure(
         idMeasure: Long
-    ) = viewModelScope.launch(Dispatchers.IO) {
+    ) = launchSafeIO {
         measureRepo.deleterMeasure(idMeasure)
     }
 }

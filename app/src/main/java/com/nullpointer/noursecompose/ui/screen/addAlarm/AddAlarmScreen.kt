@@ -48,17 +48,17 @@ fun AddAlarmScreen(
     alarmViewModel: AlarmViewModel = shareViewModel(),
     addAlarmViewModel: AddAlarmViewModel = shareViewModel(),
     addAlarmScreenState: AddAlarmScreenState = rememberAddAlarmScreenState(
-        actionUpdatePickerTime = addAlarmViewModel.alarmTime::changeTimeInitAlarm,
-        actionUpdateDateRange = addAlarmViewModel.alarmTime::changeRangeAlarm,
-        timeInitAlarm = addAlarmViewModel.alarmTime.timeInitAlarm,
-        rangeInitAlarm = addAlarmViewModel.alarmTime.rangeAlarm
+        actionUpdatePickerTime = addAlarmViewModel.alarmTimeSavable::changeTimeInitAlarm,
+        actionUpdateDateRange = addAlarmViewModel.alarmTimeSavable::changeRangeAlarm,
+        timeInitAlarm = addAlarmViewModel.alarmTimeSavable.timeInitAlarm,
+        rangeInitAlarm = addAlarmViewModel.alarmTimeSavable.rangeAlarm
     )
 ) {
 
     BackHandler(addAlarmScreenState.currentPage != 0, addAlarmScreenState::previousPage)
 
     AddAlarmScreen(
-        timeProperty = addAlarmViewModel.alarmTime,
+        timeProperty = addAlarmViewModel.alarmTimeSavable,
         pagerState = addAlarmScreenState.pagerState,
         nameAlarmProperty = addAlarmViewModel.nameAlarm,
         isVisibleModal = addAlarmScreenState.isShowModal,

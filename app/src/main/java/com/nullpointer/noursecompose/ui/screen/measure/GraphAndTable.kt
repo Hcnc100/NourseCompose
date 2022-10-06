@@ -80,7 +80,9 @@ fun GraphAndTable(
                 LazyVerticalGrid(
                     state = listState,
                     columns = GridCells.Adaptive(dimensionResource(id = R.dimen.width_row_measure)),
-                    contentPadding = PaddingValues(4.dp),
+                    contentPadding = PaddingValues(2.dp),
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
                     modifier = Modifier.weight(.5f)
                 ) {
                     items(listMeasure, key = { it.id }) { measure ->

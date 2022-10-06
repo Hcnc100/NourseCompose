@@ -2,6 +2,7 @@ package com.nullpointer.noursecompose.ui.screen.config.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nullpointer.noursecompose.core.utils.launchSafeIO
 import com.nullpointer.noursecompose.domain.sound.SoundRepository
 import com.nullpointer.noursecompose.models.notify.TypeNotify
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,19 +54,19 @@ class SettingsViewModel @Inject constructor(
         -1
     )
 
-    fun togglePlayPauseSound() = viewModelScope.launch(Dispatchers.IO) {
+    fun togglePlayPauseSound() = launchSafeIO {
         soundRepository.togglePlayPause()
     }
 
 
-    fun changeTypeNotify(type: TypeNotify) = viewModelScope.launch(Dispatchers.IO) {
+    fun changeTypeNotify(type: TypeNotify) = launchSafeIO {
         soundRepository.changeTypeNotify(type)
         if (soundRepository.isPlaying.first() && !soundRepository.isPlayingInLoop.first()) {
             soundRepository.togglePlayPause()
         }
     }
 
-    fun changeIntSound(intSound: Int) = viewModelScope.launch(Dispatchers.IO) {
+    fun changeIntSound(intSound: Int) = launchSafeIO {
         soundRepository.changeSound(intSound)
     }
 

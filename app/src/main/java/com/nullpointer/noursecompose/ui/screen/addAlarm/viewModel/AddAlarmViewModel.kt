@@ -62,7 +62,7 @@ class AddAlarmViewModel @Inject constructor(
         actionCompress = compressRepository::compressImage
     )
 
-    val alarmTime = PropertySavableAlarmTime(state = stateHandle)
+    val alarmTimeSavable = PropertySavableAlarmTime(state = stateHandle)
 
     var showDialogRepeat by SavableComposeState(stateHandle, KEY_DIALOG_REPEAT, false)
         private set
@@ -79,29 +79,29 @@ class AddAlarmViewModel @Inject constructor(
     }
 
     fun valueAlarmTime(callbackSuccess: (Alarm, Uri?) -> Unit) {
-        if (!alarmTime.hasErrorRange) {
+        if (!alarmTimeSavable.hasErrorRange) {
             val alarm = createAlarm()
             val imageAlarm = imageAlarm.getValueOrNull()
             callbackSuccess(alarm, imageAlarm)
         }
     }
 
-    fun createAlarm(): Alarm {
+    private fun createAlarm(): Alarm {
         return Alarm(
             name = nameAlarm.currentValue,
             description = description.currentValue,
-            typeAlarm = alarmTime.typeAlarm,
-            nextAlarm = alarmTime.timeNextAlarm,
-            repeaterEvery = alarmTime.timeToRepeatAlarm,
-            rangeInitAlarm = alarmTime.rangeAlarm.first,
-            rangeFinishAlarm = alarmTime.rangeAlarm.second,
+            typeAlarm = alarmTimeSavable.typeAlarm,
+            nextAlarm = alarmTimeSavable.timeNextAlarm,
+            repeaterEvery = alarmTimeSavable.timeToRepeatAlarm,
+            rangeInitAlarm = alarmTimeSavable.rangeAlarm.first,
+            rangeFinishAlarm = alarmTimeSavable.rangeAlarm.second,
         )
     }
 
     fun clearAlarmFields() {
         nameAlarm.clearValue()
         description.clearValue()
-        alarmTime.clearValue()
+        alarmTimeSavable.clearValue()
         imageAlarm.clearValue()
     }
 

@@ -3,12 +3,12 @@ package com.nullpointer.noursecompose.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nullpointer.noursecompose.core.states.Resource
+import com.nullpointer.noursecompose.core.utils.launchSafeIO
 import com.nullpointer.noursecompose.domain.logger.LogsRepository
 import com.nullpointer.noursecompose.models.registry.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,13 +30,11 @@ class LogViewModel @Inject constructor(
         Resource.Loading
     )
 
-    fun deleterAllRegistry() = viewModelScope.launch(Dispatchers.IO) {
+    fun deleterAllRegistry() = launchSafeIO {
         logsRepo.deleterAllLogs()
     }
 
-    fun deleterRegistry(
-        listIds: List<Long>,
-    ) = viewModelScope.launch(Dispatchers.IO) {
+    fun deleterRegistry(listIds: List<Long>) = launchSafeIO {
         logsRepo.deleterLogs(listIds)
     }
 }
