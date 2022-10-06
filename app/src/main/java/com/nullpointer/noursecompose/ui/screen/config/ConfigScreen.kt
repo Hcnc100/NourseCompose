@@ -41,6 +41,7 @@ fun SettingsScreen(
     val typeNotify by configViewModel.typeNotify.collectAsState()
     val indexSound by configViewModel.intSound.collectAsState()
     val isPlaying by configViewModel.isPlaying.collectAsState()
+    val isAlarmStart by configViewModel.isAlarmSound.collectAsState()
 
 
     Scaffold(
@@ -63,7 +64,7 @@ fun SettingsScreen(
                 changeNotify = configViewModel::changeTypeNotify
             )
 
-            AnimatedVisibility(visible = typeNotify == TypeNotify.ALARM) {
+            AnimatedVisibility(visible = typeNotify == TypeNotify.ALARM && !isAlarmStart) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(5.dp),
                 ) {

@@ -36,6 +36,12 @@ class SettingsViewModel @Inject constructor(
         false
     )
 
+    val isAlarmSound = soundRepository.isPlayingInLoop.flowOn(Dispatchers.IO).stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        true
+    )
+
     val listSoundSize get() = soundRepository.listSoundRaw.size
 
 
