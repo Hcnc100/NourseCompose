@@ -8,7 +8,8 @@
     <dimen name="width_row_measure">150dp</dimen>
 
     <!-- log -->
-    <dimen name="size_row_log">180dp</dimen>
+    <dimen name="width_row_log">120dp</dimen>
+    <dimen name="height_row_log">160dp</dimen>
     <dimen name="height_graph_measure">250dp</dimen>
 
     <!-- item alarm -->

@@ -1,4 +1,4 @@
-package com.nullpointer.noursecompose.ui.screen
+package com.nullpointer.noursecompose.ui.screen.sound
 
 import android.content.Context
 import android.content.res.Configuration

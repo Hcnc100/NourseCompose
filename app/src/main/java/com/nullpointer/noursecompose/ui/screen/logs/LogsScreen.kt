@@ -2,23 +2,18 @@ package com.nullpointer.noursecompose.ui.screen.logs
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nullpointer.noursecompose.R
+import com.nullpointer.noursecompose.actions.ActionLogScreen
+import com.nullpointer.noursecompose.actions.ActionLogScreen.*
 import com.nullpointer.noursecompose.core.states.Resource
 import com.nullpointer.noursecompose.core.utils.shareViewModel
 import com.nullpointer.noursecompose.models.ItemSelected
@@ -30,6 +25,8 @@ import com.nullpointer.noursecompose.presentation.SelectionViewModel
 import com.nullpointer.noursecompose.ui.dialogs.DialogDetails
 import com.nullpointer.noursecompose.ui.interfaces.ActionRootDestinations
 import com.nullpointer.noursecompose.ui.navigation.MainNavGraph
+import com.nullpointer.noursecompose.ui.screen.logs.componets.list.LoadLogsScreen
+import com.nullpointer.noursecompose.ui.screen.logs.componets.list.SuccessLogsScreen
 import com.nullpointer.noursecompose.ui.share.FabAnimation
 import com.nullpointer.noursecompose.ui.share.mpGraph.ToolbarBack
 import com.nullpointer.noursecompose.ui.states.SelectedScreenState
@@ -41,95 +38,128 @@ import kotlinx.coroutines.launch
 @Destination
 @Composable
 fun LogsScreens(
+    logViewModel: LogViewModel = hiltViewModel(),
+    actionRootDestinations: ActionRootDestinations,
     alarmViewModel: AlarmViewModel = shareViewModel(),
     selectionViewModel: SelectionViewModel = shareViewModel(),
-    actionRootDestinations: ActionRootDestinations,
-    logViewModel: LogViewModel = hiltViewModel(),
     logsScreenState: SelectedScreenState = rememberSelectedScreenState()
 ) {
-    val listAlarm by logViewModel.listLogs.collectAsState()
-    val (alarmSelected, changeAlarmSelected) = rememberSaveable { mutableStateOf<Alarm?>(null) }
+    val listLogs by logViewModel.listLogs.collectAsState()
+    var alarmSelected by rememberSaveable { mutableStateOf<Alarm?>(null) }
 
     BackHandler(
         enabled = selectionViewModel.isSelectedEnable,
         onBack = selectionViewModel::clearSelection
     )
 
+    LogsScreen(
+        listLogState = listLogs,
+        alarmSelected = alarmSelected,
+        lazyGridState = logsScreenState.lazyGridState,
+        isDeleterEnabled = selectionViewModel.isSelectedEnable && !logsScreenState.isScrollInProgress,
+        isSelectedEnable = !logsScreenState.isScrollInProgress && selectionViewModel.isSelectedEnable,
+        actionLogScreen = { actionLogScreen, log ->
+            when (actionLogScreen) {
+                ACTION_BACK -> actionRootDestinations.backDestination()
+                HIDDEN_LOG_DIALOG -> {
+                    alarmSelected = null
+                }
+                SELECTED_LOG -> {
+                    log?.let { selectionViewModel.changeItemSelected(it) }
+                }
+                DELETER_LIST_LOG -> {
+                    logViewModel.deleterRegistry(selectionViewModel.getListSelectionAndClear())
+                }
+                DELETER_ALARM -> {
+                    alarmSelected?.let {
+                        alarmViewModel.deleterAlarm(it)
+                        alarmSelected = null
+                    }
+                }
+                SHOW_LOG_DIALOG -> {
+                    log?.let {
+                        logsScreenState.coroutineScope.launch {
+                            val alarm = alarmViewModel.getAlarmById(it.idAlarm)
+                            if (alarm != null) {
+                                alarmSelected = alarm
+                            } else {
+                                logsScreenState.showToast(R.string.message_alarm_deleter)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun LogsScreen(
+    alarmSelected: Alarm?,
+    isDeleterEnabled: Boolean,
+    actionLogScreen: (ActionLogScreen, Log?) -> Unit,
+    isSelectedEnable: Boolean,
+    lazyGridState: LazyGridState,
+    listLogState: Resource<List<Log>>
+) {
+
     Scaffold(
         topBar = {
             ToolbarBack(
                 title = stringResource(R.string.title_logs_screen),
-                actionBack = actionRootDestinations::backDestination
+                actionBack = { actionLogScreen(ACTION_BACK, null) }
             )
         },
         floatingActionButton = {
             FabAnimation(
-                isVisible = selectionViewModel.isSelectedEnable && !logsScreenState.isScrollInProgress,
+                isVisible = isDeleterEnabled,
                 icon = Icons.Default.Delete,
                 description = stringResource(R.string.description_deleter_registry),
-                action = {
-                    logViewModel.deleterRegistry(selectionViewModel.getListSelectionAndClear())
-                }
+                action = { actionLogScreen(DELETER_LIST_LOG, null) }
             )
         }
-    ) {
-        LogsScreenListState(
-            listLogState = listAlarm,
-            listState = logsScreenState.lazyGridState,
-            actionSimpleClick = {
-                logsScreenState.coroutineScope.launch {
-                    val alarm = alarmViewModel.getAlarmById(it.idAlarm)
-                    if (alarm != null) {
-                        changeAlarmSelected(alarm)
-                    } else {
-                        logsScreenState.showToast(R.string.message_alarm_deleter)
-                    }
-                }
-            },
-            actionSelect = selectionViewModel::changeItemSelected,
-            isSelectEnable = selectionViewModel.isSelectedEnable,
-            modifier = Modifier.padding(it)
+    ) { paddingValues ->
+        LogListState(
+            modifier = Modifier.padding(paddingValues),
+            isSelectEnable = isSelectedEnable,
+            listState = lazyGridState,
+            listLogState = listLogState,
+            actionSelect = { actionLogScreen(SELECTED_LOG, it as Log) },
+            actionSimpleClick = { actionLogScreen(SHOW_LOG_DIALOG, it) }
         )
     }
 
-    if (alarmSelected != null) {
+
+    alarmSelected?.let {
         DialogDetails(
             alarm = alarmSelected,
-            actionHiddenDialog = { changeAlarmSelected(null) },
-            deleterAlarm = {
-                alarmViewModel.deleterAlarm(alarmSelected)
-                changeAlarmSelected(null)
-            }
+            actionHiddenDialog = { actionLogScreen(HIDDEN_LOG_DIALOG, null) },
+            deleterAlarm = { actionLogScreen(DELETER_ALARM, null) }
         )
     }
 }
 
+
 @Composable
-fun LogsScreenListState(
-    listLogState: Resource<List<Log>>,
+fun LogListState(
+    isSelectEnable: Boolean,
     listState: LazyGridState,
     modifier: Modifier = Modifier,
     actionSimpleClick: (Log) -> Unit,
-    actionSelect: (ItemSelected) -> Unit,
-    isSelectEnable: Boolean
+    listLogState: Resource<List<Log>>,
+    actionSelect: (ItemSelected) -> Unit
 ) {
     when (listLogState) {
         is Resource.Success -> {
-            LazyVerticalGrid(
-                state = listState,
+            SuccessLogsScreen(
                 modifier = modifier,
-                columns = GridCells.Adaptive(dimensionResource(id = R.dimen.size_row_log))
-            ) {
-                items(listLogState.data) { log ->
-                    ItemLog(
-                        registry = log,
-                        actionClick = actionSimpleClick,
-                        changeItemSelected = actionSelect,
-                        isSelectEnable = isSelectEnable
-                    )
-                }
-            }
+                lazyGridState = listState,
+                listLog = listLogState.data,
+                isSelectEnable = isSelectEnable,
+                changeItemSelected = actionSelect,
+                actionClickLog = actionSimpleClick
+            )
         }
-        else -> LoadingLogsScreen(modifier = modifier)
+        else -> LoadLogsScreen(modifier = modifier)
     }
 }

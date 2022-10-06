@@ -12,7 +12,7 @@ import com.nullpointer.noursecompose.core.utils.turnScreenOnAndKeyguardOff
 import com.nullpointer.noursecompose.models.alarm.Alarm
 import com.nullpointer.noursecompose.presentation.AlarmSoundViewModel
 import com.nullpointer.noursecompose.services.sound.SoundServicesControl.KEY_ALARM_PASS_ACTIVITY
-import com.nullpointer.noursecompose.ui.screen.AlarmSoundScreen
+import com.nullpointer.noursecompose.ui.screen.sound.AlarmSoundScreen
 import com.nullpointer.noursecompose.ui.theme.NourseComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
