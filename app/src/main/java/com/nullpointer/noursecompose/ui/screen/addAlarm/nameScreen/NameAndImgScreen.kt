@@ -41,7 +41,7 @@ fun NameAndImgScreen(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        TitleAddAlarm(title = "Inicia agregando un nombre para la alarma y una imagen para identificarla")
+        TitleAddAlarm(title = stringResource(R.string.title_img_and_name_alarm))
         when (config.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 Row(

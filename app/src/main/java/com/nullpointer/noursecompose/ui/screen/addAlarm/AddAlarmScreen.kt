@@ -71,9 +71,7 @@ fun AddAlarmScreen(
             when (action) {
                 CHANGE_VISIBLE_MODAL -> change?.let { addAlarmScreenState.changeVisibleModal(it) }
                 CHANGE_VISIBLE_REPEAT -> change?.let {
-                    addAlarmViewModel.changeVisibleDialogRepeat(
-                        it
-                    )
+                    addAlarmViewModel.changeVisibleDialogRepeat(it)
                 }
                 ACTION_BACK -> actionRootDestinations.backDestination()
                 SHOW_TIME_PICKER -> addAlarmScreenState.showTimePicker()
@@ -112,7 +110,12 @@ fun AddAlarmScreen(
         isVisibleModal = isVisibleModal,
         callBackSelection = callBackSelection,
         actionHideModal = { actionAddScreen(CHANGE_VISIBLE_MODAL, false) },
-        topBar = { IconClose(actionClick = { actionAddScreen(ACTION_BACK, false) }) }
+        topBar = {
+            TopAppBar(
+                actions = { IconClose(actionClick = { actionAddScreen(ACTION_BACK, false) }) },
+                title = { Text(text = stringResource(id = R.string.title_new_alarm)) }
+            )
+        }
     ) { padding ->
         BoxWithConstraints {
             val realHeight = remember { this.maxHeight }
@@ -166,19 +169,17 @@ private fun IconClose(
     actionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier.fillMaxWidth()
+
+    IconButton(
+        onClick = actionClick,
+        modifier = modifier
     ) {
-        IconButton(
-            onClick = actionClick,
-            modifier = Modifier.align(Alignment.TopEnd)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_clear),
-                contentDescription = null
-            )
-        }
+        Icon(
+            painter = painterResource(id = R.drawable.ic_clear),
+            contentDescription = null
+        )
     }
+
 }
 
 @Composable

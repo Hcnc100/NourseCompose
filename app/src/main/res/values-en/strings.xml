@@ -173,4 +173,8 @@
 
     <string name="message_error_measure_empty">The measure cannot be empty</string>
     <string name="message_error_measure_length">Measurement can\'t be that long</string>
+
+    <string name="text_play_sound">play the sound</string>
+    <string name="text_stop_sound">stop the sound</string>
+    <string name="title_img_and_name_alarm">Start by adding a name for the alarm and an image to identify it</string>
 </resources>
