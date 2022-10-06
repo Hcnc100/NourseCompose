@@ -10,5 +10,5 @@ interface SoundDataSource {
     fun togglePlayPause()
     fun stopSoundInLoop()
     fun changeSong(indexSound: Int)
-    fun startSoundInLoop()
+    fun startSoundInLoop(indexSound: Int)
 }

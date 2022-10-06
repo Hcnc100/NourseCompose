@@ -90,10 +90,10 @@ class SoundDataSourceImpl(
     }
 
 
-    override fun startSoundInLoop() {
+    override fun startSoundInLoop(indexSound: Int) {
         _isPlayInLoop.value = true
         _isPlaying.value = true
-        mediaPlayer.reset()
+        changeSong(indexSound)
         mediaPlayer.start()
     }
 

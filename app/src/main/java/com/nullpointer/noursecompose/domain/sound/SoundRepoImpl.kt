@@ -49,8 +49,8 @@ class SoundRepoImpl(
     }
 
     override suspend fun startSoundInLoopAlarm() {
-        prepareSoundSaved()
-        soundDataSource.startSoundInLoop()
+        val indexSoundSaved = settingsDataSource.intSoundFlow.first()
+        soundDataSource.startSoundInLoop(indexSoundSaved)
     }
 
     override suspend fun stopSoundInLoopAlarm() {

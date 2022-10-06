@@ -63,8 +63,4 @@ class SettingsViewModel @Inject constructor(
         soundRepository.changeSound(intSound)
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        soundRepository.releaseSound()
-    }
 }
